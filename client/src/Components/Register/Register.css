@@ -1,0 +1,60 @@
+.login-container {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    width: 100vw;
+    .login-flow {
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            padding: 1rem;
+        }
+    }
+}
+
+.register {
+    display: flex;
+    flex-direction: column;
+    background: var(--light-green);
+}
+
+.register-login {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.register-form {
+    max-width: 450px;
+    width: 100%;
+    padding: 20px;
+    margin: 0 auto;
+    label {
+        display: flex;
+    }
+    button {
+        margin: 0 auto;
+        width: 100%;
+    }
+}
+
+.login-input {
+    display: flex;
+    align-items: center;
+    position: relative;
+    
+    svg {
+        position: absolute;
+        left: 10px;
+        path {
+            fill: var(--dark-green);
+        }
+    }
+}
+
+.input-with-icon {
+    /* padding-left: 40px; */
+    padding: 1rem 0 1rem 40px;
+}
+
