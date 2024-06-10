@@ -51,6 +51,13 @@
             fill: var(--dark-green);
         }
     }
+    .email-icon {
+        path {
+            fill: none;
+            stroke: var(--dark-green);
+            border: var(--dark-green);
+        }
+    }
 }
 
 .input-with-icon {
