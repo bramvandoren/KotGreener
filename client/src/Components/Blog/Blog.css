@@ -1,174 +1,191 @@
-/* src/BlogPage.css */
 .blog {
-    padding: 20px;
-    background-color: #f0f4f0;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    margin-bottom: 80px;
+  /* padding: 0 20px; */
+  /* background-color: #f0f4f0; */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  margin-bottom: 80px;
+}
+
+.blogs {
+  padding: 0 20px;
+}
+
+.blog-intro {
+  padding: 0 20px;
+  h2 {
+    margin: 10px 0;
   }
-  
-  main {
-    flex-grow: 1;
-  }
-  
-  .blog-post {
-    background-color: white;
-    /* padding: 20px; */
-    border-radius: 10px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    display: flex;
-    /* align-items: center; */
-    margin-bottom: 10px;
-    position: relative;
-    overflow: hidden;
-    cursor: pointer;
-    .blog-image-overlay {
-      width: 100%;
-      margin-right: 20px;
-      transition: transform 0.5s ease;
-      max-width: 150px;
-    }
-  }
-  
-  .blog-post:hover .blog-image-overlay {
-    transform: scale(1.1);
-  }
-  
-  .blog-image {
+}
+
+.blog-post {
+  background-color: white;
+  /* padding: 20px; */
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  display: flex;
+  /* align-items: center; */
+  margin-bottom: 10px;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  .blog-image-overlay {
     width: 100%;
-    /* max-width: 300px; */
+    margin-right: 20px;
+    transition: transform 0.5s ease;
+    max-width: 150px;
+  }
+}
+
+.blog-post:hover .blog-image-overlay {
+  transform: scale(1.1);
+}
+
+.blog-image {
+  width: 100%;
+  /* max-width: 300px; */
+  height: 100%;
+  object-fit: cover;
+}
+
+.blog-detail-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.blog-content h2, .blog-content a, .blog-content p  {
+  margin: 10px;
+}
+
+.blog-content-date {
+  font-size: 0.8rem;
+  color: darkgray;
+}
+
+.more-link {
+  margin-top: 10px;
+  color: #388e3c;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.nav-item {
+  color: #8c8c8c;
+  text-decoration: none;
+  font-size: 16px;
+}
+
+.nav-item.active, .nav-item:hover {
+  color: #000;
+}
+
+.blog-detail {
+  /* .header {
+    position: relative;
+    height: 50vh;
+    overflow: hidden;
+  } */
+  .blog-image-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+  }
+  .blog-image-background {
+    width: 100%;
     height: 100%;
     object-fit: cover;
   }
-  
   .blog-detail-content {
-    display: flex;
-    flex-direction: column;
-  }
-  
-  .blog-content h2, .blog-content a, .blog-content p  {
-    margin: 10px;
-  }
-
-  .blog-content-date {
-    font-size: 0.8rem;
-    color: darkgray;
-  }
-  
-  .more-link {
-    margin-top: 10px;
-    color: #388e3c;
-    text-decoration: none;
-    font-weight: bold;
-  }
-  
-  .nav-item {
-    color: #8c8c8c;
-    text-decoration: none;
-    font-size: 16px;
-  }
-  
-  .nav-item.active, .nav-item:hover {
-    color: #000;
-  }
-
-  .blog-detail {
-    /* margin-bottom: 80px; */
-    .header {
-      position: relative;
-      height: 50vh;
-      overflow: hidden;
-    }
-    .blog-image-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      margin: 0;
-    }
-    .blog-image-background {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-    .blog-detail-content {
-      position: relative;
-      z-index: 2;
-      background: white;
-      padding: 20px;
-      border-radius: 20px 20px 0 0;
-      .blog-content-date {
-        margin: 0;
-      }
-    }
-  }
-
-  .blog-comments {
     position: relative;
     z-index: 2;
-    background-color: rgba(240, 245, 230, 0.7);
-    padding: 20px 20px 200px 20px;
-    .blog-comments-title {
-      position: relative;
+    background: white;
+    padding: 20px;
+    border-radius: 20px 20px 0 0;
+    .blog-content-date {
       margin: 0;
-      color: var(--dark-green);
-      .comments-count {
-        background-color: var(--medium-green);
-        padding: 0.2rem 0.5rem;
-        border-radius: 100%;
-        color: white;
-        font-size: 0.8rem;
-        position: relative;
-        top: -10px;
-      }
-    }
-    .blog-comments-create {
-      padding-right: 20px;
-      p {
-        margin-top: 10px;
-      }
-    }
-    form {
-      padding-right: 20px;
-    }
-    form input, form textarea {
-      width: 100%;
-      padding: 10px 0 0 20px;
-      margin-top: 1rem;
-      color: black;
-    }
-    form textarea::placeholder {
-      color: var(--dark-green);
-    }
-
-    div {
-      p {
-        margin: 0;
-      }
-    }
-    .comment {
-      background: white;
-      border-radius: 15px;
-      margin-top: 1rem;
-      padding: 0.5rem 0 0.5rem 0;
-      display: flex;
-      flex-direction: column;
-      p {
-        margin-left: 20px;
-        color:black;
-      }
-    }
-    .comment-user {
-      color: var(--dark-green);
-      font-size: 1.1rem;
-    }
-    .comment-date {
-      color: gray;
-      font-size: 0.8rem;
     }
   }
+}
+
+.blog-comments {
+  position: relative;
+  z-index: 2;
+  background-color: rgba(240, 245, 230, 0.7);
+  padding: 20px 20px 200px 20px;
+  .blog-comments-title {
+    position: relative;
+    margin: 0;
+    color: var(--dark-green);
+    .comments-count {
+      background-color: var(--medium-green);
+      padding: 0.2rem 0.5rem;
+      border-radius: 100%;
+      color: white;
+      font-size: 0.8rem;
+      position: relative;
+      top: -10px;
+    }
+  }
+  .blog-comments-create {
+    padding-right: 20px;
+    p {
+      margin-top: 10px;
+    }
+  }
+  form {
+    padding-right: 20px;
+  }
+  form input, form textarea {
+    width: 100%;
+    padding: 10px 0 0 20px;
+    margin-top: 1rem;
+    color: black;
+  }
+  form textarea::placeholder {
+    color: var(--dark-green);
+  }
+
+  div {
+    p {
+      margin: 0;
+    }
+  }
+  .comment {
+    background: white;
+    border-radius: 15px;
+    margin-top: 1rem;
+    padding: 0.5rem 0 0.5rem 0;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    p {
+      margin-left: 20px;
+    }
+  }
+  .comment-user {
+    color: grey;
+    font-size: 0.8rem;
+  }
+  .comment-date {
+    color: gray;
+    font-size: 0.8rem;
+  }
+  .comment-content {
+    color: var(--dark-green);
+    font-size: 1rem;
+    margin: 10px 0;
+  }
+  .comment-delete {
+    position: absolute;
+    right: 0;
+    top: 0;
+    background: transparent;
+    color: red;
+  }
+}
 
 /* Media query voor tablets (schermen groter dan 768px) */
 @media (min-width: 768px) {

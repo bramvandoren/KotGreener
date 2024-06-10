@@ -3,7 +3,10 @@ import './Blog.css';
 import Navbar from '../Navbar/Navbar';
 import BlogDetail from './BlogDetail';
 import { Link, NavLink } from 'react-router-dom';
+import logo from "../../assets/logo-kotgreener.svg";
 import { supabase } from '../../lib/helper/supabaseClient';
+import Loading from '../Loading/Loading';
+import Header from '../Header/Header';
 
 function Blog({session}) {
   const [blogs, setBlogs] = useState([]);
@@ -59,7 +62,7 @@ function Blog({session}) {
   }
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <Loading/>
   }
 
   if (!blogs) {
@@ -69,53 +72,45 @@ function Blog({session}) {
   return (
     <>
       <div className="blog">
-        <header className="header">
-          <h1>Blog</h1>
-          <div className='nav-desktop'>
-            <NavLink to="/" className="nav-item">
-              <p>Home</p>
-            </NavLink>
-            <NavLink to="/blog" className="nav-item">
-              <p>Ontdek</p>
-            </NavLink>
-            <NavLink to="/my-plants" className="nav-item">
-              <p>Mijn Planten</p>
-            </NavLink>
-            <NavLink to="/winkel" className="nav-item">
-              <p>Winkel</p>
-            </NavLink>
-            <NavLink to="/search" className="nav-item">
-              <p>Zoeken</p>
-            </NavLink>
-          </div>
-          <div className="profile-icon">B</div>
-        </header>
+        <Header/>
         <main>
-          <div className="blogs">
-            {blogs.map((blog) => (
-              <div className="blog-post" key={blog.id}>
-                <div className="blog-image-overlay">
-                  <img
-                    src={blog.image_url}
-                    alt={blog.title}
-                    className="blog-image"
-                  />
-                </div>
-                <div className="blog-content">
-                  <h2>{blog.title}</h2>
-                  <p>{truncateText(blog.content, 30)}</p>
-                  <p className="blog-content-date">{formatDate(blog.created_at)}</p>
-                  {session && (
-                    <Link to={`/blog/${blog.id}`} className="button--tertiair">Lees meer</Link>
-                  )}
-                </div>
-              </div>
-            ))}
+        <div className="blog-intro">
+          <Link className="breadcrumb">Blog</Link>
+          <div className="blog-intro-header">
+            <h2>KotGreener's Blog</h2>
           </div>
-        </main>
-      </div>
-      <Navbar />
-    </>
+          <p className="blog-intro-text">
+            Ontdek de nieuwste ontwikkelingen en handige tips voor groener te leven op kot.
+          </p>
+        </div>
+        <div className="blogs">
+          {blogs.map((blog) => (
+            <div className="blog-post" key={blog.id}>
+              <div className="blog-image-overlay">
+                <img
+                  src={blog.image_url}
+                  alt={blog.title}
+                  className="blog-image"
+                />
+              </div>
+              <div className="blog-content">
+                <h2>{blog.title}</h2>
+                <p>{truncateText(blog.content, 30)}</p>
+                <p className="blog-content-date">{formatDate(blog.created_at)}</p>
+                {session ? (
+                  <Link to={`/blog/${blog.id}`} className="button--tertiair">Lees meer</Link>
+                ) :
+                (
+                  <p><Link to="/login">Log in</Link> om een blog te lezen.</p>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      </main>
+    </div>
+  <Navbar />
+  </>
   );
 }
 
