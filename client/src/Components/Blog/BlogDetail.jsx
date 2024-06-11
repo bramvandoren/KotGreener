@@ -4,6 +4,7 @@ import Navbar from '../Navbar/Navbar';
 import { Link, NavLink, useNavigate, useParams } from 'react-router-dom';
 import logo from "../../assets/logo-kotgreener.svg";
 import { supabase } from '../../lib/helper/supabaseClient';
+import Header from '../Header/Header';
 
 
 function BlogDetail() {
@@ -49,7 +50,7 @@ function BlogDetail() {
           .from('blog_comments')
           .select('*')
           .eq('blog_id', blogId)
-          .order('created_at', { ascending: false });
+          .order('created_at', { ascending: true });
 
         if (error) {
           console.error('Error fetching comments:', error);
@@ -60,9 +61,20 @@ function BlogDetail() {
         console.error('Error fetching comments:', error);
       }
     };
+    const updateViews = async () => {
+      try {
+        await supabase
+          .from('blogs')
+          .update({ views: blog.views + 1 })
+          .eq('id', blogId);
+      } catch (error) {
+        console.error('Error updating views:', error);
+      }
+    };
     fetchSession();
     fetchBlog();
     fetchComments();
+    updateViews();
   }, [blogId]);
 
   const formatDate = (dateString) => {
@@ -98,16 +110,16 @@ function BlogDetail() {
 
       if (error) {
         throw new Error(error.message);
+      } else {
+        setComments([data[0], ...comments]);
+        setNewComment('');
       }
-
-      setComments([data[0], ...comments]);
-      setNewComment('');
     } catch (error) {
       console.error('Failed to post comment:', error);
     }
   };
 
-  const handleDeleteEvent = async (commentId) => {
+  const handleDeleteComment = async (commentId) => {
     try {
       const { error } = await supabase
         .from('blog_comments')
@@ -135,42 +147,7 @@ function BlogDetail() {
   return (
     <>
       <div className="blog-detail">
-        {/* <header className="header">
-          <div className="blog-image-overlay">
-            <img
-              // src={`http://localhost:4000/uploads/${blog.image}`}
-              alt={blog.title}
-              className="blog-image-background"
-            />
-          </div>
-          <div className="button-back" onClick={() => window.history.back()}>
-            <svg width="25" height="25" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M6.5625 14.0625H25.3125C25.5611 14.0625 25.7996 14.1613 25.9754 14.3371C26.1512 14.5129 26.25 14.7514 26.25 15C26.25 15.2486 26.1512 15.4871 25.9754 15.6629C25.7996 15.8387 25.5611 15.9375 25.3125 15.9375H6.5625C6.31386 15.9375 6.0754 15.8387 5.89959 15.6629C5.72377 15.4871 5.625 15.2486 5.625 15C5.625 14.7514 5.72377 14.5129 5.89959 14.3371C6.0754 14.1613 6.31386 14.0625 6.5625 14.0625Z" fill="black"/>
-              <path d="M6.95059 15L14.7262 22.7737C14.9023 22.9498 15.0012 23.1885 15.0012 23.4375C15.0012 23.6864 14.9023 23.9252 14.7262 24.1012C14.5502 24.2773 14.3114 24.3761 14.0625 24.3761C13.8135 24.3761 13.5748 24.2773 13.3987 24.1012L4.96122 15.6637C4.87391 15.5766 4.80464 15.4732 4.75738 15.3593C4.71012 15.2454 4.68579 15.1233 4.68579 15C4.68579 14.8766 4.71012 14.7545 4.75738 14.6407C4.80464 14.5268 4.87391 14.4233 4.96122 14.3362L13.3987 5.89871C13.5748 5.72268 13.8135 5.62378 14.0625 5.62378C14.3114 5.62378 14.5502 5.72268 14.7262 5.89871C14.9023 6.07475 15.0012 6.31351 15.0012 6.56246C15.0012 6.81142 14.9023 7.05018 14.7262 7.22621L6.95059 15Z" fill="black"/>
-            </svg>
-            <p>Terug</p>
-          </div>
-        </header> */}
-        <header className="header">
-          <img className="logo" src={logo} alt='Logo' />
-          <div className='nav-desktop'>
-            <NavLink to="/" className="nav-item">
-              <p>Home</p>
-            </NavLink>
-            <NavLink to="/blog" className="nav-item">
-              <p>Ontdek</p>
-            </NavLink>
-            <NavLink to="/my-plants" className="nav-item">
-              <p>Mijn Planten</p>
-            </NavLink>
-            <NavLink to="/winkel" className="nav-item">
-              <p>Winkel</p>
-            </NavLink>
-            <NavLink to="/search" className="nav-item">
-              <p>Zoeken</p>
-            </NavLink>
-          </div>
-        </header>
+        <Header/>
         <div className="blog-image-overlay">
           <img
             // src={`http://localhost:4000/uploads/${blog.image}`}
@@ -178,13 +155,6 @@ function BlogDetail() {
             className="blog-image-background"
           />
         </div>
-        {/* <div className="button-back" onClick={() => window.history.back()}>
-          <svg width="25" height="25" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M6.5625 14.0625H25.3125C25.5611 14.0625 25.7996 14.1613 25.9754 14.3371C26.1512 14.5129 26.25 14.7514 26.25 15C26.25 15.2486 26.1512 15.4871 25.9754 15.6629C25.7996 15.8387 25.5611 15.9375 25.3125 15.9375H6.5625C6.31386 15.9375 6.0754 15.8387 5.89959 15.6629C5.72377 15.4871 5.625 15.2486 5.625 15C5.625 14.7514 5.72377 14.5129 5.89959 14.3371C6.0754 14.1613 6.31386 14.0625 6.5625 14.0625Z" fill="black"/>
-            <path d="M6.95059 15L14.7262 22.7737C14.9023 22.9498 15.0012 23.1885 15.0012 23.4375C15.0012 23.6864 14.9023 23.9252 14.7262 24.1012C14.5502 24.2773 14.3114 24.3761 14.0625 24.3761C13.8135 24.3761 13.5748 24.2773 13.3987 24.1012L4.96122 15.6637C4.87391 15.5766 4.80464 15.4732 4.75738 15.3593C4.71012 15.2454 4.68579 15.1233 4.68579 15C4.68579 14.8766 4.71012 14.7545 4.75738 14.6407C4.80464 14.5268 4.87391 14.4233 4.96122 14.3362L13.3987 5.89871C13.5748 5.72268 13.8135 5.62378 14.0625 5.62378C14.3114 5.62378 14.5502 5.72268 14.7262 5.89871C14.9023 6.07475 15.0012 6.31351 15.0012 6.56246C15.0012 6.81142 14.9023 7.05018 14.7262 7.22621L6.95059 15Z" fill="black"/>
-          </svg>
-          <p>Terug</p>
-        </div> */}
         <main>
           <div className="blog-detail-content">
             <div>
@@ -207,7 +177,11 @@ function BlogDetail() {
                 <p className="comment-user"><strong>{comment.username}</strong></p>
                 <p className="comment-content">{comment.content}</p>
                 <p className="comment-date">{formatDate(comment.created_at)}</p>
-                <button className="comment-delete" onClick={() => handleDeleteEvent(comment.id)}>X</button>
+                {(comment.profile_id == session.user.id) ? (
+                  <button className="comment-delete" onClick={() => handleDeleteComment(comment.id)}>X</button>
+                ): (
+                  <></>
+                )}
               </div>
             ))
             )}
