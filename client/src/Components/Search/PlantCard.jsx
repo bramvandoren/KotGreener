@@ -26,7 +26,7 @@ function PlantCard({ plant, isFavorite, onFavorite, onUnfavorite, session }) {
         </div>
       </div>
       {/* Gebruik Link om naar de DetailPage te navigeren */}
-      <Link to={`/search/${plant.id}`} className="detail-link">Meer Info</Link>
+      <Link to={`/plants/${plant.id}`} className="detail-link">Meer Info</Link>
     </div>
   );
 }

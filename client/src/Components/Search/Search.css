@@ -85,7 +85,8 @@
 }
 
 .search-intro {
-  padding: 0 20px;
+  padding: 10px 20px;
+  background: white;
   .search-intro-header {
     h2 {
       margin: 0;
@@ -98,31 +99,51 @@
   align-items: center;
   position: relative;
   margin-bottom: 1.5rem;
-  padding: 0 20px;
-  svg {
-      position: absolute;
-      left: 20px;
-      /* background: var(--dark-green); */
-      /* border-radius: 100%; */
-      /* padding: 0.5rem; */
-      path {
-          /* fill: var(--dark-green); */
-          stroke: var(--dark-green);
-      }
+  .search-icon {
+    position: absolute;
+    left: 10px;
+    border-radius: 100%;
+    border: 0.15rem solid #9eb599;
+    padding: 0.5rem;
+    path {
+        stroke: #9eb599;
+        stroke-width: 2px;
+    }
+  }
+  .clear-icon {
+    position: absolute;
+    right: 20px;
+    cursor: pointer;
+    path {
+      stroke: var(--medium-green);
+    }
   }
 }
 
 .input-search-icon {
-  border-radius: 2rem;
   width: 100%;
-  padding: 0.5rem;
-  border: 0.1rem solid var(--dark-green);
-  font-size: 0.9rem;
+  padding: 1rem 0 1rem 65px;
+  background: #f4f0f1;
+  border: 0.15rem solid transparent;
+  border-radius: 10px;
 }
 
-.input-search-icon:focus {
-  background: white;
-  color: var(--dark-green);
+.input-search-icon:focus, .input-search-icon:hover, .input-search-icon:active  {
+  border: 0.15rem solid var(--medium-green);
+}
+
+.input-search-icon:focus + .search-icon path {
+  stroke: white;
+}
+
+.input-search-icon:focus + .search-icon, .input-search-icon:active + .search-icon {
+  background: var(--dark-green);
+  border-color: var(--dark-green);
+}
+
+.search-intro-text {
+  padding: 0;
+  margin: 10px 0 0 0;
 }
 
 .filters {
@@ -147,8 +168,8 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 20px;
-  margin-top: 20px;
   justify-content: center;
+  padding: 0 20px;
 }
 
 .plant-card {
@@ -162,8 +183,14 @@
   max-width: 50vw;
 }
 
-.filter, .selected-filters, .filters-extra, .results  {
+.filter {
+  padding: 0 20px 20px 20px;
+  background: white;
+}
+
+.selected-filters  {
   padding: 0 20px;
+  background: white;
 }
 
 .filter-button {
@@ -184,20 +211,38 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  padding: 10px 20px;
 }
 
 .dropdown .css-13cymwt-control {
-  background-color: white;
-  border-color: var(--dark-green);
+  background-color: #f4f0f1;
+  border: 0.15rem solid transparent;
   margin-bottom: 0.5rem;
+}
+
+.dropdown .css-1u9des2-indicatorSeparator {
+  background-color: transparent;
+}
+
+.dropdown .css-1xc3v61-indicatorContainer {
+  color: var(--dark-green);
 }
 
 .dropdown input{
   margin-bottom: 0.1rem;
 }
 
+.dropdown .css-1jqq78o-placeholder {
+  color: var(--dark-green);
+}
+
 .dropdown .css-13cymwt-control:focus {
   background-color: white;
+  border-color: var(--dark-green);
+}
+
+.dropdown .css-13cymwt-control:hover {
+  border: 0.15rem solid var(--medium-green);
   border-color: var(--dark-green);
 }
 

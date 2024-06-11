@@ -5,7 +5,7 @@ import Navbar from '../Navbar/Navbar';
 import toolsAR from "../../assets/tools-ar.png";
 import { jwtDecode } from 'jwt-decode';
 import { supabase } from '../../lib/helper/supabaseClient';
-import logo from "../../assets/logo-kotgreener.svg";
+import Header from '../Header/Header';
 
 function DetailPage() {
   const { plantId } = useParams();
@@ -14,11 +14,9 @@ function DetailPage() {
   const [isFavorite, setIsFavorite] = useState(false);
   const [isInMyPlants, setIsInMyPlants] = useState(false);
   const [session, setSession] = useState(null);
-  const [user, setUser] = useState(null);
+  const [visitsCount, setVisitsCount] = useState(0);
 
   const navigate = useNavigate();
-
-
   useEffect(() => {
     const fetchSession = async () => {
       try {
@@ -42,6 +40,15 @@ function DetailPage() {
       if (error) {
         console.error('Error fetching blog:', error);
       } else {
+        // Verhoog het aantal bezoeken met 1
+        const updatedVisits = data.visits + 1;
+
+        // Update de database met het nieuwe aantal bezoeken
+        await supabase
+          .from('plants')
+          .update({ visits: updatedVisits })
+          .eq('id', plantId);
+
         setPlant(data);
       }
       setLoading(false);
@@ -146,27 +153,7 @@ function DetailPage() {
   return (
     <>
     <div className="detail-page">
-      <header className="header">
-        {/* <h1>Blog</h1> */}
-        <img className="logo" src={logo} alt='Logo' />
-        <div className='nav-desktop'>
-          <NavLink to="/" className="nav-item">
-            <p>Home</p>
-          </NavLink>
-          <NavLink to="/blog" className="nav-item">
-            <p>Ontdek</p>
-          </NavLink>
-          <NavLink to="/my-plants" className="nav-item">
-            <p>Mijn Planten</p>
-          </NavLink>
-          <NavLink to="/winkel" className="nav-item">
-            <p>Winkel</p>
-          </NavLink>
-          <NavLink to="/search" className="nav-item">
-            <p>Zoeken</p>
-          </NavLink>
-        </div>
-      </header>
+      <Header/>
       <div className="detail-page-hero">
         <div className="plant-image-background-overlay">
             <img src={toolsAR} alt={plant.name} className="plant-image-background" />
@@ -178,11 +165,6 @@ function DetailPage() {
           </svg>
           <p>Terug</p>
         </div>
-        {session && (
-          <button className="button-favourite" onClick={handleFavorite}>
-            {isFavorite ? '❤️' : '🤍'}
-          </button>
-        )}
       </div>
       <section className="plant-details">
         <div>
@@ -192,44 +174,11 @@ function DetailPage() {
         </div>
         <div className="plant-details-header">
           <h2 className="plant-name">{plant.name}</h2>
-          {/* {session && (
-            <button className="button-favourite" onClick={handleMyPlants}>
-              {isInMyPlants ? '❤️' : '🤍'}
-            </button>
-          )} */}
           {session && (
-            <>
-            {isInMyPlants ? (
-              <>
-              <button className="button-plants button-plants--checked" onClick={handleMyPlants}>
-                <svg height="15" width="15" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" 
-                  viewBox="0 0 17.837 17.837" xmlSpace="preserve">
-                <g>
-                  <path  d="M16.145,2.571c-0.272-0.273-0.718-0.273-0.99,0L6.92,10.804l-4.241-4.27
-                    c-0.272-0.274-0.715-0.274-0.989,0L0.204,8.019c-0.272,0.271-0.272,0.717,0,0.99l6.217,6.258c0.272,0.271,0.715,0.271,0.99,0
-                    L17.63,5.047c0.276-0.273,0.276-0.72,0-0.994L16.145,2.571z"/>
-                </g>
-                </svg>
-                <p>Mijn planten</p>
-              </button>
-              </>
-              ) : (
-              <>
-              <button className="button-plants" onClick={handleMyPlants}>
-                <p>Mijn planten</p>
-                <svg height="15" width="15" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" 
-                  viewBox="0 0 60.364 60.364" xmlSpace="preserve">
-                <g>
-                  <path d="M54.454,23.18l-18.609-0.002L35.844,5.91C35.845,2.646,33.198,0,29.934,0c-3.263,0-5.909,2.646-5.909,5.91v17.269
-                    L5.91,23.178C2.646,23.179,0,25.825,0,29.088c0.002,3.264,2.646,5.909,5.91,5.909h18.115v19.457c0,3.267,2.646,5.91,5.91,5.91
-                    c3.264,0,5.909-2.646,5.91-5.908V34.997h18.611c3.262,0,5.908-2.645,5.908-5.907C60.367,25.824,57.718,23.178,54.454,23.18z"/>
-                </g>
-                </svg>
-              </button>
-              </>
-                )}
-            </>
-        )}
+            <button className="button-favourite" onClick={handleFavorite}>
+              {isFavorite ? '❤️' : '🤍'}
+            </button>
+          )}
         </div>
         <p className="description">{plant.description}</p>
         <div className="plant-info">
@@ -258,7 +207,7 @@ function DetailPage() {
               </svg>
               <h3>Verticuteren</h3>
             </div>
-            <p>{plant.verticutting_schedule}</p>
+            <p>{plant.verticutting}</p>
           </div>
           <div className="plant-info-item">
             <div className="item-repot">
@@ -267,7 +216,7 @@ function DetailPage() {
               </svg>
               <h3>Verpotten</h3>
             </div>
-            <p>{plant.repotting_schedule}</p>
+            <p>{plant.repotting}</p>
           </div>
         </div>
       </section>
