@@ -26,16 +26,21 @@
 }
 
 .register-form {
-    max-width: 450px;
+    max-width: 400px;
     width: 100%;
     padding: 20px;
     margin: 0 auto;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 0 10px #f4f0f1;
     label {
         display: flex;
     }
     button {
         margin: 0 auto;
         width: 100%;
+        padding: 1rem 0 1rem 0;
+        border-radius: 100px;
     }
 }
 
@@ -54,14 +59,12 @@
     .email-icon {
         path {
             fill: none;
-            stroke: var(--dark-green);
-            border: var(--dark-green);
+            stroke: #9eb599;
         }
     }
 }
 
 .input-with-icon {
-    /* padding-left: 40px; */
     padding: 1rem 0 1rem 40px;
 }
 
