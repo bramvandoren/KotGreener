@@ -58,12 +58,20 @@ const Avatar = ({ url, size, onUpload }) => {
           className="avatar-image"
         />
       ) : (
-        <div className="avatar-image avatar-no-image" style={{ height: size, width: size }} />
+        <div className="avatar-image avatar-no-image" style={{ height: size, width: size }}>
+          Geen profielfoto  
+        </div>
       )}
       <div className="avatar-edit-label">
-        <label htmlFor="avatar">
-          {uploading ? 'Verwerken ...' : 'Aanpassen'}
-        </label>
+        {avatarUrl ? (
+          <label htmlFor="avatar">
+            {uploading ? 'Verwerken ...' : 'Aanpassen'}
+          </label>
+        ) : (
+          <label htmlFor="avatar">
+            {uploading ? 'Verwerken ...' : 'Toevoegen'}
+          </label>
+        )}
         <input
           style={{
             visibility: 'hidden',

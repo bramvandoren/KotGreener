@@ -5,26 +5,36 @@ import { Link, NavLink, useLocation } from 'react-router-dom';
 import logo from "../../assets/logo-kotgreener.svg";
 import './Profile.css';
 import Navbar from '../Navbar/Navbar';
+import Header from '../Header/Header';
 
 export default function Account() {
-    const { state } = useLocation();
-  const { session } = state;
-
   const [loading, setLoading] = useState(true)
   const [username, setUsername] = useState(null)
   const [website, setWebsite] = useState(null)
   const [avatar_url, setAvatarUrl] = useState(null)
+  const [session, setSession] = useState(null);
 
   useEffect(() => {
+    const fetchSession = async () => {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        setSession(session);
+        if (session) {
+          getProfile(session);
+        } else {
+          navigate('/login');
+        }
+      } catch (error) {
+        console.error('Error fetching session:', error);
+      }
+    };
     let ignore = false
-    async function getProfile() {
+    async function getProfile(session) {
       setLoading(true)
-      const { user } = session
-
       const { data, error } = await supabase
         .from('profiles')
         .select(`username, website, avatar_url`)
-        .eq('id', user.id)
+        .eq('id', session.user.id)
         .single()
 
       if (!ignore) {
@@ -39,13 +49,12 @@ export default function Account() {
 
       setLoading(false)
     }
-
-    getProfile()
-
+    fetchSession();
+    // getProfile()
     return () => {
       ignore = true
     }
-  }, [session])
+  }, [])
 
   async function updateProfile(event, avatarUrl) {
     event.preventDefault()
@@ -111,27 +120,7 @@ export default function Account() {
   return (
     <>
     <div className="account">
-        <header className="header">
-          {/* <h1>Blog</h1> */}
-          <img className="logo" src={logo} alt='Logo' />
-          <div className='nav-desktop'>
-            <NavLink to="/" className="nav-item">
-              <p>Home</p>
-            </NavLink>
-            <NavLink to="/blog" className="nav-item">
-              <p>Ontdek</p>
-            </NavLink>
-            <NavLink to="/my-plants" className="nav-item">
-              <p>Mijn Planten</p>
-            </NavLink>
-            <NavLink to="/winkel" className="nav-item">
-              <p>Winkel</p>
-            </NavLink>
-            <NavLink to="/search" className="nav-item">
-              <p>Zoeken</p>
-            </NavLink>
-          </div>
-        </header>
+        <Header/>
         <div className="button-back" onClick={() => window.history.back()}>
           <svg width="25" height="25" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M6.5625 14.0625H25.3125C25.5611 14.0625 25.7996 14.1613 25.9754 14.3371C26.1512 14.5129 26.25 14.7514 26.25 15C26.25 15.2486 26.1512 15.4871 25.9754 15.6629C25.7996 15.8387 25.5611 15.9375 25.3125 15.9375H6.5625C6.31386 15.9375 6.0754 15.8387 5.89959 15.6629C5.72377 15.4871 5.625 15.2486 5.625 15C5.625 14.7514 5.72377 14.5129 5.89959 14.3371C6.0754 14.1613 6.31386 14.0625 6.5625 14.0625Z" fill="black"/>
@@ -146,21 +135,22 @@ export default function Account() {
         </div>
         <form onSubmit={updateProfile} className="form-account">
           <div>
-              <Avatar
-                url={avatar_url}
-                size={150}
-                onUpload={(event, url) => {
-                    updateProfile(event, url)
-                }}
-              />
+            <Avatar
+              url={avatar_url}
+              size={150}
+              onUpload={(event, url) => {
+                  updateProfile(event, url)
+              }}
+            />
           </div>
-          <div>
+          <div className="editProfile-form">
             <h3>Gegevens</h3>
-            <div>
                 <label htmlFor="email">Email</label>
-                <input id="email" type="text" value={session.user.email} disabled />
-            </div>
-            <div>
+                {session ? (
+                  <input id="email" type="text" value={session.user.email} disabled />
+                ) : (
+                  <></>
+                )}
                 <label htmlFor="username">Gebruikersnaam</label>
                 <input
                 id="username"
@@ -169,8 +159,6 @@ export default function Account() {
                 value={username || ''}
                 onChange={(e) => setUsername(e.target.value)}
                 />
-            </div>
-            <div>
                 <label htmlFor="website">Website</label>
                 <input
                 id="website"
@@ -178,12 +166,10 @@ export default function Account() {
                 value={website || ''}
                 onChange={(e) => setWebsite(e.target.value)}
                 />
-            </div>
-
             <div>
-                <button className="button block primary" type="submit" disabled={loading}>
+              <button className="button block primary" type="submit" disabled={loading || (!username && !website)}>
                 {loading ? 'Loading ...' : 'Update'}
-                </button>
+              </button>
             </div>
           </div>
         </form>

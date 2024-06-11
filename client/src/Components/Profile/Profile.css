@@ -66,8 +66,23 @@
   }
   .form-account {
     padding: 0 20px;
+  }
+  .editProfile-form {
+    max-width: 400px;
+    width: 100%;
+    padding: 10px 20px;
+    margin: 0 auto;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 0 10px #f4f0f1;
+    h3 {
+      margin: 0 0 10px 0;
+    }
     input {
-      width: 50%;
+      width: 90%;
+    }
+    button {
+      margin-top: 20px;
     }
   }
 }
@@ -103,19 +118,33 @@
   border: 0.2rem solid var(--dark-green);
 }
 
+.profile-avatar {
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 150px;
+  height: 150px;
+  padding: 20px;
+  border-radius: 100%;
+  margin: 0 auto;
+  color: white;
+  font-size: 3rem;
+  background: radial-gradient(circle, rgba(238,174,202,1) 0%, rgba(148,187,233,1) 100%);
+}
+
+.avatar-no-image {
+  /* background: #f4f0f1; */
+  background: radial-gradient(circle, rgba(238,174,202,1) 0%, rgba(148,187,233,1) 100%);
+  flex-direction: row;
+  flex-wrap: wrap;
+  color: white;
+}
+
 .profile-edit {
   text-transform: uppercase;
 }
 
-.profile-avatar {
-  /* border: 0.1rem solid var(--dark-green); */
-  padding: 1rem 1.5rem;
-  border-radius: 25%;
-  color: white;
-  background: rgb(238,174,202);
-  background: radial-gradient(circle, rgba(238,174,202,1) 0%, rgba(148,187,233,1) 100%);
-
-}
 .profile-info {
   display: flex;
   flex-direction: column;
@@ -130,6 +159,10 @@
     color: var(--dark-green);
     border: 0.1rem solid var(--dark-green);
     font-size: 0.9rem;
+  }
+  button:hover {
+    background: var(--dark-green);
+    color: white;
   }
 }
 

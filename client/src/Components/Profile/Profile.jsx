@@ -127,16 +127,14 @@ const Profile = ( {onClose} ) => {
       </div>
       <div className="profile-info">
         <div className="profile-info--left">
-          {/* {console.log(imageUrl)} */}
           {imageUrl ? (
             <img
               src={imageUrl}
               alt="Avatar"
               className="avatar-image"
-              // style={{ height: '50px', width: '50px' }}
             />
           ) : (
-            <div className="profile-avatar">{username}</div>
+            <div className="profile-avatar">{truncateName((session ? session.user.email : ""),1)}</div>
           )}
           {session ? (
             <div className="profile-details">
@@ -153,7 +151,6 @@ const Profile = ( {onClose} ) => {
       <section className="favorites">
         <h3>Mijn Favoriete Planten</h3>
         <div className="favorites-plants">
-          {console.log(favorites)}
           {favorites.length > 0 ? (
             favorites.map(favorite => (
               <Link key={favorite.plant_id} to={`/search/${favorite.plant_id}`} className="favorites-plants-item">
