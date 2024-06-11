@@ -1,0 +1,101 @@
+
+/* Room size parameters */
+:root {
+    --room-width: 100vw;
+    --room-height: 80vh;
+    --room-depth: 100vw;
+  }
+  
+  .room {
+    max-width: 100% !important;
+    width: 100%;
+    height: 80vh;
+    perspective: 1000px;
+    perspective-origin: 50% 50%;
+    transform-style: preserve-3d;
+    position: relative;
+    margin: 0 auto;
+    overflow: hidden;
+  }
+  
+  .photo-room {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    backface-visibility: visible;
+    transition: 0.25s all ease-out;
+    transform-style: preserve-3d;
+    transform-origin: 50% 50%;
+    /* cursor: pointer; */
+  }
+  
+  .room-wall {
+    position: absolute;
+    width: var(--room-width);
+    height: var(--room-height);
+    transform-origin: 50% 50%;
+    backface-visibility: hidden;
+    top: calc(50% - var(--room-height) / 2);
+    left: calc(50% - var(--room-width) / 2);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    /* box-shadow: rgba(0, 0, 0, 1) 20px 20px 16px 16px; */
+  }
+  .back-wall {
+    transform: translateZ(calc(-1 * var(--room-depth) / 2));
+    background: radial-gradient(white, var(--light-green)); /* lightgoldenrodyellow to darken(lightgoldenrodyellow, 20) */
+  }
+  
+  .front-wall {
+    transform: rotateY(180deg) translateZ(calc(-1 * var(--room-depth) / 2));
+    background: radial-gradient(#ff0000, #990000); /* red to darken(red, 20) */
+  }
+  
+  .left-wall {
+    background: radial-gradient(#2fb220, #1a7a1a); /* lightseagreen to darken(lightseagreen, 20) */
+    transform: rotateY(90deg) translateZ(calc(-1 * var(--room-width) / 2));
+  }
+  
+  .right-wall {
+    background: radial-gradient(#ffffff, #cccccc); /* white to darken(white, 20) */
+    transform: rotateY(-90deg) translateZ(calc(-1 * var(--room-width) / 2));
+  }
+  
+  .top-wall {
+    background: radial-gradient(#ffffff, #cccccc); /* white to darken(white, 20) */
+    height: var(--room-depth);
+    top: calc(50% - var(--room-depth) / 2);
+    transform: rotateX(-90deg) translateZ(calc(-1 * var(--room-height) / 2));
+  }
+  
+  .bottom-wall {
+    background: radial-gradient(#90ee90, #578e57); /* var(--light-green) to darken(var(--light-green), 20) */
+    height: var(--room-depth);
+    top: calc(50% - var(--room-depth) / 2);
+    transform: rotateX(90deg) translateZ(calc(-1 * var(--room-height) / 2));
+  }
+  
+  
+  
+  .wall-item {
+    width: 50vw;
+    height: 50vh;
+    /* transform-origin: 50% 50%; */
+    /* transform: translateX(calc(var(--room-width) / 2)) translateY(calc(var(--room-height) / 2));  */
+    /* position: absolute; */
+    /* backface-visibility: visible; */
+    /* top: -300px;
+    left: -450px; */
+    border: 12px solid #fff;
+    background-color: #ccc;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    box-shadow: 0px 10px 25px -1px rgba(0.25, 0.25, 0.25, 0.65);
+    transition: 0.5s all ease-out;
+    margin: 0 auto;
+  }
+  
+  
+  
