@@ -1,20 +1,21 @@
 #root {
-  max-width: 1280px;
+  /* max-width: 1280px; */
   margin: 0 auto;
-  text-align: center;
+  margin-top: 100px;
 }
 
 .logo {
-  height: 6em;
-  padding: 1.5em;
+  margin: 10px 0;
   will-change: filter;
   transition: filter 300ms;
+  width: 100px;
 }
 .logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
+  filter: drop-shadow(0 0 2em var(--medium-green));
+  cursor: pointer;
 }
 .logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+  filter: drop-shadow(0 0 2em #cf0404aa);
 }
 
 @keyframes logo-spin {

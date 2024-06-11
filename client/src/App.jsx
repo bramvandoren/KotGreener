@@ -1,58 +1,117 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
-import Dashboard from './Components/Dashboard/Dashboard'
-import Login from './Components/Login/Login'
 import { Register } from './Components/Register/Register'
+import {supabase} from "./lib/helper/supabaseClient";
 
-// Import React router dom
-import {createBrowserRouter, RouterProvider} from 'react-router-dom'
-
-// Create a router
-const router = createBrowserRouter([
-  {
-    path: '/',
-    element: <Login/>
-  },
-  {
-    path: '/register',
-    element: <Register/>
-  },
-  {
-    path: '/dashboard',
-    element: <Dashboard/>
-  },
-])
+import {BrowserRouter, createBrowserRouter, Route, RouterProvider, Routes} from 'react-router-dom'
+import Home from './Components/Home/Home'
+import Blog from './Components/Blog/Blog'
+import MyPlants from './Components/MyPlants/MyPlants'
+import Search from './Components/Search/Search'
+import DetailPage from './Components/Search/Detailpage'
+import LoginPage from './Components/LoginPage/LoginPage'
+import Market from './Components/Market/Market'
+import Profile from './Components/Profile/Profile'
+import AdminRoute from './Components/Admin/AdminRoute'
+import AdminPage from './Components/Admin/AdminPage'
+import AdminBlogPage from './Components/Admin/AdminBlogPage/AdminBlogPage'
+import AdminProfilePage from './Components/Admin/AdminProfilepage.jsx/AdminProfilePage'
+import AdminPlantsPage from './Components/Admin/AdminPlantsPage/AdminPlantsPage'
+import BlogDetail from './Components/Blog/BlogDetail'
+import MyPlant from './Components/MyPlants/MyPlant'
+import Auth from './Auth/Auth'
+import Account from './Components/Profile/Account'
+import Avatar from './Components/Profile/Avatar'
+import AddPlant from './Components/MyPlants/AddPlant'
+import EditPlant from './Components/MyPlants/EditPlant'
+import Loading from './Components/Loading/Loading'
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [session, setSession] = useState(null)
 
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session)
+    })
+
+    supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session)
+    })
+  }, [])
   return (
     <>
-      <div>
-        <RouterProvider router={router}/>
-      </div>
+    <BrowserRouter>
+      {/* <div className="container" style={{ padding: '50px 0 100px 0' }}>
+        {!session ? <Auth /> : <Home key={session.user.id} session={session} />}
+      </div> */}
+      <Routes>
+      <Route path="/" exact element={<Home session={session} />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/profile/edit" element={<Account />} />
+
+        <Route path="/blog" element={<Blog session = {session}/>} />
+        <Route path="/blog/:blogId" element={<BlogDetail/>} />
+
+        <Route path="/plants" element={<Search />} />
+        <Route path="/plants/:plantId" element={<DetailPage/>} />
+
+        <Route path="/my-plants" element={<MyPlants/>} />
+        <Route path="/my-plants/add" element={<AddPlant/>} />
+        <Route path="/my-plants/:id" element={<MyPlant/>} />
+        <Route path="/my-plants/edit/:id" element={<EditPlant/>} />
+
+    </Routes>
+    </BrowserRouter>
+      {/* <BrowserRouter>
+        <Routes>
+          <Route path="/" exact element={<Home />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/blog" element={<Blog/>} />
+          <Route path="/blog/:blogId" element={<BlogDetail/>} />
+          <Route path="/my-plants" element={<MyPlants/>} />
+          <Route path="/my-plants/:id" element={<MyPlant/>} />
+          <Route path="/winkel" element={<Market/>} />
+          <Route path="/search" element={<Search/>} />
+          <Route path="/search/:plantId" element={<DetailPage/>} />
+          <Route
+            path="/admin"
+            element={
+              <AdminRoute>
+                <AdminPage />
+              </AdminRoute>
+            }
+          />
+          <Route path="/admin/blog" 
+          element={
+            <AdminRoute>
+              <AdminBlogPage />
+            </AdminRoute>
+          } />
+          <Route path="/admin/plants" 
+          element={
+            <AdminRoute>
+              <AdminPlantsPage />
+            </AdminRoute>
+          } />
+          <Route path="/admin/profile" 
+          element={
+            <AdminRoute>
+              <AdminProfilePage />
+            </AdminRoute>
+          } />
+          <Route path="/stats" element={<DetailPage/>} />
+        </Routes>
+      </BrowserRouter> */}
       {/* <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p> */}
+        <button onClick={Login}>Login with Github</button>
+      </div> */}
     </>
   )
 }
