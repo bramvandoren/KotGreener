@@ -4,6 +4,7 @@ import Navbar from '../Navbar/Navbar';
 import { supabase } from '../../lib/helper/supabaseClient';
 import './Login.css';
 import logo from "../../assets/logo-kotgreener.svg";
+import Header from '../Header/Header';
 
 function LoginPage() {
   const [loading, setLoading] = useState(false)
@@ -27,32 +28,6 @@ function LoginPage() {
       
     }
     setLoading(false)
-
-      // Fetch user role or other user data from Supabase if needed
-      // Assuming you have a 'profiles' table with user data
-      // const { data, error: userError } = await supabase
-      //   .from('profiles')
-      //   .select('role')
-      //   .eq('id', user.id)
-      //   .single();
-
-      // if (userError) {
-      //   throw userError;
-      // }
-
-      // localStorage.setItem('token', user.access_token);
-
-      // Check the role and navigate accordingly
-    //   if (data.role === 'admin') {
-    //     navigate('/admin');
-    //   } else {
-    //     navigate('/');
-    //   }
-    // } catch (error) {
-    //   console.error('Error logging in', error);
-    //   alert('Invalid credentials');
-    // }
-    // setLoading(false)
   };
 
   const handleGoogleSignIn = async () => {
@@ -77,33 +52,13 @@ function LoginPage() {
   return (
     <>
     <div className="login">
-      <header className="header">
-        {/* <h1>Blog</h1> */}
-        <img className="logo" src={logo} alt='Logo' />
-        <div className='nav-desktop'>
-          <NavLink to="/" className="nav-item">
-            <p>Home</p>
-          </NavLink>
-          <NavLink to="/blog" className="nav-item">
-            <p>Ontdek</p>
-          </NavLink>
-          <NavLink to="/my-plants" className="nav-item">
-            <p>Mijn Planten</p>
-          </NavLink>
-          <NavLink to="/winkel" className="nav-item">
-            <p>Winkel</p>
-          </NavLink>
-          <NavLink to="/search" className="nav-item">
-            <p>Zoeken</p>
-          </NavLink>
-        </div>
-      </header>
+      <Header/>
       <div className="login-form">
         <h1>Inloggen</h1>
         <div className="login-register">
           <p>Nog geen account?</p>
           <Link to="/register">
-            <button className="btn--ternair">Account aanmaken</button>
+            Account aanmaken
           </Link>
         </div>
         <form onSubmit={handleLogin}>
