@@ -39,7 +39,6 @@ function MyPlants() {
         if (session) {
           fetchMyPlants(session.user.id);
           fetchEvents(session.user.id);
-          // fetchTasks(session.user.id);
         } else {
           navigate('/login');
         }
@@ -75,7 +74,7 @@ function MyPlants() {
         } else {
           setMyPlants(data);
           setImageUrl(data.image_url)
-          console.log(data)
+          // console.log(data)
         } 
       }
       setLoading(false)
@@ -99,78 +98,18 @@ function MyPlants() {
       console.log('Error downloading image: ', error.message)
     }
   }
-
-  // const fetchTasks = async (userId) => {
-  //   const { data, error } = await supabase
-  //     .from('tasks')
-  //     .select('*')
-  //     .eq('profile_id', userId);
-
-  //   if (error) {
-  //     console.error('Error fetching tasks:', error);
-  //   } else {
-  //     setTasks(data);
-  //     countTodayTasks(data);
-  //   }
-  // };
-
   // Bepaal het aantal taken voor vandaag
   const countTodayTasks = (tasks) => {
     const today = format(new Date(), 'yyyy-MM-dd');
-    const todayTasks = tasks.filter(task => format(new Date(task.start_event), 'yyyy-MM-dd') === today);
+    const todayTasks = tasks.filter(task => format(new Date(task.start_event), 'yyyy-MM-dd') === today && !task.done);
     setTodayTasksCount(todayTasks.length);
   };
-
-  // const addPlant = async (plant) => {
-  //   try {
-  //     const userId = jwtDecode(token).userId;
-  //     const { data, error } = await supabase
-  //       .from('user_plants')
-  //       .insert({
-  //         profile_id: userId,
-  //         plant_id: plant.plant_id,
-  //         nickname: plant.nickname,
-  //       })
-  //       .select('*, plants(name, sunlight, water_frequency, image_url, height)')
-  //       .single();
-
-  //     if (error) {
-  //       console.error('Error adding plant:', error);
-  //     } else {
-  //       setMyPlants([...myPlants, data]);
-  //       setShowAddPlantForm(false);
-  //     }
-  //   } catch (error) {
-  //     console.error('Error adding plant:', error);
-  //   }
-  // };
-
-  // const handleFavorite = async (plantId) => {
-  //   if (!session) return;
-  //   const userId = session.user.id;
-    
-  //   try {
-  //     if (isFavorite) {
-  //       await supabase
-  //         .from('favorites')
-  //         .delete()
-  //         .eq('profile_id', userId)
-  //         .eq('plant_id', plantId);
-  //     } else {
-  //       await supabase
-  //         .from('favorites')
-  //         .insert({ profile_id: userId, plant_id: plantId });
-  //     }
-  //     setIsFavorite(!isFavorite);
-  //   } catch (error) {
-  //     console.error('Error updating favorite:', error);
-  //   }
-  // };
 
   // const togglePlusButton = () => {
   //   setIsPlusButtonOpen(!isPlusButtonOpen);
   //   setIsSocialButtonOpen(!isSocialButtonOpen);
   // };
+
   const toggleCalendarVisibility = () => {
     setIsCalendarVisible(!isCalendarVisible);
   };
@@ -193,6 +132,9 @@ function MyPlants() {
             <p className="my-plants-intro-text">Hier kan u uw eigen planten toevoegen, beheren en aanpassen. Bij het toevoegen van uw plant
               ontvangt u een persoonlijk schema met bijhorende taken.
             </p>
+            <button onClick={toggleCalendarVisibility}>
+              {isCalendarVisible ? 'Verberg Kalender' : 'Toon Kalender'}
+            </button>
             <button onClick={toggleTasksVisibility}>
               {isTasksVisible ? 'Verberg Taken' : 'Toon Taken'}
               {todayTasksCount > 0 && (
@@ -200,9 +142,6 @@ function MyPlants() {
                   {todayTasksCount}
                 </span>
               )}
-            </button>
-            <button onClick={toggleCalendarVisibility}>
-              {isCalendarVisible ? 'Verberg Kalender' : 'Toon Kalender'}
             </button>
           </div>
           {isCalendarVisible && <MyPlantsCalendar />}

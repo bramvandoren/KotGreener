@@ -3,6 +3,8 @@ import { Link, NavLink, useNavigate } from 'react-router-dom';
 import logo from "../../assets/logo-kotgreener.svg";
 import { supabase } from '../../lib/helper/supabaseClient';
 import { addDays, format } from 'date-fns';
+import Header from '../Header/Header';
+import Navbar from '../Navbar/Navbar';
 
 function AddPlant() {
   const [name, setName] = useState('');
@@ -227,171 +229,157 @@ function AddPlant() {
   return (
     <>
     <div className="addPlant">
-      <header className="header">
-        {/* <h1>Blog</h1> */}
-        <img className="logo" src={logo} alt='Logo' />
-        <div className='nav-desktop'>
-          <NavLink to="/" className="nav-item">
-            <p>Home</p>
-          </NavLink>
-          <NavLink to="/blog" className="nav-item">
-            <p>Ontdek</p>
-          </NavLink>
-          <NavLink to="/my-plants" className="nav-item">
-            <p>Mijn Planten</p>
-          </NavLink>
-          <NavLink to="/winkel" className="nav-item">
-            <p>Winkel</p>
-          </NavLink>
-          <NavLink to="/search" className="nav-item">
-            <p>Zoeken</p>
-          </NavLink>
-        </div>
-    </header>
-    <div className="my-plants-intro">
-      <div className="breadcrumb">
-        <Link to={'/my-plants'}>Mijn planten</Link>
-        <span> / </span>
-        <Link>Plant toevoegen</Link>
-    </div>
-      <div className="my-plants-intro-header">
-        <h2>Plant toevoegen</h2>
+      <Header/>
+      <div className="my-plants-intro">
+        <div className="breadcrumb">
+          <Link to={'/my-plants'}>Mijn planten</Link>
+          <span> / </span>
+          <Link>Plant toevoegen</Link>
       </div>
-      <p className="my-plants-intro-text">
-        Voeg hier uw eigen plant toe.
-        Selecteer een plant en personaliseer deze.
-        Vervolgens wordt er een schema voor uw plant te verzorgen gegenereerd.
-      </p>
-    </div>
-    <div className="addPlant-form">
-      <form onSubmit={handleSubmit}>
-        <label>
-          Selecteer plant
-        </label>
-        <select
-          value={selectedPlant}
-          onChange={handlePlantChange}
-          required
-        >
-          <option value="">--Selecteer een plant--</option>
-          {existingPlants.map((plant) => (
-            <option key={plant.id} value={plant.id}>
-              {plant.name}
-            </option>
-          ))}
-          <option value="manual">Nieuwe plant toevoegen</option>
-        </select>
-        <label>
-          Bijnaam
-        </label>
-        <input
-          type="text"
-          value={nickname}
-          onChange={(e) => setNickname(e.target.value)}
-          required
-        />
-        <label>
-          Hoogte (in cm)
-        </label>
-        <input
-          type="number"
-          value={height}
-          onChange={(e) => setHeight(e.target.value)}
-          disabled={!isManualEntry && selectedPlant !== ""}
-          required
-          min={1}
-        />
-        <label>
-          Zonlicht
-        </label>
-        <select
-          value={sunlight}
-          onChange={(e) => setSunlight(e.target.value)}
-          disabled={!isManualEntry && selectedPlant !== ""}
-          required
-        >
-          <option value="">--Selecteer zonlicht--</option>
-          <option value="zonnig">Zonnig</option>
-          <option value="schaduw">Schaduw</option>
-          <option value="halfschaduw">Halfschaduw</option>
-        </select>
-        <label>
-          Waterfrequentie
-        </label>
-        <select
-          value={waterFrequency}
-          onChange={(e) => setWaterFrequency(e.target.value)}
-          disabled={!isManualEntry && selectedPlant !== ""}
-          required
-        >
-          <option value="">--Selecteer waterfrequentie--</option>
-          <option value="dagelijks">Dagelijks</option>
-          <option value="wekelijks">Wekelijks</option>
-          <option value="tweewekelijks">Tweewekelijks</option>
-          <option value="maandelijks">Maandelijks</option>
-        </select>
-        {/* <label>
-          Verticutting frequentie
-          <select
-              value={verticuttingFrequency}
-              onChange={(e) => setVerticuttingFrequency(e.target.value)}
+        <div className="my-plants-intro-header">
+          <h2>Plant toevoegen</h2>
+        </div>
+        <p className="my-plants-intro-text">
+          Voeg hier uw eigen plant toe.
+          Selecteer een plant en personaliseer deze.
+          Vervolgens wordt er een schema voor uw plant te verzorgen gegenereerd.
+        </p>
+      </div>
+      <div className="addPlant-form">
+        {/* <h3>Voeg hier jouw plant toe</h3> */}
+        <form onSubmit={handleSubmit}>
+          <div className="form-left">
+            <label>
+              Selecteer plant
+            </label>
+            <select
+              value={selectedPlant}
+              onChange={handlePlantChange}
+              required
+            >
+              <option disabled selected value="">Type plant</option>
+              {existingPlants.map((plant) => (
+                <option key={plant.id} value={plant.id}>
+                  {plant.name}
+                </option>
+              ))}
+              <option value="manual">Nieuwe plant toevoegen</option>
+            </select>
+            <label>
+              Bijnaam
+            </label>
+            <input
+              type="text"
+              value={nickname}
+              onChange={(e) => setNickname(e.target.value)}
+              required
+            />
+            <label>
+              Hoogte (in cm)
+            </label>
+            <input
+              type="number"
+              value={height}
+              onChange={(e) => setHeight(e.target.value)}
+              disabled={!isManualEntry && selectedPlant !== ""}
+              required
+              min={1}
+            />
+            <label>
+              Zonlicht
+            </label>
+            <select
+              value={sunlight}
+              onChange={(e) => setSunlight(e.target.value)}
               disabled={!isManualEntry && selectedPlant !== ""}
               required
             >
-            <option value="">--Selecteer voeding frequentie--</option>
-            <option value="weekly">Wekelijks</option>
-            <option value="biweekly">Tweewekelijks</option>
-            <option value="monthly">Maandelijks</option>
-          </select>
-        </label> */}
-        <label>
-          Verpotten frequentie
-        </label>
-        <select
-          value={repottingFrequency}
-          onChange={(e) => setRepottingFrequency(e.target.value)}
-          disabled={!isManualEntry && selectedPlant !== ""}
-          required
-        >
-          <option value="">--Selecteer verpot frequentie--</option>
-          <option value="jaarlijks">Jaarlijks</option>
-          <option value="tweejaarlijks">Tweejaarlijks</option>
-          <option value="driejaarlijks">Driejaarlijks</option>
-        </select>
-        <label>
-          Afbeelding URL:
-          <input
-            type="text"
-            value={imageUrl}
-            onChange={(e) => setImageUrl(e.target.value)}
-            disabled={!isManualEntry && selectedPlant !== ""}
-          />
-        </label>
-        <label className="button primary block" htmlFor="single">
-            {uploading ? 'Uploading ...' : 'Afbeelding kiezen'}
-        </label>
-        <input
-          type="file"
-          id="single"
-          accept="image/*"
-          onChange={uploadImage}
-          disabled={uploading}
-        />
-        {/* {console.log(downloadImageUrl)} */}
-        {downloadImageUrl ? (
-          <img
-            src={downloadImageUrl}
-            alt="Image"
-            className="my plant image"
-            style={{ height: '50px', width: '50px' }}
-          />
-        ) : (
-          <div className="avatar no-image" style={{ height: '50px', width: '50px' }} />
-        )}
-        <button type="submit">Plant toevoegen</button>
-      </form>
+              <option disabled selected value="">Hoeveelheid zonlicht</option>
+              <option value="zonnig">Zonnig</option>
+              <option value="schaduw">Schaduw</option>
+              <option value="halfschaduw">Halfschaduw</option>
+            </select>
+            <label>
+              Waterfrequentie
+            </label>
+            <select
+              value={waterFrequency}
+              onChange={(e) => setWaterFrequency(e.target.value)}
+              disabled={!isManualEntry && selectedPlant !== ""}
+              required
+            >
+              <option disabled selected value="">Frequentie water geven</option>
+              <option value="dagelijks">Dagelijks</option>
+              <option value="wekelijks">Wekelijks</option>
+              <option value="tweewekelijks">Tweewekelijks</option>
+              <option value="maandelijks">Maandelijks</option>
+            </select>
+            {/* <label>
+              Verticutting frequentie
+              <select
+                  value={verticuttingFrequency}
+                  onChange={(e) => setVerticuttingFrequency(e.target.value)}
+                  disabled={!isManualEntry && selectedPlant !== ""}
+                  required
+                >
+                <option value="">--Selecteer voeding frequentie--</option>
+                <option value="weekly">Wekelijks</option>
+                <option value="biweekly">Tweewekelijks</option>
+                <option value="monthly">Maandelijks</option>
+              </select>
+            </label> */}
+          </div>
+          <div className="form-right">
+            <label>
+              Verpotten frequentie
+            </label>
+            <select
+              value={repottingFrequency}
+              onChange={(e) => setRepottingFrequency(e.target.value)}
+              disabled={!isManualEntry && selectedPlant !== ""}
+              required
+            >
+              <option disabled selected value="">Wanneer verpotten</option>
+              <option value="jaarlijks">Jaarlijks</option>
+              <option value="tweejaarlijks">Tweejaarlijks</option>
+              <option value="driejaarlijks">Driejaarlijks</option>
+            </select>
+            <label>
+              Afbeelding URL:
+              <input
+                type="text"
+                value={imageUrl}
+                onChange={(e) => setImageUrl(e.target.value)}
+                disabled={!isManualEntry && selectedPlant !== ""}
+              />
+            </label>
+            <label className="button primary block" htmlFor="single">
+                {uploading ? 'Uploading ...' : 'Afbeelding kiezen'}
+            </label>
+            <input
+              type="file"
+              id="single"
+              accept="image/*"
+              onChange={uploadImage}
+              disabled={uploading}
+            />
+            {/* {console.log(downloadImageUrl)} */}
+            {downloadImageUrl ? (
+              <img
+                src={downloadImageUrl}
+                alt="Image"
+                className="my plant image"
+                style={{ height: '50px', width: '50px' }}
+              />
+            ) : (
+              <div className="avatar no-image" style={{ height: '50px', width: '50px' }} />
+            )}
+            <button type="submit">Plant toevoegen</button>
+          </div>
+        </form>
+      </div>
     </div>
-  </div>
+    <Navbar/>
   </>
   );
 }

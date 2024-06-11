@@ -8,12 +8,26 @@ const MyPlantsTasks = () => {
   const [nextTask, setNextTask] = useState(null);
   const [todayTasksCount, setTodayTasksCount] = useState(0);
   const [events, setEvents] = useState([]);
+  const [session, setSession] = useState(null);
 
   useEffect(() => {
-    const fetchTasks = async () => {
+    const fetchSession = async () => {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        setSession(session);
+        if (session) {
+          fetchTasks(session);
+          // fetchMyPlant(session.user.id);
+        }
+      } catch (error) {
+        console.error('Error fetching session:', error);
+      }
+    };
+    const fetchTasks = async (session) => {
       const { data, error } = await supabase
         .from('watering_events')
         .select('*')
+        .eq('profile_id', session.user.id)
         .order('start_event', { ascending: true });
 
       if (error) {
@@ -24,32 +38,58 @@ const MyPlantsTasks = () => {
         countTodayTasks(data);
       }
     };
-
-    const filterTasks = (tasks) => {
-      const today = new Date();
-      const todayTasks = tasks.filter(task =>
-        isSameDay(parseISO(task.start_event), today)
-      );
-      setTodayTasks(todayTasks);
-
-      const futureTasks = tasks.filter(task =>
-        parseISO(task.start_event) > today
-      );
-
-      if (futureTasks.length > 0) {
-        const nextTask = futureTasks[0];
-        setNextTask(nextTask);
-      }
-    };
-
-    fetchTasks();
+    fetchSession();
   }, []);
+
+  const filterTasks = (tasks) => {
+    const today = new Date();
+    const todayTasks = tasks.filter(task =>
+      isSameDay(parseISO(task.start_event), today)
+    );
+    setTodayTasks(todayTasks);
+
+    const futureTasks = tasks.filter(task =>
+      parseISO(task.start_event) > today && !task.done
+    );
+
+    if (futureTasks.length > 0) {
+      const nextTask = futureTasks[0];
+      setNextTask(nextTask);
+    }
+  };
 
   // Bepaal het aantal taken voor vandaag
   const countTodayTasks = (tasks) => {
     const today = format(new Date(), 'yyyy-MM-dd');
-    const todayTasks = tasks.filter(task => format(new Date(task.start_event), 'yyyy-MM-dd') === today);
+    const todayTasks = tasks.filter(task => format(new Date(task.start_event), 'yyyy-MM-dd') === today && !task.done);
     setTodayTasksCount(todayTasks.length);
+  };
+
+  const toggleTaskDone = async (taskId, currentStatus) => {
+    try {
+      const { error } = await supabase
+        .from('watering_events')
+        .update({ done: !currentStatus })
+        .eq('id', taskId);
+
+      if (error) {
+        console.error('Error updating task status:', error);
+      } else {
+        // Update the task list to reflect the changes
+        setTasks(prevTasks =>
+          prevTasks.map(task =>
+            task.id === taskId ? { ...task, done: !currentStatus } : task
+          )
+        );
+        // Re-filter tasks to reflect the changes
+        filterTasks(tasks.map(task =>
+          task.id === taskId ? { ...task, done: !currentStatus } : task
+        ));
+        countTodayTasks(tasks);
+      }
+    } catch (error) {
+      console.error('Unexpected error:', error);
+    }
   };
 
   const deleteEvent = async (eventId) => {
@@ -79,7 +119,7 @@ const MyPlantsTasks = () => {
 
   return (
     <div className="tasks">
-      <h3>Mijn taken</h3>
+      {/* <h3>Mijn taken</h3> */}
       <div className="tasks-section">
         <div className="today-tasks">
           <div className="today-todo-count">
@@ -91,12 +131,18 @@ const MyPlantsTasks = () => {
             )}
           </div>
           <div className="tasks-items">
-            {/* {console.log(tasks)} */}
             {todayTasks.length > 0 ? (
               todayTasks.map(task => (
-                <div className="tasks-item" key={task.id} onClick={() => handleEventSelect(task)}>
-                  <p>{task.title}</p>
-                  <p>{task.type}</p>
+                <div className={`tasks-item ${task.type} task-${task.done}`} key={task.id} onClick={() => toggleTaskDone(task.id, task.done)}>
+                  <div className={`small-circle ${task.type}`}></div>
+                  {task.done ? (
+                    <p>Done</p>
+                  ) : (
+                  <>
+                    <p>{task.title}</p>
+                    <p>{task.type}</p>
+                  </>
+                  )}
                 </div>
               ))
               ) : (
@@ -111,7 +157,8 @@ const MyPlantsTasks = () => {
             <p>{format(parseISO(nextTask.start_event), 'dd-MM-yyyy')}</p>
           </div>
           <div className="tasks-items">
-              <div className="tasks-item">
+              <div className={`tasks-item ${nextTask.type}`} key={nextTask.id}>
+                <div className={`small-circle ${nextTask.type}`}></div>
                 <p>{nextTask.title}</p>
                 <p>{nextTask.type}</p>
               </div>

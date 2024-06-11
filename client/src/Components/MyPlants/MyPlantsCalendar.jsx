@@ -97,16 +97,32 @@ function MyPlantsCalendar() {
   };
 
     return (
-        <div className="App">
-            <Calendar
-                localizer={localizer}
-                events={events}
-                startAccessor= {events.start_event}
-                endAccessor={events.end_event}
-                style={{ height: 500, margin: '50px' }}
-                onSelectEvent={handleEventSelect}
-                eventPropGetter={eventPropGetter} // Kleurtoewijzing
-            />
+        <div className="calendar">
+          <Calendar
+            localizer={localizer}
+            events={events}
+            startAccessor= {events.start_event}
+            endAccessor={events.end_event}
+            onSelectEvent={handleEventSelect}
+            eventPropGetter={eventPropGetter}
+          />
+          <div className="calendar-legende">
+            <h4>Legende</h4>
+            <div className="legende-items">
+              <div className="legende-item">
+                <span className="water">oo</span>
+                <p>Water geven</p>
+              </div>
+              <div className="legende-item">
+                <span className="verzorgen">oo</span>
+                <p>Verzorgen</p>
+              </div>
+              <div className="legende-item">
+                <span className="verpot">oo</span>
+                <p>Verpotten</p>
+              </div>
+            </div>
+          </div>
         </div>
     );
 }
