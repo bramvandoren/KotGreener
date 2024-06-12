@@ -4,7 +4,8 @@ import viteLogo from '/vite.svg'
 import './App.css'
 import { Register } from './Components/Register/Register'
 import {supabase} from "./lib/helper/supabaseClient";
-
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import {BrowserRouter, createBrowserRouter, Route, RouterProvider, Routes} from 'react-router-dom'
 import Home from './Components/Home/Home'
 import Blog from './Components/Blog/Blog'
@@ -12,21 +13,18 @@ import MyPlants from './Components/MyPlants/MyPlants'
 import Search from './Components/Search/Search'
 import DetailPage from './Components/Search/Detailpage'
 import LoginPage from './Components/LoginPage/LoginPage'
-import Market from './Components/Market/Market'
+// import Market from './Components/Market/Market'
 import Profile from './Components/Profile/Profile'
-import AdminRoute from './Components/Admin/AdminRoute'
-import AdminPage from './Components/Admin/AdminPage'
-import AdminBlogPage from './Components/Admin/AdminBlogPage/AdminBlogPage'
-import AdminProfilePage from './Components/Admin/AdminProfilepage.jsx/AdminProfilePage'
-import AdminPlantsPage from './Components/Admin/AdminPlantsPage/AdminPlantsPage'
+// import AdminRoute from './Components/Admin/AdminRoute'
+// import AdminPage from './Components/Admin/AdminPage'
+// import AdminBlogPage from './Components/Admin/AdminBlogPage/AdminBlogPage'
+// import AdminProfilePage from './Components/Admin/AdminProfilepage.jsx/AdminProfilePage'
+// import AdminPlantsPage from './Components/Admin/AdminPlantsPage/AdminPlantsPage'
 import BlogDetail from './Components/Blog/BlogDetail'
 import MyPlant from './Components/MyPlants/MyPlant'
-import Auth from './Auth/Auth'
 import Account from './Components/Profile/Account'
-import Avatar from './Components/Profile/Avatar'
 import AddPlant from './Components/MyPlants/AddPlant'
 import EditPlant from './Components/MyPlants/EditPlant'
-import Loading from './Components/Loading/Loading'
 
 function App() {
   const [session, setSession] = useState(null)
