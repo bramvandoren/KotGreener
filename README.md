@@ -1,6 +1,6 @@
 # **KotGreener Web Application**
 
-![KotGreener Logo](./assets/logo-kotgreener.svg)
+![KotGreener Logo](./kotgreener-logo.svg)
 
 ## **Introduction**
 
