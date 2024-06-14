@@ -36,13 +36,13 @@ function App() {
     <>
     <BrowserRouter>
       <Routes>
-      <Route path="/" exact element={<Home session={session} />} />
+      <Route path="/" exact element={<Home/>} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<Register />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/profile/edit" element={<Account />} />
 
-        <Route path="/blog" element={<Blog session = {session}/>} />
+        <Route path="/blog" element={<Blog/>} />
         <Route path="/blog/:slug" element={<BlogDetail/>} />
 
         <Route path="/plants" element={<Search />} />
