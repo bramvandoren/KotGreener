@@ -1,5 +1,4 @@
 import React, { useEffect, useRef, useState } from 'react';
-import {jwtDecode} from 'jwt-decode';
 import './Home.css';
 import Navbar from '../Navbar/Navbar';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
@@ -14,6 +13,9 @@ import { supabase } from '../../lib/helper/supabaseClient';
 import { format } from 'date-fns';
 import { parseISO, isSameDay } from 'date-fns';
 import Header from '../Header/Header';
+import Loading from '../Loading/Loading';
+import UserStats from './UserStats';
+import PlantCard from '../Search/PlantCard';
 
 function Home() {
   const [loading, setLoading] = useState(false);
@@ -21,13 +23,13 @@ function Home() {
   const [plants, setPlants] = useState([]);
   const [showProfile, setShowProfile] = useState(false);
   const navigate = useNavigate();
-  const [website, setWebsite] = useState(null)
   const [avatar_url, setAvatarUrl] = useState(null)
   const [session, setSession] = useState(null)
   const [tasks, setTasks] = useState([]);
   const [todayTasks, setTodayTasks] = useState([]);
   const [todayTasksCount, setTodayTasksCount] = useState(0);
   const [popularPlants, setPopularPlants] = useState([]);
+  const [tipOfTheWeek, setTipOfTheWeek] = useState('');
   const elementRef = useRef(null);
   const [arrowDisable, setArrowDisable] = useState(true);
 
@@ -39,8 +41,6 @@ function Home() {
         if (session) {
           getProfile(session);
           fetchEvents(session.user.id)
-        } else {
-          // navigate('/login');
         }
       } catch (error) {
         console.error('Error fetching session:', error);
@@ -50,7 +50,7 @@ function Home() {
     const fetchEvents = async (userId) => {
       const { data, error } = await supabase
         .from('watering_events')
-        .select('*')
+        .select('*, user_plants(*)')
         .eq('profile_id', userId);
   
       if (error) {
@@ -67,7 +67,7 @@ function Home() {
           .from('plants')
           .select('*')
           .order('visits', { ascending: false })
-          .limit(5); // Haal bijvoorbeeld de top 5 meest populaire planten op
+          .limit(5);
 
         if (error) {
           console.error('Error fetching popular plants:', error);
@@ -78,9 +78,28 @@ function Home() {
         console.error('Error fetching popular plants:', error);
       }
     };
+    const fetchTipOfTheWeek = async () => {
+      try {
+        // setLoading(true)
+
+        const { data, error } = await supabase
+          .from('tips')
+          .select('*')
+          .single()
+
+          console.log(data)
+        if (error) {
+          console.error('Error fetching tip of the week:', error);
+        } else {
+          setTipOfTheWeek(data.tip);
+        }
+      } catch (error) {
+        console.error('Error fetching tip of the week:', error);
+      }
+    };
     let ignore = false
     async function getProfile(session) {
-      setLoading(true)
+      // setLoading(true)
       const { data, error } = await supabase
         .from('profiles')
         .select(`username, website, avatar_url`)
@@ -92,15 +111,15 @@ function Home() {
           console.warn(error)
         } else if (data) {
           setUsername(data.username)
-          setWebsite(data.website)
           setAvatarUrl(data.avatar_url)
         }
       }
-      setLoading(false)
+      // setLoading(false)
     }
 
     fetchSession();
     fetchPopularPlants();
+    fetchTipOfTheWeek();
     return () => {
       ignore = true
     }
@@ -163,6 +182,10 @@ function Home() {
       }
   }
 
+  if (loading) {
+    return <Loading/>
+  }
+
   return (
     <>
     <div className="home">
@@ -170,8 +193,9 @@ function Home() {
       <main>
         {session ? (
           <>
+          <UserStats/>
           <section className="home-intro">
-            <p>Hallo <b>{username ? username : session.user.user_metadata.username}</b>, welkom terug!</p>
+            <h2>Hallo <span>{username ? username : session.user.user_metadata.username}</span>, welkom!</h2>
           </section>
           <section className="today-todo">
             <div className="today-todo-count">
@@ -209,10 +233,13 @@ function Home() {
               {todayTasks.length > 0 ? (
                 todayTasks.map(task => (
                 <>
+                <div className="tasks-items-card">
                   <div className={`tasks-item ${task.type} task-${task.done}`} key={task.id} onClick={() => toggleTaskDone(task.id, task.done)}>
-                    <p>{task.title}</p>
                     <p>{task.type}</p>
+                    <img src={task.user_plants.image_url} alt={task.user_plants.image_url} className="task-item-image" />
                   </div>
+                  <p>{task.title}</p>
+                </div>
                 </>
                 ))
                 ) : (
@@ -227,13 +254,12 @@ function Home() {
           </section>
           <section className="tip-of-the-week">
             <h2>Tip van de week</h2>
-            <p>Zorg ervoor dat je plantpotten drainagegaten hebben om overtollig water af te voeren en wortelrot te voorkomen.</p>
+            <p>{tipOfTheWeek}</p>
           </section>
         </>
          ) : (
           <>
           <div className="hero-home">
-            {/* <h1><span>Kot</span>Greener</h1> */}
             <img className="logo" src={logo} alt='Logo' />
             <h2>Maak <b>Groen</b> jouw kotgeno(o)t!</h2>
             <button className="login-button" onClick={() => navigate('/login')}>Start hier →</button>
@@ -288,24 +314,16 @@ function Home() {
           <h2>Meest populaire planten</h2>
           <div className="plant-list">
             {popularPlants.map((plant) => (
-              <div className="plant-item" key={plant.id}>
-                <img src={plant.image_url} alt={plant.name} />
-                <h3>{plant.name}</h3>
-                <Link to ={`/plants/${plant.id}`}>Bekijk</Link>
-              </div>
+              <>
+              <PlantCard
+              key={plant.id} 
+              plant={plant}
+            />
+            </>
             ))}
           </div>
         </section>
-
-        <section className="recent-messages">
-          <h3>Recente berichten</h3>
-        </section>
       </main>
-      {showProfile && (
-        <div className="profile-popup">
-          <Profile session={session} onClose={toggleProfile} />
-        </div>
-      )}
     </div>
     <Navbar />
     </>
