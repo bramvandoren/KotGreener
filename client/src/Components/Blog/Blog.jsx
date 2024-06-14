@@ -31,23 +31,6 @@ function Blog({session}) {
     fetchBlogs();
   }, []);
 
-  // const fetchBlogs = async () => {
-  //   try {
-  //     const { data: blogs, error } = await supabase
-  //       .from('blogs')
-  //       .select('*')
-  //       .order('created_at', { ascending: false });
-  //     console.log(blogs);
-  //     if (error) {
-  //       throw new Error('Failed to fetch blogs');
-  //     }
-
-  //     setBlogs(blogs);
-  //   } catch (error) {
-  //     console.error('Error fetching blogs:', error.message);
-  //   }
-  // };
-
   const truncateText = (text, wordLimit) => {
     const words = text.split(' ');
     if (words.length > wordLimit) {
@@ -98,7 +81,7 @@ function Blog({session}) {
                 <p>{truncateText(blog.content, 30)}</p>
                 <p className="blog-content-date">{formatDate(blog.created_at)}</p>
                 {session ? (
-                  <Link to={`/blog/${blog.id}`} className="button--tertiair">Lees meer</Link>
+                  <Link to={`/blog/${blog.slug}`} className="button--tertiair">Lees meer</Link>
                 ) :
                 (
                   <p><Link to="/login">Log in</Link> om een blog te lezen.</p>

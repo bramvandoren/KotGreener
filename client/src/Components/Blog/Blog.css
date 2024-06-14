@@ -8,11 +8,12 @@
 }
 
 .blogs {
-  padding: 0 20px;
+  padding: 0 5%;
 }
 
 .blog-intro {
-  padding: 0 20px;
+  padding: 0 5%;
+  padding-top: 100px;
   h2 {
     margin: 10px 0;
   }
@@ -20,11 +21,9 @@
 
 .blog-post {
   background-color: white;
-  /* padding: 20px; */
   border-radius: 10px;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
   display: flex;
-  /* align-items: center; */
   margin-bottom: 10px;
   position: relative;
   overflow: hidden;
@@ -43,15 +42,11 @@
 
 .blog-image {
   width: 100%;
-  /* max-width: 300px; */
-  height: 100%;
-  object-fit: cover;
+  height: auto;
+  display: block;
+  transition: transform 0.3s ease;
 }
 
-.blog-detail-content {
-  display: flex;
-  flex-direction: column;
-}
 
 .blog-content h2, .blog-content a, .blog-content p  {
   margin: 10px;
@@ -99,13 +94,28 @@
     object-fit: cover;
   }
   .blog-detail-content {
+    .blog-detail-intro {
+      h2 {
+        font-size: 3rem;
+        font-weight:400;
+        color: var(--medium-green);
+      }
+    }
     position: relative;
     z-index: 2;
     background: white;
-    padding: 20px;
+    padding: 5%;
     border-radius: 20px 20px 0 0;
+    display: flex;
+    flex-direction: column;
+    padding-top: 100px;
     .blog-content-date {
       margin: 0;
+    }
+    h2 {
+      margin: 10px 0;
+      font-size: 1.5rem;
+      font-family: 'Montserrat', Helvetica, sans-serif;
     }
   }
 }
@@ -114,7 +124,7 @@
   position: relative;
   z-index: 2;
   background-color: rgba(240, 245, 230, 0.7);
-  padding: 20px 20px 200px 20px;
+  padding: 20px 5% 200px 5%;
   .blog-comments-title {
     position: relative;
     margin: 0;
@@ -130,17 +140,17 @@
     }
   }
   .blog-comments-create {
-    padding-right: 20px;
+    padding-right: 5%;
     p {
       margin-top: 10px;
     }
   }
   form {
-    padding-right: 20px;
+    padding-right: 5%;
   }
   form input, form textarea {
     width: 100%;
-    padding: 10px 0 0 20px;
+    padding: 10px 20px 0 20px;
     margin-top: 1rem;
     color: black;
   }
