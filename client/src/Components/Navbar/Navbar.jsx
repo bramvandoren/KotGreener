@@ -1,12 +1,6 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import HomeIcon from '../../assets/icons/home.svg';
-import BlogIcon from '../../assets/icons/book.svg';
-import PlantIcon from '../../assets/icons/plant.svg';
-import MarketIcon from '../../assets/icons/market.svg';
-import SearchIcon from '../../assets/icons/search.svg';
 import './Navbar.css';
-
 
 function Navbar() {
   return (
