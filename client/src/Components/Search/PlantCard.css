@@ -1,7 +1,5 @@
 /* src/PlantCard.css */
 .plant-image {
-  width: 100px;
-  height: 100px;
   object-fit: cover;
   border-radius: 50%;
 }
@@ -10,10 +8,6 @@
   font-size: 1.2em;
   color: #234A0F;
   margin: 0.5rem 0 0.5rem 0;
-}
-
-.plant-image-overlay {
-  height: 50%;
 }
 
 .plant-card a {
@@ -35,8 +29,20 @@
 .plant-card-info-dots {
   padding: 0;
   margin: 0;
-  display: flex;
-  flex-direction: column;
+  .plant-info-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    div {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      svg path {
+        stroke: var(--medium-green);
+      }
+    }
+  }
   p {
     margin: 0;
   }

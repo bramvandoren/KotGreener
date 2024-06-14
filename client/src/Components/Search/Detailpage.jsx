@@ -6,17 +6,21 @@ import toolsAR from "../../assets/tools-ar.png";
 import { jwtDecode } from 'jwt-decode';
 import { supabase } from '../../lib/helper/supabaseClient';
 import Header from '../Header/Header';
+import Loading from '../Loading/Loading';
+import Footer from '../Partials/Footer';
+import PlantCard from './PlantCard';
 
 function DetailPage() {
   const { plantId } = useParams();
   const [plant, setPlant] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isFavorite, setIsFavorite] = useState(false);
-  const [isInMyPlants, setIsInMyPlants] = useState(false);
   const [session, setSession] = useState(null);
   const [visitsCount, setVisitsCount] = useState(0);
-
+  const [animalFriendly, setAnimalFriendly] = useState('');
+  const [otherPlants, setOtherPlants] = useState([]);
   const navigate = useNavigate();
+
   useEffect(() => {
     const fetchSession = async () => {
       try {
@@ -24,7 +28,6 @@ function DetailPage() {
         setSession(session);
         if (session) {
           checkIfFavorite(session.user.id);
-          checkMyPlants(session.user.id);
         }
       } catch (error) {
         console.error('Error fetching session:', error);
@@ -50,6 +53,8 @@ function DetailPage() {
           .eq('id', plantId);
 
         setPlant(data);
+        setAnimalFriendly(data.animal_friendly ? 'Ja' : 'Nee');
+        fetchOtherPlants(data.id);
       }
       setLoading(false);
     };
@@ -77,26 +82,6 @@ function DetailPage() {
     }
   };
 
-
-  // Controleer of de plant in 'mijn planten' lijst staat.
-  const checkMyPlants = async (userId) => {
-    try {
-      const { data, error } = await supabase
-        .from('user_plants')
-        .select('*')
-        .eq('profile_id', userId)
-        .eq('plant_id', plantId);
-
-      if (error) {
-        console.error('Error fetching my plants:', error);
-      } else {
-        setIsInMyPlants(data.length > 0);
-      }
-    } catch (error) {
-      console.error('Error fetching my plants:', error);
-    }
-  };
-
   // Voeg de plant toe of verwijder deze van de favorieten.
   const handleFavorite = async () => {
     if (!session) return;
@@ -120,30 +105,23 @@ function DetailPage() {
     }
   };
 
-  // Voeg de plant toe of verwijder deze van 'mijn planten'.
-  const handleMyPlants = async () => {
-    if (!session) return;
-    const userId = session.user.id;
-    try {
-      if (isInMyPlants) {
-        await supabase
-          .from('user_plants')
-          .delete()
-          .eq('profile_id', userId)
-          .eq('plant_id', plantId);
-      } else {
-        await supabase
-          .from('user_plants')
-          .insert({ profile_id: userId, plant_id: plantId });
-      }
-      setIsInMyPlants(!isInMyPlants);
-    } catch (error) {
-      console.error('Error updating my plants:', error);
+  // Geef extra planten weer 
+  const fetchOtherPlants = async (currentPlantId) => {
+    const { data, error } = await supabase
+      .from('plants')
+      .select('*')
+      .neq('id', currentPlantId)
+      .limit(3);
+
+    if (error) {
+      console.error('Error fetching other plants:', error);
+    } else {
+      setOtherPlants(data);
     }
   };
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <Loading/>;
   }
 
   if (!plant) {
@@ -156,19 +134,15 @@ function DetailPage() {
       <Header/>
       <div className="detail-page-hero">
         <div className="plant-image-background-overlay">
-            <img src={toolsAR} alt={plant.name} className="plant-image-background" />
+            <img src={plant.image_url} alt={plant.name} className="plant-image-background" />
         </div>
-        <div className="button-back" onClick={() => window.history.back()}>
-          <svg width="25" height="25" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M6.5625 14.0625H25.3125C25.5611 14.0625 25.7996 14.1613 25.9754 14.3371C26.1512 14.5129 26.25 14.7514 26.25 15C26.25 15.2486 26.1512 15.4871 25.9754 15.6629C25.7996 15.8387 25.5611 15.9375 25.3125 15.9375H6.5625C6.31386 15.9375 6.0754 15.8387 5.89959 15.6629C5.72377 15.4871 5.625 15.2486 5.625 15C5.625 14.7514 5.72377 14.5129 5.89959 14.3371C6.0754 14.1613 6.31386 14.0625 6.5625 14.0625Z" fill="black"/>
-            <path d="M6.95059 15L14.7262 22.7737C14.9023 22.9498 15.0012 23.1885 15.0012 23.4375C15.0012 23.6864 14.9023 23.9252 14.7262 24.1012C14.5502 24.2773 14.3114 24.3761 14.0625 24.3761C13.8135 24.3761 13.5748 24.2773 13.3987 24.1012L4.96122 15.6637C4.87391 15.5766 4.80464 15.4732 4.75738 15.3593C4.71012 15.2454 4.68579 15.1233 4.68579 15C4.68579 14.8766 4.71012 14.7545 4.75738 14.6407C4.80464 14.5268 4.87391 14.4233 4.96122 14.3362L13.3987 5.89871C13.5748 5.72268 13.8135 5.62378 14.0625 5.62378C14.3114 5.62378 14.5502 5.72268 14.7262 5.89871C14.9023 6.07475 15.0012 6.31351 15.0012 6.56246C15.0012 6.81142 14.9023 7.05018 14.7262 7.22621L6.95059 15Z" fill="black"/>
-          </svg>
-          <p>Terug</p>
+        <div className="plant-image-overlay">
+          <img src={plant.image_url} alt={plant.name} className="plant-image" />
         </div>
       </div>
       <section className="plant-details">
         <div>
-          <Link to={'/search'} className="breadcrumb">Planten zoeken</Link>
+          <Link to={'/plants'} className="breadcrumb">Planten zoeken</Link>
           <span> / </span>
           <Link className="breadcrumb">{plant.name }</Link>
         </div>
@@ -196,18 +170,18 @@ function DetailPage() {
               <svg width="16" height="21" viewBox="0 0 16 21" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M8 20.1875C6.20979 20.1875 4.4929 19.4763 3.22703 18.2105C1.96116 16.9446 1.25 15.2277 1.25 13.4375C1.25 12.3523 1.66384 11.007 2.35049 9.54786C3.03018 8.10352 3.94367 6.61668 4.86855 5.2679C5.79178 3.92152 6.71656 2.72687 7.41121 1.86819C7.63406 1.59273 7.8329 1.35224 8 1.15287C8.1671 1.35224 8.36594 1.59273 8.58879 1.86819C9.28345 2.72687 10.2082 3.92152 11.1315 5.2679C12.0563 6.61668 12.9698 8.10352 13.6495 9.54786C14.3362 11.007 14.75 12.3523 14.75 13.4375C14.75 15.2277 14.0388 16.9446 12.773 18.2105C11.5071 19.4763 9.79021 20.1875 8 20.1875Z" stroke="black" strokeWidth="2"/>
               </svg>
-              <h3>Water</h3>            
+              <h3>Water</h3>
             </div>
             <p>{plant.water_frequency}</p>
           </div>
           <div className="plant-info-item">
-            <div className="item-verticute">
-              <svg width="25" height="25" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M4.16675 8.33341L8.33341 4.16675M14.5834 4.16675L4.16675 14.5834M4.16675 20.8334L20.8334 4.16675M20.8334 10.4167L10.4167 20.8334M20.8334 16.6667L16.6667 20.8334" stroke="black" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            <div className="item-height">
+              <svg width="8" height="19" viewBox="0 0 8 19" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M3.64645 18.3536C3.84171 18.5488 4.15829 18.5488 4.35355 18.3536L7.53553 15.1716C7.7308 14.9763 7.7308 14.6597 7.53553 14.4645C7.34027 14.2692 7.02369 14.2692 6.82843 14.4645L4 17.2929L1.17157 14.4645C0.976311 14.2692 0.659728 14.2692 0.464466 14.4645C0.269204 14.6597 0.269204 14.9763 0.464466 15.1716L3.64645 18.3536ZM4.35355 0.646446C4.15829 0.451185 3.84171 0.451185 3.64645 0.646446L0.464466 3.82843C0.269204 4.02369 0.269204 4.34027 0.464466 4.53553C0.659728 4.7308 0.976311 4.7308 1.17157 4.53553L4 1.70711L6.82843 4.53553C7.02369 4.7308 7.34027 4.7308 7.53553 4.53553C7.7308 4.34027 7.7308 4.02369 7.53553 3.82843L4.35355 0.646446ZM4.5 18L4.5 1H3.5L3.5 18H4.5Z" fill="#234A0F"/>
               </svg>
-              <h3>Verticuteren</h3>
+              <h3>Grootte</h3>
             </div>
-            <p>{plant.verticutting}</p>
+            <p>{plant.height} cm</p>
           </div>
           <div className="plant-info-item">
             <div className="item-repot">
@@ -220,6 +194,20 @@ function DetailPage() {
           </div>
         </div>
       </section>
+      <section className="other-plants">
+        <h3>Andere planten die je misschien leuk vindt</h3>
+        <div className="other-plants-container">
+          {otherPlants.map((plant) => (
+            <>
+            <PlantCard
+              key={plant.id} 
+              plant={plant}
+            />
+          </>
+          ))}
+        </div>
+      </section>
+
     </div>
     <Navbar />
     </>

@@ -1,6 +1,5 @@
-/* src/SearchPage.css */
 .search-page {
-    padding: 0 0 80px 0;
+    padding: 100px 0 80px 0;
 }
 
 .detail-page {
@@ -9,10 +8,65 @@
   .detail-page-hero {
     position: relative;
     width: 100%;
-    height: 40vh;
+    /* height: 40vh; */
     overflow: hidden;
     z-index: 1;
     margin: 0;
+    .plant-image-overlay {
+      position: relative;
+      width: 400px;
+      height: 400px;
+      margin: 0 auto;
+      margin-top: 100px;
+      margin-bottom: 20px;
+      z-index: 100;
+      img {
+        border-radius: 50%;
+        width: 100%;
+        height: 100%;
+      }
+    }
+  }
+  .other-plants {
+    position: relative;
+    z-index: 2;
+    background: white;
+    padding: 20px 0;
+    h3 {
+      padding: 0 5% 0 5%;
+    }
+    .other-plants-container {
+      display: grid;
+        padding: 0 5% 0 5%;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+        margin-top: 20px;
+        justify-content: center;
+        .other-plant {
+          box-sizing: border-box;
+          background-color: white;
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+          padding: 10px;
+          border-radius: 10px;
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+          max-width: 300px;
+          .other-plant-image-overlay {
+            width: 100%;
+            max-height: 200px;
+            overflow: hidden;
+          }
+          img {
+            width: 100%;
+            position: relative;
+            object-fit: cover;
+          }
+          button {
+            width: 100%;
+          }
+        }
+    }
   }
 }
 
@@ -40,8 +94,8 @@
   position: absolute;
   top: 20px;
   left: 0;
-  margin: 0 0 0 20px;
-  padding: 10px 20px;
+  margin: 0 0 0 5%;
+  padding: 10px 5%;
   background-color: rgba(0, 0, 0, 0.5);
   border-radius: 20px;
   cursor: pointer;
@@ -67,7 +121,7 @@
 .button-favourite {
   position: absolute;
   top: 20px;
-  right: 20px;
+  right: 5%;
   cursor: pointer;
   background: none;
   border: none;
@@ -85,7 +139,7 @@
 }
 
 .search-intro {
-  padding: 10px 20px;
+  padding: 10px 5%;
   background: white;
   .search-intro-header {
     h2 {
@@ -169,7 +223,7 @@
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 20px;
   justify-content: center;
-  padding: 0 20px;
+  padding: 0 5%;
 }
 
 .plant-card {
@@ -180,26 +234,93 @@
   border-radius: 10px;
   display: flex;
   flex-direction: column;
-  max-width: 50vw;
+  justify-content: space-between;
+  max-width: 300px;
+  .plant-image-overlay {
+    position: relative;
+    width: 100%;
+    max-height: 200px;
+    overflow: hidden;
+    img {
+      width: 100%;
+      position: relative;
+      object-fit: cover;
+      border-radius: 0;
+    }
+    button {
+      position: absolute;
+      top: 0;
+      right: 0;
+    }
+  }
 }
 
 .filter {
-  padding: 0 20px 20px 20px;
+  padding: 0 5% 10px 5%;
   background: white;
 }
 
+.filter-more {
+  background-color: #f4f0f1;
+  display: flex;
+  flex-direction: column;
+  border-radius: 5px;
+  cursor: pointer;
+  p {
+    margin: 0;
+    width: 100%;
+  }
+  .filter-more-header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 10px;
+    svg {
+      width: 15px;
+    }
+  }
+  .filter-more-others {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    background: #f4f0f1;
+    padding: 10px;
+    cursor:auto;
+    .filter-item {
+      padding: 20px;
+      background: white;
+      border-radius: 10px;
+      cursor: pointer;
+      text-align: center;
+      transition: 0.3s ease;
+    }
+    .filter-item:hover {
+      box-shadow: 0 2px 4px var(--medium-green);
+      background: var(--medium-green);
+      color: white;
+      
+      svg path {
+        stroke: white;
+        fill: white;
+      }
+    }
+  }
+}
+
 .selected-filters  {
-  padding: 0 20px;
+  padding: 0 5%;
   background: white;
 }
 
 .filter-button {
-  padding: 0.5rem;
+  padding: 10px 20px;
   background-color: transparent;
   color: var(--dark-green);
   border: 0.2rem solid var(--dark-green);
   font-weight: bold;
-  margin-top: 1rem;
+  margin-top: 10px;
+  margin-bottom: 10px;
 }
 .filter-button:hover {
   background-color: transparent;
@@ -211,13 +332,14 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 10px 20px;
+  padding: 10px 5%;
 }
 
 .dropdown .css-13cymwt-control {
   background-color: #f4f0f1;
   border: 0.15rem solid transparent;
   margin-bottom: 0.5rem;
+  cursor: pointer;
 }
 
 .dropdown .css-1u9des2-indicatorSeparator {
@@ -228,8 +350,17 @@
   color: var(--dark-green);
 }
 
+.dropdown.css-t3ipsp-control {
+  border-color: var(--dark-green);
+  box-shadow: none;
+}
+
 .dropdown input{
   margin-bottom: 0.1rem;
+}
+
+.css-d7l1ni-option {
+  background-color: #f4f0f1;
 }
 
 .dropdown .css-1jqq78o-placeholder {
@@ -252,17 +383,20 @@
   background: var(--light-green);
   border-radius: 20px 20px 0 0;
   z-index: 99;
-  min-height: 60vh;
-  padding: 20px 20px;
+  /* min-height: 60vh; */
+  padding: 20px 5%;
   h2 {
     font-weight: 800;
+  }
+  h3 {
+    font-weight: 400;
   }
   .description {
     margin: 10px 0 10px 0;
   }
   .plant-info {
     display: flex;
-    align-items: baseline;
+    align-items: center;
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 10px;
@@ -299,7 +433,7 @@
           }
         }
       }
-      .item-verticute {
+      .item-height {
         display: flex;
         align-items: center;
         svg {
@@ -327,16 +461,22 @@
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  align-items: baseline;
-  /* padding: 0 20px 0 20px; */
+  align-items: center;
+  margin: 10px 0 0 0;
+  .action-buttons {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    
+  }
   h2 {
-    margin: 20px 0 0 0;
+    margin: 0;
   }
   .button-plants {
     background-color: transparent;
     border: 0.1rem solid var(--dark-green);
     color: var(--dark-green);
-    padding: 10px 20px;
+    padding: 10px 5%;
     border-radius: 20px;
     display: flex;
     align-items: center;
