@@ -17,11 +17,22 @@
     display: flex;
     flex-direction: column;
     background: var(--light-green);
+    padding-top: 100px;
+    h2 {
+        margin: 0;
+    }
 }
 
 .login-register {
     display: flex;
-    align-items: center;
+    align-items: baseline;
+    p {
+        margin-top: 10px;
+        margin-bottom: 5px;
+    }
+    a {
+        margin-left: 10px;
+    }
 }
 
 .login-form {
@@ -29,14 +40,17 @@
     width: 100%;
     padding: 20px;
     margin: 0 auto;
+    margin-bottom: 40px;
     background: white;
     border-radius: 10px;
     box-shadow: 0 0 10px #f4f0f1;
     label {
         display: flex;
+        margin-top: 10px;
     }
     button {
         margin: 0 auto;
+        margin-top: 20px;
         width: 100%;
         padding: 1rem 0 1rem 0;
         border-radius: 100px;
@@ -58,6 +72,7 @@
         background: #f4f0f1;
         border: none;
         border-radius: 10px;
+        color: var(--dark-green);
     }
     input:hover {
         box-shadow:#9eb599 0 0 0 2px;
@@ -66,4 +81,57 @@
         box-shadow: 0 0 0 2px var(--medium-green), 0 0 0 6px rgba(158, 181, 153, .2) !important;
     }
 }
+
+.login-google {
+    text-align: center;
+    p {
+        margin: 10px;
+        color: grey;
+    }
+    .login-google-or {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        hr {
+            flex-grow: 1;
+            border: 0;
+            border-top: 1px solid #ccc;
+            width: 20%;
+        }
+    }
+    .login-google-button {
+        margin: 0;
+        background: white;
+        color: grey;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 0 0 2px #f4f0f1;
+        padding: 0;
+        svg {
+            width: 30px;
+            height: 30px;
+            margin-right: 10px;
+        }
+        span {
+            padding: 1rem 0 1rem 0;
+        }
+    }
+    .login-google-button:hover {
+        box-shadow:#9eb599 0 0 0 2px;
+    }
+    .login-google-button:focus {
+        box-shadow: 0 0 0 2px var(--medium-green), 0 0 0 6px rgba(158, 181, 153, .2) !important;
+    }
+}
+
+
+.error-message {
+    color: red;
+    font-size: 0.875rem; /* Kleinere tekst */
+    margin-top: 0.5rem; /* Ruimte boven de foutmelding */
+  }
 

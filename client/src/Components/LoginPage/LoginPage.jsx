@@ -10,24 +10,79 @@ function LoginPage() {
   const [loading, setLoading] = useState(false)
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const navigate = useNavigate()
+  const navigate = useNavigate();
+  const [errors, setErrors] = useState({ email: '', password: '', general: '' });
 
+
+  const validateEmail = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
+  // Handle login function
   const handleLogin = async (e) => {
     e.preventDefault();
+    setLoading(true);
+    let valid = true;
+    const newErrors = { email: '', password: '', general: '' };
+
+    // Validate email
+    if (!email) {
+      newErrors.email = 'E-mail is vereist';
+      valid = false;
+    } else if (!validateEmail(email)) {
+      newErrors.email = 'Voer een geldig e-mailadres in';
+      valid = false;
+    }
+
+    // Validate password
+    if (!password) {
+      newErrors.password = 'Wachtwoord is vereist';
+      valid = false;
+    }
+
+    // Set errors
+    setErrors(newErrors);
+
+    // Exit if validation fails
+    if (!valid) {
+      setLoading(false);
+      return;
+    }
+
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
 
     if (error) {
-      alert(error.error_description || error.message)
-    } else {
-      console.log(data);
-      alert('Check your email for the login link!')
-      navigate('/')
-      
+      if (error.message === 'Invalid login credentials') {
+        // Check if the email exists in the database
+        const { count, error: countError } = await supabase
+          .from('profiles') // Verander 'profiles' naar de naam van je tabel met gebruikers
+          .select('*', { count: 'exact', head: true })
+          .eq('email', email);
+
+        if (countError) {
+          // General error handling for Supabase errors
+          newErrors.general = countError.message || 'Er is een fout opgetreden. Probeer het later opnieuw.';
+        } else if (count > 0) {
+          // If email exists, the password is incorrect
+          newErrors.password = 'Onjuist wachtwoord. Controleer uw wachtwoord en probeer het opnieuw.';
+        } else {
+          // If email does not exist
+          newErrors.email = 'Dit e-mailadres is niet gevonden. Controleer uw e-mailadres of maak een nieuw account aan.';
+        }
+      } else {
+        // General error message for other errors
+        newErrors.general = error.error_description || error.message;
+      }
+      setErrors(newErrors);
+      setLoading(false);
+      return;
     }
-    setLoading(false)
+    navigate('/');
+    setLoading(false);
   };
 
   const handleGoogleSignIn = async () => {
@@ -41,7 +96,7 @@ function LoginPage() {
         throw error;
       }
   
-      // Handle successful login with Google
+    // Handle successful login with Google
     } catch (error) {
       console.error('Error logging in with Google', error);
       alert('Error logging in with Google');
@@ -54,7 +109,7 @@ function LoginPage() {
     <div className="login">
       <Header/>
       <div className="login-form">
-        <h1>Inloggen</h1>
+        <h2>Inloggen</h2>
         <div className="login-register">
           <p>Nog geen account?</p>
           <Link to="/register">
@@ -66,17 +121,18 @@ function LoginPage() {
             <label htmlFor="email">E-mail</label>
             <div className="login-input">
               <svg className="email-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path className="email-icon-path" d="M3 7C3 6.46957 3.21071 5.96086 3.58579 5.58579C3.96086 5.21071 4.46957 5 5 5H19C19.5304 5 20.0391 5.21071 20.4142 5.58579C20.7893 5.96086 21 6.46957 21 7V17C21 17.5304 20.7893 18.0391 20.4142 18.4142C20.0391 18.7893 19.5304 19 19 19H5C4.46957 19 3.96086 18.7893 3.58579 18.4142C3.21071 18.0391 3 17.5304 3 17V7Z" stroke="black" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                <path d="M3 7L12 13L21 7" stroke="black" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                <path className="email-icon-path" d="M3 7C3 6.46957 3.21071 5.96086 3.58579 5.58579C3.96086 5.21071 4.46957 5 5 5H19C19.5304 5 20.0391 5.21071 20.4142 5.58579C20.7893 5.96086 21 6.46957 21 7V17C21 17.5304 20.7893 18.0391 20.4142 18.4142C20.0391 18.7893 19.5304 19 19 19H5C4.46957 19 3.96086 18.7893 3.58579 18.4142C3.21071 18.0391 3 17.5304 3 17V7Z" stroke="black" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M3 7L12 13L21 7" stroke="black" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="input-with-icon"
+                className={`input-with-icon ${errors.email ? 'error-input' : ''}`}
               />
             </div>
+            {errors.email && <div className="error-message">{errors.email}</div>}
           </div>
           <div className="login-field">
             <label htmlFor="password">Wachtwoord</label>
@@ -89,19 +145,37 @@ function LoginPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                className="input-with-icon"
+                className={`input-with-icon ${errors.password ? 'error-input' : ''}`}
               />
             </div>
+            {errors.password && <div className="error-message">{errors.password}</div>}
           </div>
-          {/* <button type="submit">Inloggen</button> */}
           <button disabled={loading}>
             {loading ? <span>Loading</span> : <span>Inloggen</span>}
           </button>
         </form>
-        <p>of</p>
-        <button type="button" onClick={handleGoogleSignIn}>
-          Inloggen met Google
-        </button>
+        <div className="login-google">
+          <div className="login-google-or">
+            <hr/>
+            <p>of</p>
+            <hr/>
+          </div>
+          <button className="login-google-button" type="button" onClick={handleGoogleSignIn}>
+            <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" viewBox="0 0 48 48">
+              <path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z">
+              </path>
+              <path fill="#FF3D00" d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z">
+              </path>
+              <path fill="#4CAF50" d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.202,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z">
+              </path>
+              <path fill="#1976D2" d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571c0.001-0.001,0.002-0.001,0.003-0.002l6.19,5.238C36.971,39.205,44,34,44,24C44,22.659,43.862,21.35,43.611,20.083z">
+              </path>
+            </svg>
+            <span>
+              Inloggen met Google
+            </span>
+          </button>
+        </div>
       </div>
     </div>
     <Navbar />

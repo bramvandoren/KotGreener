@@ -6,65 +6,117 @@ import Navbar from '../Navbar/Navbar';
 import Header from '../Header/Header';
 
 export const Register = () => {
+  const [loading, setLoading] = useState(false)
   const [email, setEmail] = useState('');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
-  const [input, setInput] = useState({
-    email: "",
-    username: "",
-    password: "",
-  });
+  const [errors, setErrors] = useState({ email: '', password: '', general: '' });
 
   const navigate = useNavigate();
 
-  const handleSubmitEvent = async (e) => {
-    e.preventDefault();
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          data: {
-            username,
-          },
-        },
-      });
-
-      if (error) {
-        alert(error.error_description || error.message)
-      } else {
-        alert('Check your email for the login link!');
-        navigate('/login');
-      }
+  const validateEmail = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
   };
 
-  const handleInput = (e) => {
-    const { name, value } = e.target;
-    setInput((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+  const handleRegister = async (e) => {
+    e.preventDefault();
 
-    // Add validation logic here
-    if (name === 'email' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
-      setErrorMessage('Please enter a valid email address.');
-    } else {
-      setErrorMessage('');
+    setLoading(true);
+    let valid = true;
+    const newErrors = { email: '', password: '', username: '', general: '' };
+
+    // Check username length
+    if (username.length < 3) {
+      newErrors.username = 'Gebruikersnaam moet minstens 3 tekens bevatten';
+      valid = false;
     }
+
+    // Validate email
+    if (!email) {
+      newErrors.email = 'E-mail is vereist';
+      valid = false;
+    } else if (!validateEmail(email)) {
+      newErrors.email = 'Voer een geldig e-mailadres in';
+      valid = false;
+    }
+
+    // Validate password
+    if (!password) {
+      newErrors.password = 'Wachtwoord is vereist';
+      valid = false;
+    }
+
+    // Set errors
+    setErrors(newErrors);
+
+    // Exit if validation fails
+    if (!valid) {
+      setLoading(false);
+      return;
+    }
+
+    // Proceed with user registration
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: {
+          username,
+        },
+      },
+    });
+
+    if (error) {
+      if (error.code === 'weak_password') {
+        newErrors.password = 'Wachtwoord moet minstens 6 tekens zijn';
+        newErrors.general = error.error_description || error.message;
+      } else if (error.message === "User already registered") {
+        newErrors.email = 'E-mailadres is al in gebruik';
+        newErrors.general = error.error_description || error.message;
+      } else if (error.message === 'Database error saving new user') {
+          
+        // Check if the username exists in the database
+        const { count, error: countError } = await supabase
+        .from('profiles') // Verander 'profiles' naar de naam van je tabel met gebruikers
+        .select('*', { count: 'exact', head: true })
+        .eq('username', username);
+        
+
+        if (countError) {
+          // General error handling for Supabase errors
+          newErrors.general = countError.message || 'Er is een fout opgetreden. Probeer het later opnieuw.';
+        } else if (count > 0) {
+          // If username exists, error
+          newErrors.username = 'Gebruikersnaam ' + username + ' bestaat al, probeer een nieuwe';
+        } else {
+          return;
+        }
+      } 
+      else {
+        newErrors.general = error.error_description || error.message;
+      }
+      setErrors(newErrors);
+      setLoading(false);
+      return;
+    }
+    navigate('/');
+    setLoading(false);
   };
 
   return (
-    <div>
+    <div className="register">
       <Header/>
       <div className="register-form">
-          <h1>Account aanmaken</h1>
+          <h2>Account aanmaken</h2>
           <div className="register-login">
           <p>Heb je al een account?</p>
-          <Link to="/login">
-            <button className="btn--ternair">Inloggen</button>
+          <Link to="/login"className="btn--ternair">
+            Inloggen
           </Link>
         </div>
-        <form onSubmit={handleSubmitEvent}>
+        <form onSubmit={handleRegister}>
           <div className="login-field">
             <label htmlFor="username">Gebruikersnaam</label>
             <div className="login-input">
@@ -80,13 +132,14 @@ export const Register = () => {
                 className="input-with-icon"
               />
             </div>
+            {errors.username && <div className="error-message">{errors.username}</div>}
           </div>
           <div className="login-field">
             <label htmlFor="email">E-mail</label>
             <div className="login-input">
               <svg className="email-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path className="email-icon-path" d="M3 7C3 6.46957 3.21071 5.96086 3.58579 5.58579C3.96086 5.21071 4.46957 5 5 5H19C19.5304 5 20.0391 5.21071 20.4142 5.58579C20.7893 5.96086 21 6.46957 21 7V17C21 17.5304 20.7893 18.0391 20.4142 18.4142C20.0391 18.7893 19.5304 19 19 19H5C4.46957 19 3.96086 18.7893 3.58579 18.4142C3.21071 18.0391 3 17.5304 3 17V7Z" stroke="black" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                <path d="M3 7L12 13L21 7" stroke="black" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                <path className="email-icon-path" d="M3 7C3 6.46957 3.21071 5.96086 3.58579 5.58579C3.96086 5.21071 4.46957 5 5 5H19C19.5304 5 20.0391 5.21071 20.4142 5.58579C20.7893 5.96086 21 6.46957 21 7V17C21 17.5304 20.7893 18.0391 20.4142 18.4142C20.0391 18.7893 19.5304 19 19 19H5C4.46957 19 3.96086 18.7893 3.58579 18.4142C3.21071 18.0391 3 17.5304 3 17V7Z" stroke="black" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M3 7L12 13L21 7" stroke="black" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
               <input
                 type="email"
@@ -98,6 +151,7 @@ export const Register = () => {
                 className="input-with-icon"
               />
             </div>
+            {errors.email && <div className="error-message">{errors.email}</div>}
           </div>
           <div className="login-field">
             <label htmlFor="password">Wachtwoord</label>
@@ -114,9 +168,12 @@ export const Register = () => {
                 className="input-with-icon"
               />
             </div>
+            {errors.password && <div className="error-message">{errors.password}</div>}
           </div>
-          {errorMessage && <div className="error">{errorMessage}</div>}
-          <button type="submit" className="">Registreer</button>
+          {errorMessage && <div className="error-message">{errorMessage}</div>}
+          <button type="submit" disabled={loading}>
+            {loading ? <span>Loading</span> : <span>Registreer</span>}
+          </button>
         </form>
       </div>
     <Navbar />

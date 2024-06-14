@@ -17,12 +17,21 @@
     display: flex;
     flex-direction: column;
     background: var(--light-green);
+    padding-top: 100px;
 }
 
 .register-login {
     display: flex;
     flex-direction: row;
-    align-items: center;
+    align-items: baseline;
+    p {
+        margin-top: 10px;
+        margin-bottom: 5px;
+    }
+    a {
+        text-decoration: none;
+        margin-left: 10px;
+    }
 }
 
 .register-form {
@@ -30,14 +39,21 @@
     width: 100%;
     padding: 20px;
     margin: 0 auto;
+    margin-bottom: 40px;
     background: white;
     border-radius: 10px;
     box-shadow: 0 0 10px #f4f0f1;
+    h2 {
+        margin: 0;
+    }
     label {
         display: flex;
+        margin-top: 10px;
+        color: black;
     }
     button {
         margin: 0 auto;
+        margin-top: 20px;
         width: 100%;
         padding: 1rem 0 1rem 0;
         border-radius: 100px;
@@ -68,3 +84,8 @@
     padding: 1rem 0 1rem 40px;
 }
 
+.error-message {
+    color: red;
+    font-size: 0.875rem; /* Kleinere tekst */
+    margin-top: 0.5rem; /* Ruimte boven de foutmelding */
+  }
