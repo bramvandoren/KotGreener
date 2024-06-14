@@ -57,54 +57,7 @@ function App() {
 
     </Routes>
     <Footer/>
-
     </BrowserRouter>
-      {/* <BrowserRouter>
-        <Routes>
-          <Route path="/" exact element={<Home />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/blog" element={<Blog/>} />
-          <Route path="/blog/:blogId" element={<BlogDetail/>} />
-          <Route path="/my-plants" element={<MyPlants/>} />
-          <Route path="/my-plants/:id" element={<MyPlant/>} />
-          <Route path="/winkel" element={<Market/>} />
-          <Route path="/search" element={<Search/>} />
-          <Route path="/search/:plantId" element={<DetailPage/>} />
-          <Route
-            path="/admin"
-            element={
-              <AdminRoute>
-                <AdminPage />
-              </AdminRoute>
-            }
-          />
-          <Route path="/admin/blog" 
-          element={
-            <AdminRoute>
-              <AdminBlogPage />
-            </AdminRoute>
-          } />
-          <Route path="/admin/plants" 
-          element={
-            <AdminRoute>
-              <AdminPlantsPage />
-            </AdminRoute>
-          } />
-          <Route path="/admin/profile" 
-          element={
-            <AdminRoute>
-              <AdminProfilePage />
-            </AdminRoute>
-          } />
-          <Route path="/stats" element={<DetailPage/>} />
-        </Routes>
-      </BrowserRouter> */}
-      {/* <div>
-        <button onClick={Login}>Login with Github</button>
-      </div> */}
     </>
   )
 }
