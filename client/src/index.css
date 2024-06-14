@@ -1,5 +1,5 @@
-/* src/global.css */
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500&family=Pacifico&display=swap');
+/* @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500&family=Pacifico&display=swap'); */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
 
 *,*:focus,*:hover{
   outline:none;
@@ -10,13 +10,15 @@
   --medium-green: #457A14;
   --dark-green: #234A0F;
 
-  font-family: 'Montserrat', system-ui, Avenir, Helvetica, Arial, sans-serif;
+  --toastify-icon-color-success: #457A14;
+  --toastify-color-progress-success: #457A14;
+
+  font-family: 'Montserrat', Helvetica, sans-serif;
+  font-family: "Segoe UI", sans-serif;
   line-height: 1.5;
-  font-weight: 400;
 
   color-scheme: light dark;
   color: black;
-  /* background-color: var(--light-green); */
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -40,9 +42,6 @@ a:hover {
 
 body {
   margin: 0;
-  /* display: flex;
-  min-width: 320px;
-  min-height: 100vh; */
   background-color: var(--light-green);
 }
 
@@ -57,12 +56,11 @@ h1 {
 
 h2 {
   font-family: 'Montserrat', system-ui, Avenir, Helvetica, Arial, sans-serif;
-  font-weight: lighter;
   font-size: 1.8rem;
 }
 
 button {
-  border-radius: 1rem;
+  border-radius: 100px;
   border: 1px solid transparent;
   padding: 0.5rem 1rem 0.5rem 1rem;
   font-size: 1em;
@@ -71,7 +69,6 @@ button {
   background-color: var(--dark-green);
   color: white;
   cursor: pointer;
-  /* transition: border-color 0.25s; */
   transition: 0.3s ease;
 
 }
@@ -84,6 +81,18 @@ button:focus-visible {
   outline: none;
 }
 
+.btn--secondary {
+  background-color: transparent;
+  color: var(--dark-green);
+  border: 3px solid var(--dark-green);
+  border-radius: 100px;
+}
+
+.btn--secondary:hover {
+  background-color: var(--dark-green);
+  color: white;
+}
+
 .btn--ternair {
   background: transparent;
   color: var(--dark-green);
@@ -93,6 +102,51 @@ button:focus-visible {
 .btn--ternair:hover {
   background: transparent;
   color: var(--medium-green);
+}
+
+.btn--delete {
+  cursor: pointer;
+  path {
+    stroke:rgb(165, 0, 0);
+  }
+}
+
+.btn--delete:hover {
+  path {
+    stroke:rgb(212, 0, 0);
+  }
+}
+
+.btn--grey {
+  background-color: grey;
+}
+
+.btn-edit {
+  cursor: pointer;
+  path {
+    stroke: var(--dark-green)
+  }
+}
+.btn-edit:hover {
+  cursor: pointer;
+
+  path {
+    stroke: var(--medium-green)
+  }
+}
+
+.button--confirm-delete {
+  background: rgb(165, 0, 0);
+}
+.button--confirm-delete:hover {
+  background: rgb(191, 0, 0);
+}
+
+.button--cancel {
+  background: grey;
+}
+.button--cancel:hover {
+  background: lightgray;
 }
 
 button:disabled {
@@ -110,11 +164,11 @@ input, textarea, select {
   padding: 0.5rem 1rem;
   background: transparent;
   font-size: 1rem;
+  color: black;
 }
 
 form input, form textarea {
   width: 100%;
-  /* padding: 8px; */
   margin-top: 5px;
 }
 
@@ -127,10 +181,6 @@ input {
 input:hover {
   box-shadow:#9eb599 0 0 0 2px;
 }
-
-/* input:focus {
-  box-shadow: 0 0 0 2px var(--medium-green), 0 0 0 6px rgba(158, 181, 153, .2) !important;
-} */
 
 input:disabled {
   opacity: 0.5;
@@ -168,10 +218,6 @@ input::file-selector-button {
   a:hover {
     color: var(--dark-green);
   }
-  /* button {
-    background-color: var(--light-green);
-    color: var(--dark-green);
-  } */
 }
 
 /* Media query voor tablets (schermen groter dan 768px) */
@@ -180,30 +226,18 @@ input::file-selector-button {
       width: 80%;
       margin: 0 auto;
   }
+  .navbar {
+    display: none;
+  }
 }
 
 /* Media query voor desktops (schermen groter dan 1024px) */
 @media (min-width: 1024px) {
-  .navbar {
-    display: none;
-  }
 
-  .nav-desktop {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    /* padding: 20px; */
-    p {
-      font-size: 1.0rem;
-    }
-
-    a.nav-item:hover {
-      border-bottom: 0.1rem solid var(--medium-green);
-    }
-
-    a.nav-item.active {
-      border-bottom: 0.1rem solid var(--medium-green);
-      font-weight: bold;
+  .header-desktop {
+    .logo {
+      width: 120px;
     }
   }
+
 }

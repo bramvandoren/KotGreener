@@ -8,6 +8,7 @@ import {BrowserRouter, createBrowserRouter, Route, RouterProvider, Routes} from 
 import Home from './Components/Home/Home'
 import Blog from './Components/Blog/Blog'
 import MyPlants from './Components/MyPlants/MyPlants'
+import Market from './Components/Market/Market';
 import Search from './Components/Search/Search'
 import DetailPage from './Components/Search/Detailpage'
 import LoginPage from './Components/LoginPage/LoginPage'
@@ -17,6 +18,7 @@ import MyPlant from './Components/MyPlants/MyPlant'
 import Account from './Components/Profile/Account'
 import AddPlant from './Components/MyPlants/AddPlant'
 import EditPlant from './Components/MyPlants/EditPlant'
+import Footer from './Components/Partials/Footer';
 
 function App() {
   const [session, setSession] = useState(null)
@@ -41,7 +43,7 @@ function App() {
         <Route path="/profile/edit" element={<Account />} />
 
         <Route path="/blog" element={<Blog session = {session}/>} />
-        <Route path="/blog/:blogId" element={<BlogDetail/>} />
+        <Route path="/blog/:slug" element={<BlogDetail/>} />
 
         <Route path="/plants" element={<Search />} />
         <Route path="/plants/:plantId" element={<DetailPage/>} />
@@ -51,7 +53,11 @@ function App() {
         <Route path="/my-plants/:id" element={<MyPlant/>} />
         <Route path="/my-plants/edit/:id" element={<EditPlant/>} />
 
+        <Route path="/winkel" element={<Market/>} />
+
     </Routes>
+    <Footer/>
+
     </BrowserRouter>
       {/* <BrowserRouter>
         <Routes>
