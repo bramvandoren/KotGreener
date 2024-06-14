@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react'
 import { supabase } from '../../lib/helper/supabaseClient';
 import Avatar from './Avatar';
 import { Link, NavLink, useLocation } from 'react-router-dom';
-import logo from "../../assets/logo-kotgreener.svg";
 import './Profile.css';
 import Navbar from '../Navbar/Navbar';
 import Header from '../Header/Header';
@@ -65,57 +64,38 @@ export default function Account() {
     const updates = {
       id: user.id,
       username,
-      website,
       avatar_url: avatarUrl,
       updated_at: new Date(),
     }
 
-    const { error } = await supabase.from('profiles').upsert(updates);
+    if (avatarUrl) {
+      // Add avatar_url to updates object only if it's provided
+      updates.avatar_url = avatarUrl;
 
-    const file = event.target.files[0]
-    const fileExt = file.name.split('.').pop()
-    const fileName = `${Math.random()}.${fileExt}`
-    const filePath = `${fileName}`
-    const { error: uploadError } = await supabase.storage.from('avatars').upload(filePath, file)
+      // Handle the file upload
+      const file = event.target.files[0];
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${Math.random()}.${fileExt}`;
+      const filePath = `${fileName}`;
+      const { error: uploadError } = await supabase.storage.from('avatars').upload(filePath, file);
 
-    if (uploadError) {
-      throw uploadError
+      if (uploadError) {
+          setLoading(false);
+          throw uploadError;
+      }
     }
+
+    const { error } = await supabase.from('profiles').upsert(updates);
 
     if (error) {
       alert(error.message)
     } else {
-      setAvatarUrl(avatarUrl)
+      if (avatarUrl) {
+        setAvatarUrl(avatarUrl);
+      }
     }
     setLoading(false)
   }
-
-  // async function uploadAvatar(event) {
-  //   try {
-  //     setUploading(true)
-
-  //     if (!event.target.files || event.target.files.length === 0) {
-  //       throw new Error('You must select an image to upload.')
-  //     }
-
-  //     const file = event.target.files[0]
-  //     const fileExt = file.name.split('.').pop()
-  //     const fileName = `${Math.random()}.${fileExt}`
-  //     const filePath = `${fileName}`
-
-  //     const { error: uploadError } = await supabase.storage.from('avatars').upload(filePath, file)
-
-  //     if (uploadError) {
-  //       throw uploadError
-  //     }
-
-  //     onUpload(event, filePath)
-  //   } catch (error) {
-  //     alert(error.message)
-  //   } finally {
-  //     setUploading(false)
-  //   }
-  // }
 
   return (
     <>
@@ -158,13 +138,6 @@ export default function Account() {
                 // required
                 value={username || ''}
                 onChange={(e) => setUsername(e.target.value)}
-                />
-                <label htmlFor="website">Website</label>
-                <input
-                id="website"
-                type="url"
-                value={website || ''}
-                onChange={(e) => setWebsite(e.target.value)}
                 />
             <div>
               <button className="button block primary" type="submit" disabled={loading || (!username && !website)}>

@@ -7,6 +7,7 @@ import Avatar from './Avatar';
 import Home from '../Home/Home';
 import Account from './Account';
 import Header from '../Header/Header';
+import Navbar from '../Navbar/Navbar';
 
 const Profile = ( {onClose} ) => {
   const [loading, setLoading] = useState(true)
@@ -112,15 +113,9 @@ const Profile = ( {onClose} ) => {
     return name;
   };
 
-  // const toggleProfile = () => {
-  //   setShowProfile(!showProfile);
-  // };
-
   return (
+    <>
     <div className="profile">
-      {/* <svg className="close-button" onClick={onClose} width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M19 12H5M12 19L5 12L12 5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-      </svg> */}
       <Header/>
       <div className="breadcrumb">
         <Link to={'/profile'}>Profiel</Link>
@@ -153,7 +148,7 @@ const Profile = ( {onClose} ) => {
         <div className="favorites-plants">
           {favorites.length > 0 ? (
             favorites.map(favorite => (
-              <Link key={favorite.plant_id} to={`/search/${favorite.plant_id}`} className="favorites-plants-item">
+              <Link key={favorite.plant_id} to={`/plants/${favorite.plant_id}`} className="favorites-plants-item">
                 {favorite.plants.name}
               </Link>
             ))
@@ -184,6 +179,8 @@ const Profile = ( {onClose} ) => {
         </button>
       </div>
     </div>
+    <Navbar/>
+    </>
   );
 };
 

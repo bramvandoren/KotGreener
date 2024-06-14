@@ -1,25 +1,12 @@
-/* .profile-mobile {
-  position: fixed;
-  top: 0;
-  right: 0;
-  padding: 0 20px 0 20px;
-  width: 90vw;
-  height: 100vh;
-  z-index: 9999;
-  color: green;
-  transition: 0.5s ease;
-  background: var(--light-green);
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-} */
-
 .profile {
   background: white;
   padding-bottom: 50px;
+  padding-top: 100px;
   .breadcrumb {
-    padding: 0 20px;
+    padding: 0 5%;
   }
   .favorites {
-    padding: 0 20px;
+    padding: 0 5%;
     .favorites-plants-item {
       border: 0.1rem solid var(--dark-green);
       background: var(--dark-green);
@@ -34,20 +21,21 @@
     }
   }
   .places {
-    padding: 0 20px;
+    padding: 0 5%;
     .place-item {
       background: var(--light-green);
     }
   }
   .settings {
-    padding: 0 20px;    
+    padding: 0 5%;    
   }
   .notifications {
-    padding: 0 20px;
+    padding: 0 5%;
   }
 }
 
 .account {
+  padding-top: 100px;
   .avatar-edit-label {
     position: absolute;
     bottom: 0;
@@ -62,16 +50,18 @@
     }
   }
   .breadcrumb {
-    padding: 0 20px;
+    padding: 0 5%;
   }
   .form-account {
-    padding: 0 20px;
+    padding: 0 5%;
+    padding-bottom: 20px;
   }
   .editProfile-form {
     max-width: 400px;
     width: 100%;
-    padding: 10px 20px;
+    padding: 10px 5%;
     margin: 0 auto;
+    margin-top: 20px;
     background: white;
     border-radius: 10px;
     box-shadow: 0 0 10px #f4f0f1;
@@ -115,6 +105,7 @@
   padding: 20px;
   border-radius: 100%;
   margin: 0 auto;
+  padding: 0;
   border: 0.2rem solid var(--dark-green);
 }
 
@@ -181,7 +172,7 @@
   }
 }
 .profile.open {
-  right: 0; /* Slide in */
+  right: 0;
 }
 
 .close-button {
