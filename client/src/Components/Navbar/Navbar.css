@@ -1,15 +1,14 @@
 .navbar {
-  /* display: flex; */
   position: fixed;
   bottom: 0;
   width: 100%;
   justify-content: space-around;
   background-color: white;
   padding: 10px 0;
-  border-top: 1px solid #ddd;
   z-index: 999;
+  display: flex;
+  box-shadow: rgba(0, 0, 0, 0.03) 0px 0px 16px 16px;
 }
-
 
 .nav-item {
   display: flex;
@@ -17,12 +16,27 @@
   align-items: center;
   text-decoration: none;
   cursor: pointer;
+  transition: 0.3s ease;
   /* height: 30px; */
   p {
-    color: #000;
+    color:dimgrey;
     font-size: 0.7rem;
+    font-weight: 500;
+    font-family: 'Montserrat', system-ui, Avenir, Helvetica, Arial, sans-serif;
     padding: 0;
     margin: 0;
+    transition: 0.3s ease;
+
+  }
+  svg {
+    width: 25px;
+    height: 25px;
+    path {
+    stroke-width: 1.5px;
+    stroke: gray;
+    transition: 0.3s ease;
+    scale: 100%;
+    }
   }
 }
 
@@ -30,6 +44,11 @@ a.nav-item.active svg {
   border-radius: 50%;
   background-color: var(--light-green);
   width: 40px;
+  path {
+    stroke: var(--medium-green);
+    fill: var(--medium-green);
+    stroke-width: 2px;
+  }
 }
 
 a.nav-item.active p{
@@ -40,5 +59,19 @@ a.nav-item.active p{
 
 a.nav-item:hover {
   text-decoration: none;
+  transition: 0.3s ease;
+  svg {
+    scale: 110%;
+    transition: 0.3s ease;
+    path {
+      stroke: var(--medium-green);
+      transition: 0.3s ease;
+    }
+  }
+  p {
+    color: var(--medium-green);
+    transition: 0.3s ease;
+  }
+
 }
   
