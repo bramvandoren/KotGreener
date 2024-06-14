@@ -7,10 +7,12 @@ import { Calendar, dateFnsLocalizer } from "react-big-calendar";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { supabase } from '../../lib/helper/supabaseClient';
 import nl from 'date-fns/locale/nl';
 
-const locales = {};
+const locales = {locale: nl};
 const localizer = dateFnsLocalizer({
     format,
     parse,
@@ -61,40 +63,63 @@ function MyPlantsCalendar() {
     }, []);
 
     const deleteEvent = async (eventId) => {
-        try {
-            const { error } = await supabase
-            .from('watering_events')
-            .delete()
-            .eq('id', eventId);
+      try {
+          const { error } = await supabase
+          .from('watering_events')
+          .delete()
+          .eq('id', eventId);
 
-            if (error) {
-            console.error('Error deleting event:', error);
-            } else {
-            // Verwijder het event uit de lokale state
-            setEvents(events.filter(event => event.id !== eventId));
-            }
-        } catch (error) {
-            console.error('Error deleting event:', error);
-        }
+          if (error) {
+          console.error('Error deleting event:', error);
+          toast.error('Fout bij het verwijderen van het event.');
+          } else {
+          // Verwijder het event uit de lokale state
+          setEvents(events.filter(event => event.id !== eventId));
+          toast.success('Event succesvol verwijderd.');
+          }
+      } catch (error) {
+          console.error('Error deleting event:', error);
+          toast.error('Er is een onverwachte fout opgetreden.');
+      }
     };
 
     const handleEventSelect = (event) => {
-      const confirmDelete = window.confirm(`Wil je het event "${event.title}" verwijderen?`);
-      if (confirmDelete) {
-        deleteEvent(event.id);
-      }
+      showToastWithButtons(event.id);
     };
     
     // Methode om kleur van evenementen te bepalen
     const eventPropGetter = (event) => {
-      let backgroundColor = '#3174ad'; // Default kleur (blauw)
+      let backgroundColor = '#3174ad';
       if (event.type === 'watering') {
-          backgroundColor = '#007BFF'; // Watering in blauw
+          backgroundColor = '#007BFF';
       } else if (event.type === 'repotting') {
-          backgroundColor = '#28A745'; // Repotting in groen
+          backgroundColor = '#a5592a';
       }
       return { style: { backgroundColor } };
-  };
+    };
+
+    // CustomToast met knoppen voor bevestiging en annulering
+    const CustomToast = ({ eventId, closeToast }) => (
+      <div>
+        <p>Weet je zeker dat je dit evenement wilt verwijderen?</p>
+        <button className="button--cancel" onClick={closeToast}>Annuleren</button>
+        <button className="button--confirm-delete" onClick={() => handleConfirm(eventId, closeToast)}>Bevestigen</button>
+      </div>
+    );
+
+    const handleConfirm = (eventId, closeToast) => {
+      deleteEvent(eventId); // Verwijder het event
+      closeToast(); // Sluit de toast
+    };
+
+    const showToastWithButtons = (eventId) => {
+      toast(<CustomToast eventId={eventId} />, {
+        position: "top-right",
+        autoClose: false,
+        closeOnClick: false,
+      });
+    };
+    
 
     return (
         <div className="calendar">

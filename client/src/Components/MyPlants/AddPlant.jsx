@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import logo from "../../assets/logo-kotgreener.svg";
 import { supabase } from '../../lib/helper/supabaseClient';
+import Select from 'react-select';
 import { addDays, format } from 'date-fns';
 import Header from '../Header/Header';
 import Navbar from '../Navbar/Navbar';
@@ -14,7 +15,6 @@ function AddPlant() {
   const [height, setHeight] = useState('');
   const [imageUrl, setImageUrl] = useState('');
   const [downloadImageUrl, setDownloadImageUrl] = useState('');
-
   const navigate = useNavigate();
   const [session, setSession] = useState(null);
   const [existingPlants, setExistingPlants] = useState([]);
@@ -73,12 +73,13 @@ function AddPlant() {
 
     try {
       const userId = session.user.id;
+      const plantId = selectedPlant.value;
 
       const { data, error } = await supabase
         .from('user_plants')
         .insert({
           profile_id: userId,
-          plant_id: isManualEntry ? null : selectedPlant,
+          plant_id: isManualEntry ? null : plantId,
           nickname,
           height,
           sunlight,
@@ -109,11 +110,11 @@ function AddPlant() {
     }
   };
 
-  const handlePlantChange = (e) => {
-    const plantId = e.target.value;
-    setSelectedPlant(plantId);
+  const handlePlantChange = (selectedOption) => {
+    // const plantId = e.target.value;
+    setSelectedPlant(selectedOption);
 
-    if (plantId === "manual") {
+    if (selectedOption.value === "manual") {
       setIsManualEntry(true);
       setHeight('');
       setSunlight('');
@@ -123,7 +124,7 @@ function AddPlant() {
       setImageUrl('');
     } else {
       setIsManualEntry(false);
-      const selected = existingPlants.find(plant => plant.id === plantId);
+      const selected = existingPlants.find(plant => plant.id === selectedOption.value);
       if (selected) {
         setHeight(selected.height);
         setSunlight(selected.sunlight);
@@ -134,6 +135,13 @@ function AddPlant() {
       }
     }
   };
+
+  const options = existingPlants.map((plant) => ({
+    value: plant.id,
+    label: plant.name,
+  }));
+
+  options.push({ value: 'manual', label: 'Nieuwe plant toevoegen' });
 
   async function downloadImage(path) {
     try {
@@ -249,7 +257,15 @@ function AddPlant() {
         {/* <h3>Voeg hier jouw plant toe</h3> */}
         <form onSubmit={handleSubmit}>
           <div className="form-left">
-            <label>
+          <Select
+              options={options}
+              value={selectedPlant}
+              onChange={handlePlantChange}
+              placeholder="Type plant"
+              isClearable
+              required
+            />
+            {/* <label>
               Selecteer plant
             </label>
             <select
@@ -264,7 +280,7 @@ function AddPlant() {
                 </option>
               ))}
               <option value="manual">Nieuwe plant toevoegen</option>
-            </select>
+            </select> */}
             <label>
               Bijnaam
             </label>

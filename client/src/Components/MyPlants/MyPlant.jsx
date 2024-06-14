@@ -1,21 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import {jwtDecode} from 'jwt-decode';
 import { Link, NavLink, useNavigate, useParams } from 'react-router-dom';
 import Navbar from '../Navbar/Navbar';
 import toolsAR from "../../assets/tools-ar.png";
 import { supabase } from '../../lib/helper/supabaseClient';
-import logo from "../../assets/logo-kotgreener.svg";
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import './MyPlants.css';
 import Header from '../Header/Header';
+import Loading from '../Loading/Loading';
 
 function MyPlant() {
   const { id } = useParams();
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [tasks, setTasks] = useState([]);
   const [plant, setMyPlant] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [isInMyPlants, setIsInMyPlants] = useState(false);
-  const [isFavorite, setIsFavorite] = useState(false);
   const navigate = useNavigate();
   const [session, setSession] = useState(null);
   const [imageUrl, setImageUrl] = useState(null);
@@ -43,7 +40,7 @@ function MyPlant() {
     const fetchMyPlant = async (userId) => {
       const { data, error } = await supabase
         .from('user_plants')
-        .select('*, plants(name, sunlight, water_frequency, image_url, height, description, verticutting, repotting)')
+        .select('*, plants(name, sunlight, water_frequency, image_url, height, description, care, repotting)')
         .eq('id', id)
         .eq('profile_id', userId)
         .single();
@@ -105,14 +102,17 @@ function MyPlant() {
         .from('watering_events')
         .delete()
         .eq('id', eventId);
-  
+
       if (error) {
         console.error('Error deleting event:', error);
+        toast.error('Fout bij het verwijderen van het event.');
       } else {
         setEvents(events.filter(event => event.id !== eventId));
+        toast.success('Event succesvol verwijderd.');
       }
     } catch (error) {
       console.error('Unexpected error:', error);
+      toast.error('Er is een onverwachte fout opgetreden.');
     }
   };
 
@@ -121,48 +121,75 @@ function MyPlant() {
   };
 
   const handleDeletePlant = async () => {
-    if (window.confirm('Weet je zeker dat je deze plant wilt verwijderen?')) {
-      try {
-        const { error } = await supabase
-          .from('user_plants')
+    try {
+      const { error } = await supabase
+        .from('user_plants')
+        .delete()
+        .eq('id', id);
+
+      if (error) {
+        console.error('Error deleting plant:', error);
+        toast.error('Fout bij het verwijderen van de plant.');
+      } else {
+        const { error: eventsError } = await supabase
+          .from('watering_events')
           .delete()
-          .eq('id', id);
+          .eq('user_plant_id', id);
 
-        if (error) {
-          console.error('Error deleting plant:', error);
-        } else {
-          // Verwijder bijbehorende events
-          const { error: eventsError } = await supabase
-            .from('watering_events')
-            .delete()
-            .eq('user_plant_id', id);
-
-          if (eventsError) {
-            console.error('Error deleting watering events:', eventsError);
-          }
-
-          navigate('/my-plants');
+        if (eventsError) {
+          console.error('Error deleting watering events:', eventsError);
         }
-      } catch (error) {
-        console.error('Unexpected error:', error);
+
+        navigate('/my-plants');
+        toast.success('Plant succesvol verwijderd.');
       }
+    } catch (error) {
+      console.error('Unexpected error:', error);
+      toast.error('Er is een onverwachte fout opgetreden.');
     }
   };
 
-  if (loading) {
-    return <div>Loading...</div>;
-}
+  const handlePlantDelete = (event) => {
+    showToastWithButtons(id);
+  };
 
-if (!plant) {
-    return <div>Plant niet gevonden.</div>;
-}
+  // CustomToast met knoppen voor bevestiging en annulering
+  const CustomToast = ({ plantId, closeToast }) => (
+    <div>
+      <p>Weet je zeker dat je de plant wilt verwijderen?</p>
+      <button className="button--cancel" onClick={closeToast}>Annuleren</button>
+      <button className="button--confirm-delete" onClick={() => handleConfirm(plantId, closeToast)}>Bevestigen</button>
+    </div>
+  );
+
+  const handleConfirm = (plantId, closeToast) => {
+    handleDeletePlant(); // Verwijder het event
+    closeToast(); // Sluit de toast
+  };
+
+  const showToastWithButtons = (eventId) => {
+    toast(<CustomToast eventId={eventId} />, {
+      position: "top-right",
+      autoClose: false,
+      closeOnClick: false,
+    });
+  };
+
+
+  if (loading) {
+    return <Loading/>;
+  }
+
+  if (!plant) {
+      return <div>Plant niet gevonden.</div>;
+  }
 
   return (
     <>
       <div className="myPlant">
         <Header/>
         <div className="plant-image-background-overlay">
-          <img src={plantImageUrl} alt={plant.name} className="plant-image-background" />
+          <img src={plant.image_url ? plant.image_url : "" } alt={plant.name} className="plant-image-background" />
         </div>
         <section className="plant-details">
           <div>
@@ -172,9 +199,17 @@ if (!plant) {
           </div>
           <div className="plant-details-header">
             <h2 className="plant-name">{plant.nickname ? plant.nickname : 'Mijn '+ plant.plants.name}</h2>
-            <div>
-              <button onClick={handleEditPlant}>Bewerk Plant</button>
-              <button onClick={handleDeletePlant} style={{ backgroundColor: 'red', color: 'white' }}>Verwijder Plant</button>
+            <div className="action-buttons">
+              <svg className="btn-edit" onClick={handleEditPlant} fill="none" height="24" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+              </svg>
+              <svg className="btn--delete" onClick={() => handlePlantDelete(id)} xmlns="http://www.w3.org/2000/svg" width="20" height="22" id="trash">
+              <g fill="none" fill-rule="evenodd" stroke="#000" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2">
+                  <path d="M1 5h18M17 5v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5m3 0V3a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M8 10v6M12 10v6">
+                  </path>
+                </g>
+              </svg>
             </div>
           </div>
           <h3 className="plant-name">{plant.plants ? plant.plants.name : plant.name}</h3>
@@ -199,13 +234,13 @@ if (!plant) {
               <p>{plant.plants ? plant.plants.water_frequency : plant.water_frequency}</p>
             </div>
             <div className="plant-info-item">
-              <div className="item-verticute">
-                <svg width="25" height="25" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M4.16675 8.33341L8.33341 4.16675M14.5834 4.16675L4.16675 14.5834M4.16675 20.8334L20.8334 4.16675M20.8334 10.4167L10.4167 20.8334M20.8334 16.6667L16.6667 20.8334" stroke="black" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              <div className="item-height">
+                <svg width="8" height="19" viewBox="0 0 8 19" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M3.64645 18.3536C3.84171 18.5488 4.15829 18.5488 4.35355 18.3536L7.53553 15.1716C7.7308 14.9763 7.7308 14.6597 7.53553 14.4645C7.34027 14.2692 7.02369 14.2692 6.82843 14.4645L4 17.2929L1.17157 14.4645C0.976311 14.2692 0.659728 14.2692 0.464466 14.4645C0.269204 14.6597 0.269204 14.9763 0.464466 15.1716L3.64645 18.3536ZM4.35355 0.646446C4.15829 0.451185 3.84171 0.451185 3.64645 0.646446L0.464466 3.82843C0.269204 4.02369 0.269204 4.34027 0.464466 4.53553C0.659728 4.7308 0.976311 4.7308 1.17157 4.53553L4 1.70711L6.82843 4.53553C7.02369 4.7308 7.34027 4.7308 7.53553 4.53553C7.7308 4.34027 7.7308 4.02369 7.53553 3.82843L4.35355 0.646446ZM4.5 18L4.5 1H3.5L3.5 18H4.5Z" fill="#234A0F"/>
                 </svg>
-                <h3>Verticuteren</h3>
+                <h3>Grootte</h3>
               </div>
-              <p>{plant.plants ? plant.plants.verticutting : plant.verticutting}</p>
+              <p>{plant.plants ? plant.plants.height + ' cm' : plant.height + ' cm'}</p>
             </div>
             <div className="plant-info-item">
               <div className="item-repot">
@@ -222,7 +257,6 @@ if (!plant) {
             <div className="myPlant-tasks">
               {events.map(event => (
                 <div className="myPlant-task" key={event.id}>
-                  <h4>{event.title}</h4>
                   <p>{event.type}</p>
                   <p>{event.start_event.toLocaleDateString()}</p>
                   <button onClick={() => handleDeleteEvent(event.id)}>Delete</button>
@@ -233,6 +267,7 @@ if (!plant) {
             <p>No watering events found for this plant.</p>
           )}
         </section>
+        <ToastContainer position="top-right" autoClose={5000} hideProgressBar={false} />
       </div>
       <Navbar />
     </>

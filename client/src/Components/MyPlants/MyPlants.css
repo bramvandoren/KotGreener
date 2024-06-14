@@ -1,5 +1,4 @@
 .my-plants-page {
-  /* padding: 20px; */
   background-color: white;
   color: var(--dark-green);
   display: flex;
@@ -7,12 +6,11 @@
   justify-content: space-between;
   margin-bottom: 300px;
   h2 {
-    margin-bottom: 20px;
-    font-family: 'Pacifico', cursive;
-    color: var(--medium-green);
+    margin: 10px 0;
   }
   .my-plants-intro {
-    padding: 20px 20px 10px 20px;
+    padding: 20px 5% 20px 5%;
+    padding-top: 100px;
     .my-plants-intro-text {
       margin: 0 0 10px 0;
     }
@@ -22,13 +20,35 @@
       align-items: baseline;
       justify-content: space-between;
     }
+    .btn--secondary {
+      padding: 0.5rem 0.5rem 0.5rem 1rem;
+      svg {
+        transform: rotate(-90deg);
+        width: 15px;
+        height: 15px;
+        margin-bottom: -2px;
+        margin-left: 5px;
+        transition: 0.3s ease;
+      }
+    }
+    .btn--secondary:hover {
+      background-color: var(--light-green);
+      color: var(--dark-green);
+    }
+    .btn-show {
+      background-color: var(--light-green);
+      color: var(--dark-green);
+      svg {
+        transform: rotate(0);
+      }
+    }
   }
 }
 
 .tasks {
   background: var(--light-green);
-  padding: 20px;
-  margin: 0 20px;
+  padding: 10px;
+  margin: 0 5% 10px 5%;
   border: 0.2rem solid var(--medium-green);
   border-radius: 15px;
   h2 {
@@ -50,51 +70,75 @@
       font-size: 12px;
     }
   }
-  
 }
 
 .tasks-items {
-  /* display: flex;
   padding: 0;
-  gap: 10px; */
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
   .tasks-item {
     display: flex;
     position: relative;
     flex-direction: column;
+    justify-content: center;
+    gap: 5px;
     border-radius: 50%;
-    padding: 25px;
-    border: 10px solid transparent;
+    padding: 0;
+    border: 5px solid transparent;
     margin: 10px 0;
     width: 100px;
     height: 100px;
     p {
-      margin: 10px;
+      margin: 0px;
     }
     .small-circle {
       position: absolute;
       top: -10px;
       right: -10px;
-      width: 50px;
-      height: 50px;
+      width: 35px;
+      height: 35px;
       background-color: white;
       border-radius: 50%;
-      border: 5px solid transparent;
+      border: 4px solid transparent;
+      text-align: center;
     }
     .small-circle.watering {
       border-color: lightblue;
+      svg {
+        fill: lightblue;
+        path {
+          stroke: lightblue;
+        }
+      }
+    }
+    .small-circle.repotting {
+      border-color: #a5592a;
+      svg {
+        fill: #a5592a;
+        path {
+          stroke: #a5592a;
+          fill: #a5592a;
+        }
+      }
     }
   }
   .task-true {
-    background: black;
+    background: rgba(0,0,0,0.8);
     color: white;
   }
+  svg.done {
+    width: 40px;
+    height: 40px;
+    margin: 0 auto;
+    fill: white;
+  }
   .tasks-item.watering {
-    /* background: lightblue; */
     border-color: lightblue;
   }
   
-  .tasks-item.repot {
-    border-color: brown;
+  .tasks-item.repotting {
+    border-color: #a5592a;
   }
   .tasks-item:hover {
     /* background: linear-gradient(rgb(0 0 0/40%) 0 0); */
@@ -105,13 +149,12 @@
 
 .task-count {
   display: inline-block;
-  margin-left: 10px;
-  padding: 2px 8px;
+  margin-left: 5px;
+  padding: 2px 7px;
   background-color: red;
   color: white;
   border-radius: 50%;
   font-size: 12px;
-  vertical-align: middle;
 }
 
 
@@ -185,8 +228,8 @@
 }
 
 .plant-image {
-  width: 60px;
-  height: 60px;
+  /* width: 60px;
+  height: 60px; */
   border-radius: 10px;
   margin-right: 20px;
 }
@@ -222,8 +265,9 @@
       display: flex;
       flex-direction: column;
       background: white;
-      padding: 20px;
+      padding: 10px;
       border-radius: 10px;
+      text-align: center;
       p {
         margin: 0;
         text-align: center;
@@ -232,27 +276,70 @@
   }
 }
 
+.my-plants {
+  background: var(--light-green);
+  padding: 0 5%;
+  padding-top: 10px;
+  .select-orderBy {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    select {
+      padding: 5px 5px;
+      cursor: pointer;
+      color: var(--dark-green);
+      border: 0.15rem solid var(--dark-green);
+      option {
+        background-color: var(--light-green);
+      }
+      option:checked {
+        font-weight: bold;
+      }
+    }
+    label {
+      margin: 0 10px;
+    }
+  }
+}
+
+
 .my-plants-items {
   display: grid;
   padding: 0;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 20px;
-  padding-top: 20px;
-  padding-left: 20px;
+  padding-top: 10px;
   justify-content: center;
   background: var(--light-green);
+  .plant-card-info-dots {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    text-align: center;
+  }
+  .plant-image-overlay {
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  }
 }
 
 .editPlant {
   display: flex;
   flex-direction: column;
+  padding-top: 100px;
+  padding-bottom: 20px;
   .breadcrumb {
-    padding: 0 20px;
+    padding: 10px 5%;
   }
   .editPlant-form {
     max-width: 400px;
     width: 100%;
-    padding: 10px 20px;
+    padding: 10px 5%;
     margin: 0 auto;
     background: white;
     border-radius: 10px;
@@ -279,16 +366,21 @@
 .addPlant {
   h2 {
     margin-bottom: 20px;
-    font-family: 'Pacifico', cursive;
-    color: var(--medium-green);
+    color: var(--dark-green);
   }
   .my-plants-intro {
-    padding: 20px 20px 10px 20px;
+    padding: 20px 5% 10px 5%;
     background: white;
+    padding-top: 100px;
+    h2 {
+      margin: 10px 0;
+    }
+    .my-plants-intro-text {
+      margin: 0 0 10px 0;
+    }
   }
   .addPlant-form {
     padding: 10px 20px;
-    /* max-width: 400px; */
     background: white;
     max-width: 700px;
     margin: 0 auto;
@@ -297,6 +389,7 @@
     box-shadow: 0 0 10px #f4f0f1;
     input,select {
       margin: 0;
+      margin-bottom: 10px;
       padding: 10px 0 10px 10px;
       width: 100%;
       background: #f4f0f1;
@@ -306,11 +399,12 @@
     input:hover, select:hover {
       box-shadow:#9eb599 0 0 0 2px;
     }
-    input:focus, select:focus {
+    /* input:focus, select:focus {
         box-shadow: 0 0 0 2px var(--medium-green), 0 0 0 6px rgba(158, 181, 153, .2) !important;
-    }
+    } */
     label {
       margin: 15px 0 5px 0;
+      margin-top: 10px;
     }
     button {
       padding: 1rem 1rem;
@@ -331,6 +425,9 @@
     padding: 0;
     height: 50vh;
     width: 80vw;
+  }
+  .rbc-agenda-view {
+    color: white;
   }
   .calendar-legende {
     display: flex;
@@ -371,6 +468,33 @@
   }
 }
 
+.plant-card-info {
+  display: flex;
+  flex-direction: column;
+  h2 {
+    font-size: 1.5rem;
+    margin: 0;
+    margin-bottom: 10px;
+  }
+  h3 {
+    margin: 0;
+    margin-bottom: 10px;
+    font-weight: 400;
+  }
+}
+
+
 input[type=number]::-webkit-inner-spin-button {
   -webkit-appearance: none;
 }
+
+/* MEDIA QUERIES */
+@media (max-width: 600px) {
+  .tasks-section {
+    .today-tasks {
+      width: 100%;
+    }
+  }
+}
+
+

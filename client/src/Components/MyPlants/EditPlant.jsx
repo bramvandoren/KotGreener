@@ -2,22 +2,33 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { supabase } from '../../lib/helper/supabaseClient';
 import Header from '../Header/Header';
+import Avatar from '../Profile/Avatar';
+import ChangePlantImage from './ChangePlantImage';
 
 const EditPlant = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(true)
-  // const [plant, setPlant] = useState({
-  //   nickname: '',
-  //   sunlight: '',
-  //   water_frequency: '',
-  // });
+  const [loading, setLoading] = useState(true);
   const [nickname, setNickname] = useState(null);
   const [sunlight, setSunlight] = useState(null);
   const [water_frequency, setWaterFrequency] = useState(null);
-
+  const [height, setHeight] = useState('');
+  const [repottingFrequency, setRepottingFrequency] = useState('');
+  const [avatar_url, setAvatarUrl] = useState(null);
+  const [session, setSession] = useState(null);
 
   useEffect(() => {
+    const fetchSession = async () => {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        setSession(session);
+        if (!session) {
+          navigate('/login');
+        }
+      } catch (error) {
+        console.error('Error fetching session:', error);
+      }
+    };
     const fetchPlantDetails = async () => {
       setLoading(true)
       const { data, error } = await supabase
@@ -31,13 +42,46 @@ const EditPlant = () => {
       } else {
         setNickname(data.nickname);
         setSunlight(data.sunlight);
+        setHeight(data.height);
         setWaterFrequency(data.water_frequency);
+        setRepottingFrequency(data.repotting);
       }
       setLoading(false)
     };
-
+    fetchSession();
     fetchPlantDetails();
   }, [id]);
+
+  async function updateProfile(event, avatarUrl) {
+    event.preventDefault()
+
+    setLoading(true)
+    const { user } = session
+
+    const updates = {
+      id: user.id,
+      image_url: avatarUrl,
+    }
+
+    const { error } = await supabase.from('user_plants').upsert(updates);
+
+    const file = event.target.files[0]
+    const fileExt = file.name.split('.').pop()
+    const fileName = `${Math.random()}.${fileExt}`
+    const filePath = `${fileName}`
+    const { error: uploadError } = await supabase.storage.from('user_plants_images').upload(filePath, file)
+
+    if (uploadError) {
+      throw uploadError
+    }
+
+    if (error) {
+      alert(error.message)
+    } else {
+      setAvatarUrl(avatarUrl)
+    }
+    setLoading(false)
+  }
 
   const handleUpdatePlant = async () => {
     // const { nickname, sunlight, water_frequency } = plant;
@@ -48,6 +92,8 @@ const EditPlant = () => {
           nickname,
           sunlight,
           water_frequency,
+          height,
+          repotting:repottingFrequency
         })
         .eq('id', id);
 
@@ -73,9 +119,18 @@ const EditPlant = () => {
       </div>
       <div className="editPlant-form">
         <h2>Bewerk Plant</h2>
+        <div>
+            {/* <ChangePlantImage
+              url={avatar_url}
+              size={150}
+              onUpload={(event, url) => {
+                  updateProfile(event, url)
+              }}
+            /> */}
+          </div>
         <div className="editPlant-form-items">
           <label>
-              Nickname:
+              Bijnaam
           </label>
               <input
               type="text"
@@ -84,7 +139,7 @@ const EditPlant = () => {
               onChange={(e) => setNickname(e.target.value)}
               />
           <label>
-            Sunlight:
+            Zonlicht
           </label>
           <input
           type="text"
@@ -94,7 +149,7 @@ const EditPlant = () => {
           disabled
           />
           <label>
-            Water Frequency:
+            Water
           </label>
           <input
           type="text"
@@ -103,6 +158,28 @@ const EditPlant = () => {
           onChange={(e) => setWaterFrequency(e.target.value)}
           disabled
           />
+          <label>
+            Hoogte (in cm)
+          </label>
+          <input
+            type="number"
+            value={height}
+            onChange={(e) => setHeight(e.target.value)}
+            disabled
+            required
+            min={1}
+          />
+          <label>
+            Verpotten frequentie
+          </label>
+          <input
+          type="text"
+          name="repotting_frequency"
+          value={repottingFrequency || ''}
+          onChange={(e) => setRepottingFrequency(e.target.value)}
+          disabled
+          />
+          
           <button onClick={handleUpdatePlant} className="button block primary" type="submit" disabled={loading || (!nickname)}>
             {loading ? 'Loading ...' : 'Update Plant'}
           </button>
