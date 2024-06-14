@@ -38,6 +38,7 @@ Website: https://kot-greener.vercel.app/
    ```bash
    git clone https://github.com/your-username/kotgreener.git
    cd kotgreener
+   cd client
    ```
 
 2. **Install dependencies**
@@ -77,5 +78,5 @@ Voor vragen of opmerkingen, neem contact op met:
 
 ---
 
-Door deze stappen te volgen, kun je snel en gemakkelijk beginnen met het werken aan en gebruiken van de KotGreener webapplicatie. Veel plezier met tuinieren en het beheren van je groene vrienden!
+Door deze stappen te volgen, kun je snel en gemakkelijk beginnen met het werken aan en gebruiken van de KotGreener webapplicatie.
 
