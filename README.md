@@ -48,7 +48,6 @@ Website: https://kot-greener.vercel.app/
    # or
    yarn install
    ```
-   ```
 
 ### **Running the Application**
 
@@ -67,7 +66,6 @@ Website: https://kot-greener.vercel.app/
 - **Volg je dagelijkse verzorgingstaken** en markeer taken als voltooid.
 - **Bekijk de Tip van de Week** voor nuttige plantentips.
 - **Lees de informatieve blogs**
-```
 
 ## **Contact**
 
