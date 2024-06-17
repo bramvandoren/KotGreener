@@ -19,9 +19,12 @@ import Account from './Components/Profile/Account'
 import AddPlant from './Components/MyPlants/AddPlant'
 import EditPlant from './Components/MyPlants/EditPlant'
 import Footer from './Components/Partials/Footer';
+import ScrollToTop from './Components/Scroller/ScrollToTop';
+import MarketDrafts from './Components/Market/MarketDrafts';
+import EditPlantMarket from './Components/Market/EditPlantMarket';
 
 function App() {
-  const [session, setSession] = useState(null)
+  const [session, setSession] = useState(null);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -53,9 +56,12 @@ function App() {
         <Route path="/my-plants/:id" element={<MyPlant/>} />
         <Route path="/my-plants/edit/:id" element={<EditPlant/>} />
 
-        <Route path="/winkel" element={<Market/>} />
+        <Route path="/markt" element={<Market/>} />
+        <Route path="/markt/add" element={<MarketDrafts/>} />
+        <Route path="/markt/edit/:plantId" element={<EditPlantMarket/>} />
 
     </Routes>
+    <ScrollToTop />
     <Footer/>
     </BrowserRouter>
     </>

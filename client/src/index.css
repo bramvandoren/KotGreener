@@ -56,7 +56,8 @@ h1 {
 
 h2 {
   font-family: 'Montserrat', system-ui, Avenir, Helvetica, Arial, sans-serif;
-  font-size: 1.8rem;
+  font-size: 1.3rem;
+  color: var(--dark-green);
 }
 
 button {
@@ -212,7 +213,7 @@ input::file-selector-button {
 
 @media (prefers-color-scheme: light) {
   :root {
-    color: var(--dark-green);
+    color: black;
     background-color: var(--light-green);
   }
   a:hover {
@@ -225,6 +226,9 @@ input::file-selector-button {
   .container {
       width: 80%;
       margin: 0 auto;
+  }
+  h2 {
+    font-size: 1.8rem;
   }
   .navbar {
     display: none;
