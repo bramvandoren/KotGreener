@@ -2,18 +2,26 @@ import React, { useEffect, useState } from 'react';
 import './Blog.css';
 import Navbar from '../Navbar/Navbar';
 import BlogDetail from './BlogDetail';
-import { Link, NavLink } from 'react-router-dom';
-import logo from "../../assets/logo-kotgreener.svg";
+import { Link, NavLink, Navigate, useNavigate } from 'react-router-dom';
 import { supabase } from '../../lib/helper/supabaseClient';
 import Loading from '../Loading/Loading';
 import Header from '../Header/Header';
 
-function Blog({session}) {
+function Blog() {
   const [blogs, setBlogs] = useState([]);
-  const [userSession, setUserSession] = useState(null);
+  const [session, setSession] = useState(true);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
+    const fetchSession = async () => {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        setSession(session);
+      } catch (error) {
+        console.error('Error fetching session:', error);
+      }
+    };
     const fetchBlogs = async () => {
       const { data, error } = await supabase
         .from('blogs')
@@ -27,7 +35,7 @@ function Blog({session}) {
       }
       setLoading(false);
     };
-
+    fetchSession();
     fetchBlogs();
   }, []);
 
@@ -49,7 +57,7 @@ function Blog({session}) {
   }
 
   if (!blogs) {
-    return <div>Blog not found</div>;
+    return <div>Blog niet gevonden</div>;
   }
 
   return (
@@ -81,7 +89,7 @@ function Blog({session}) {
                 <p>{truncateText(blog.content, 30)}</p>
                 <p className="blog-content-date">{formatDate(blog.created_at)}</p>
                 {session ? (
-                  <Link to={`/blog/${blog.slug}`} className="button--tertiair">Lees meer</Link>
+                  <Link to={`/blog/${blog.slug}`} className="read-more">Lees meer</Link>
                 ) :
                 (
                   <p><Link to="/login">Log in</Link> om een blog te lezen.</p>

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import './Blog.css';
 import Navbar from '../Navbar/Navbar';
-import { Link, NavLink, useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { supabase } from '../../lib/helper/supabaseClient';
 import Header from '../Header/Header';
 import {marked} from 'marked';

@@ -1,6 +1,4 @@
 .blog {
-  /* padding: 0 20px; */
-  /* background-color: #f0f4f0; */
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -24,19 +22,24 @@
   border-radius: 10px;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
   display: flex;
+  flex-direction: column;
   margin-bottom: 10px;
   position: relative;
   overflow: hidden;
   cursor: pointer;
   .blog-image-overlay {
     width: 100%;
+    max-height: 400px;
     margin-right: 20px;
     transition: transform 0.5s ease;
-    max-width: 150px;
+    overflow: hidden;
+  }
+  .blog-content {
+    padding: 10px 0;
   }
 }
 
-.blog-post:hover .blog-image-overlay {
+.blog-post:hover .blog-image-overlay img {
   transform: scale(1.1);
 }
 
@@ -48,8 +51,13 @@
 }
 
 
-.blog-content h2, .blog-content a, .blog-content p  {
+.blog-content h2, .blog-content p  {
   margin: 10px;
+}
+
+.blog-content a.read-more {
+  margin: 10px;
+  font-size: 1.2rem;
 }
 
 .blog-content-date {
@@ -75,11 +83,6 @@
 }
 
 .blog-detail {
-  /* .header {
-    position: relative;
-    height: 50vh;
-    overflow: hidden;
-  } */
   .blog-image-overlay {
     position: fixed;
     top: 0;
@@ -96,8 +99,8 @@
   .blog-detail-content {
     .blog-detail-intro {
       h2 {
-        font-size: 3rem;
-        font-weight:400;
+        font-size: 1.5rem;
+        font-weight: 400;
         color: var(--medium-green);
       }
     }
@@ -114,7 +117,7 @@
     }
     h2 {
       margin: 10px 0;
-      font-size: 1.5rem;
+      font-size: 1.2rem;
       font-family: 'Montserrat', Helvetica, sans-serif;
     }
   }
@@ -149,7 +152,7 @@
     padding-right: 5%;
   }
   form input, form textarea {
-    width: 100%;
+    width: 85%;
     padding: 10px 20px 0 20px;
     margin-top: 1rem;
     color: black;
@@ -200,14 +203,57 @@
 /* Media query voor tablets (schermen groter dan 768px) */
 @media (min-width: 768px) {
   .blog-post {
+    flex-direction: row;
     .blog-image-overlay {
-      max-width: 300px;
+      width: 100%;
+      max-width: 500px;
+      max-height: none;
+      img {
+        /* width: 100%; */
+        height: 100%;
+        object-fit: cover;
+      }
+    }
+  }
+  .blog-detail {
+    .blog-detail-content {
+      .blog-detail-intro {
+        h2 {
+          font-size: 2rem;
+        }
+      }
+      h2 {
+        font-size: 1.5rem;
+      }
+    }
+  }
+  .blog-comments {
+    form input, form textarea {
+      width: 95%;
     }
   }
 }
 
 /* Media query voor desktops (schermen groter dan 1024px) */
 @media (min-width: 1024px) {
+  .blog-detail {
+    .blog-detail-content {
+      .blog-detail-intro {
+        h2 {
+          font-size: 2.5rem;
+        }
+      }
+      h2 {
+        font-size: 1.5rem;
+      }
+    }
+  }
+
+  .blog-comments {
+    form input, form textarea {
+      width: 100%;
+    }
+  }
   
 }
 

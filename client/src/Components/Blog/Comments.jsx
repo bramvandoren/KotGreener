@@ -65,8 +65,7 @@ const Comments = ({ blogId, session }) => {
       if (error) {
         throw new Error(error.message);
       } else {
-        // Na succesvolle invoeging, opnieuw ophalen van reacties
-        fetchComments(); // Dit zal de comments opnieuw instellen met de meest recente gegevens
+        fetchComments();
         setNewComment('');
       }
     } catch (error) {
