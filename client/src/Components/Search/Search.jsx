@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import {jwtDecode} from 'jwt-decode';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import Select from 'react-select';
 import PlantCard from './PlantCard';
 import Navbar from '../Navbar/Navbar';
+import plants from "../../assets/lot-of-plants.png";
 import { supabase } from '../../lib/helper/supabaseClient';
-import logo from "../../assets/logo-kotgreener.svg";
 import './Search.css';
 import Header from '../Header/Header';
 
@@ -21,6 +20,8 @@ function Search() {
   const [favorites, setFavorites] = useState([]);
   const [session, setSession] = useState(null);
   const [sortOption, setSortOption] = useState('order');
+  const areFiltersSelected = sunlight || size || care || extraFilters.length > 0;
+
   const navigate = useNavigate();
 
   const handleSearch = (e) => {
@@ -267,141 +268,233 @@ function Search() {
       <div className="search-page">
         <Header/>
         <div className="search-intro">
+          <img src={plants} alt='Jouw Groen beheren' />
           <Link className="breadcrumb">Planten zoeken</Link>
           <div className="search-intro-header">
-            <h2>Planten zoeken</h2>
+              <h2>Planten zoeken</h2>
+              <p className="search-intro-text">
+                Zoek nu jouw perfecte plant voor op kot. Pas aan naar jouw persoonlijke keuze(s) en ontdek.
+              </p>
           </div>
-          <p className="search-intro-text">Zoek nu jouw perfecte plant voor op kot. Pas aan naar jouw persoonlijke keuze(s) en ontdek.
-          </p>
-        </div>
-        <div className="filter">
-          <div className="search-input">
-            <input
-              type="text"
-              placeholder="Zoek een plant"
-              value={query}
-              onChange={handleSearch}
-              className="input-search-icon"
-            />
-            {query ? (
-            <svg className="clear-icon" onClick={handleClearSearch} width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M16.875 7.125L7.125 16.875M7.125 7.125L16.875 16.875" stroke="black" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-            ) : (<></>)}
-            <svg className="search-icon" width="25" height="25" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M21.875 21.875L15.625 15.625M3.125 10.4167C3.125 11.3742 3.3136 12.3224 3.68005 13.2071C4.04649 14.0917 4.58359 14.8956 5.26068 15.5727C5.93777 16.2497 6.7416 16.7868 7.62627 17.1533C8.51093 17.5197 9.45911 17.7083 10.4167 17.7083C11.3742 17.7083 12.3224 17.5197 13.2071 17.1533C14.0917 16.7868 14.8956 16.2497 15.5727 15.5727C16.2497 14.8956 16.7868 14.0917 17.1533 13.2071C17.5197 12.3224 17.7083 11.3742 17.7083 10.4167C17.7083 9.45911 17.5197 8.51093 17.1533 7.62627C16.7868 6.7416 16.2497 5.93777 15.5727 5.26068C14.8956 4.58359 14.0917 4.04649 13.2071 3.68004C12.3224 3.3136 11.3742 3.125 10.4167 3.125C9.45911 3.125 8.51093 3.3136 7.62627 3.68004C6.7416 4.04649 5.93777 4.58359 5.26068 5.26068C4.58359 5.93777 4.04649 6.7416 3.68005 7.62627C3.3136 8.51093 3.125 9.45911 3.125 10.4167Z" stroke="black" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-          </div>
-          <div className="dropdowns">
-            <Select
-              options={sunlightOptions}
-              placeholder="Hoeveelheid Zonlicht"
-              value={sunlight}
-              onChange={setSunlight}
-              className="dropdown"
-            />
-            <Select
-              options={sizeOptions}
-              placeholder="Grootte Plant"
-              value={size}
-              onChange={setSize}
-              className="dropdown"
-            />
-            <Select
-              options={careOptions}
-              placeholder="Hoeveelheid Verzorging"
-              value={care}
-              onChange={setCare}
-              className="dropdown"
-            />
-          </div>
-          <div className="filter-more">
-            <div className="filter-more">
-            <div className="filter-more-header" onClick={() => setIsMoreFiltersOpen(!isMoreFiltersOpen)}>
-              <p>Meer eigenschappen</p>
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
-                <path d={isMoreFiltersOpen ? "M16 22a2 2 0 0 1-1.41-.59l-10-10a2 2 0 0 1 2.82-2.82L16 17.17l8.59-8.58a2 2 0 0 1 2.82 2.82l-10 10A2 2 0 0 1 16 22Z" : "M16 10a2 2 0 0 1 1.41.59l10 10a2 2 0 0 1-2.82 2.82L16 14.83l-8.59 8.58a2 2 0 0 1-2.82-2.82l10-10A2 2 0 0 1 16 10Z"}></path>
-              </svg>
-            </div>
-            {isMoreFiltersOpen && (
-              <div className="filter-more-others">
-                {extraFilterOptions.map(filter => (
-                  <div
-                    key={filter.value}
-                    className={`filter-item ${extraFilters.includes(filter.value) ? 'selected' : ''}`}
-                    onClick={() => handleExtraFilterClick(filter)}
-                  >
-                    {SVGIcons[filter.value]}
-                    <p>{filter.label}</p>
+          <div className="filter-desktop">
+            <div className="filter">
+              <div className="filter-content">
+                <h3>Filter</h3>
+                <div className="search-input">
+                  <input
+                    type="text"
+                    placeholder="Zoek een plant"
+                    value={query}
+                    onChange={handleSearch}
+                    className="input-search-icon"
+                  />
+                  {query ? (
+                  <svg className="clear-icon" onClick={handleClearSearch} width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M16.875 7.125L7.125 16.875M7.125 7.125L16.875 16.875" stroke="black" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                  ) : (<></>)}
+                  <svg className="search-icon" width="25" height="25" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21.875 21.875L15.625 15.625M3.125 10.4167C3.125 11.3742 3.3136 12.3224 3.68005 13.2071C4.04649 14.0917 4.58359 14.8956 5.26068 15.5727C5.93777 16.2497 6.7416 16.7868 7.62627 17.1533C8.51093 17.5197 9.45911 17.7083 10.4167 17.7083C11.3742 17.7083 12.3224 17.5197 13.2071 17.1533C14.0917 16.7868 14.8956 16.2497 15.5727 15.5727C16.2497 14.8956 16.7868 14.0917 17.1533 13.2071C17.5197 12.3224 17.7083 11.3742 17.7083 10.4167C17.7083 9.45911 17.5197 8.51093 17.1533 7.62627C16.7868 6.7416 16.2497 5.93777 15.5727 5.26068C14.8956 4.58359 14.0917 4.04649 13.2071 3.68004C12.3224 3.3136 11.3742 3.125 10.4167 3.125C9.45911 3.125 8.51093 3.3136 7.62627 3.68004C6.7416 4.04649 5.93777 4.58359 5.26068 5.26068C4.58359 5.93777 4.04649 6.7416 3.68005 7.62627C3.3136 8.51093 3.125 9.45911 3.125 10.4167Z" stroke="black" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </div>
+                <div>
+                  
+                </div>
+                <div className="dropdowns">
+                  <Select
+                    options={sunlightOptions}
+                    placeholder="Hoeveelheid Zonlicht"
+                    value={sunlight}
+                    onChange={setSunlight}
+                    className="dropdown"
+                  />
+                  <Select
+                    options={sizeOptions}
+                    placeholder="Grootte Plant"
+                    value={size}
+                    onChange={setSize}
+                    className="dropdown"
+                  />
+                  <Select
+                    options={careOptions}
+                    placeholder="Hoeveelheid Verzorging"
+                    value={care}
+                    onChange={setCare}
+                    className="dropdown"
+                  />
+                </div>
+                <div className="filter-more">
+                <div className="filter-more">
+                  <div className="filter-more-header" onClick={() => setIsMoreFiltersOpen(!isMoreFiltersOpen)}>
+                    <p>Meer eigenschappen</p>
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+                      <path d={isMoreFiltersOpen ? "M16 22a2 2 0 0 1-1.41-.59l-10-10a2 2 0 0 1 2.82-2.82L16 17.17l8.59-8.58a2 2 0 0 1 2.82 2.82l-10 10A2 2 0 0 1 16 22Z" : "M16 10a2 2 0 0 1 1.41.59l10 10a2 2 0 0 1-2.82 2.82L16 14.83l-8.59 8.58a2 2 0 0 1-2.82-2.82l10-10A2 2 0 0 1 16 10Z"}></path>
+                    </svg>
                   </div>
-                ))}
+                  {isMoreFiltersOpen && (
+                    <div className="filter-more-others">
+                      {extraFilterOptions.map(filter => (
+                        <div
+                          key={filter.value}
+                          className={`filter-item ${extraFilters.includes(filter.value) ? 'selected' : ''}`}
+                          onClick={() => handleExtraFilterClick(filter)}
+                        >
+                          {SVGIcons[filter.value]}
+                          <p>{filter.label}</p>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
               </div>
-            )}
+              </div>
+            </div>
+
           </div>
+        </div>
+        <div className="results-filter">
+          <div className="filter-desktop">
+            <div className="filter">
+              <div className="filter-content">
+                <h3>Filter</h3>
+                <div className="search-input">
+                  <input
+                    type="text"
+                    placeholder="Zoek een plant"
+                    value={query}
+                    onChange={handleSearch}
+                    className="input-search-icon"
+                  />
+                  {query ? (
+                  <svg className="clear-icon" onClick={handleClearSearch} width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M16.875 7.125L7.125 16.875M7.125 7.125L16.875 16.875" stroke="black" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                  ) : (<></>)}
+                  <svg className="search-icon" width="25" height="25" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21.875 21.875L15.625 15.625M3.125 10.4167C3.125 11.3742 3.3136 12.3224 3.68005 13.2071C4.04649 14.0917 4.58359 14.8956 5.26068 15.5727C5.93777 16.2497 6.7416 16.7868 7.62627 17.1533C8.51093 17.5197 9.45911 17.7083 10.4167 17.7083C11.3742 17.7083 12.3224 17.5197 13.2071 17.1533C14.0917 16.7868 14.8956 16.2497 15.5727 15.5727C16.2497 14.8956 16.7868 14.0917 17.1533 13.2071C17.5197 12.3224 17.7083 11.3742 17.7083 10.4167C17.7083 9.45911 17.5197 8.51093 17.1533 7.62627C16.7868 6.7416 16.2497 5.93777 15.5727 5.26068C14.8956 4.58359 14.0917 4.04649 13.2071 3.68004C12.3224 3.3136 11.3742 3.125 10.4167 3.125C9.45911 3.125 8.51093 3.3136 7.62627 3.68004C6.7416 4.04649 5.93777 4.58359 5.26068 5.26068C4.58359 5.93777 4.04649 6.7416 3.68005 7.62627C3.3136 8.51093 3.125 9.45911 3.125 10.4167Z" stroke="black" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </div>
+                <div>
+                  
+                </div>
+                <div className="dropdowns">
+                  <Select
+                    options={sunlightOptions}
+                    placeholder="Hoeveelheid Zonlicht"
+                    value={sunlight}
+                    onChange={setSunlight}
+                    className="dropdown"
+                  />
+                  <Select
+                    options={sizeOptions}
+                    placeholder="Grootte Plant"
+                    value={size}
+                    onChange={setSize}
+                    className="dropdown"
+                  />
+                  <Select
+                    options={careOptions}
+                    placeholder="Hoeveelheid Verzorging"
+                    value={care}
+                    onChange={setCare}
+                    className="dropdown"
+                  />
+                </div>
+                <div className="filter-more">
+                <div className="filter-more">
+                  <div className="filter-more-header" onClick={() => setIsMoreFiltersOpen(!isMoreFiltersOpen)}>
+                    <p>Meer eigenschappen</p>
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+                      <path d={isMoreFiltersOpen ? "M16 22a2 2 0 0 1-1.41-.59l-10-10a2 2 0 0 1 2.82-2.82L16 17.17l8.59-8.58a2 2 0 0 1 2.82 2.82l-10 10A2 2 0 0 1 16 22Z" : "M16 10a2 2 0 0 1 1.41.59l10 10a2 2 0 0 1-2.82 2.82L16 14.83l-8.59 8.58a2 2 0 0 1-2.82-2.82l10-10A2 2 0 0 1 16 10Z"}></path>
+                    </svg>
+                  </div>
+                  {isMoreFiltersOpen && (
+                    <div className="filter-more-others">
+                      {extraFilterOptions.map(filter => (
+                        <div
+                          key={filter.value}
+                          className={`filter-item ${extraFilters.includes(filter.value) ? 'selected' : ''}`}
+                          onClick={() => handleExtraFilterClick(filter)}
+                        >
+                          {SVGIcons[filter.value]}
+                          <p>{filter.label}</p>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+              </div>
+            </div>
+
+          </div>
+          <div className="plants-results">
+            <div className="selected-filters">
+              {areFiltersSelected ? (
+                <>
+                {sunlight && (
+                <button className="filter-button" onClick={() => handleFilterRemove('sunlight')}>
+                  {sunlight.label} ✕
+                </button>
+              )}
+              {size && (
+                <button className="filter-button" onClick={() => handleFilterRemove('size')}>
+                  {size.label} ✕
+                </button>
+              )}
+              {care && (
+                <button className="filter-button" onClick={() => handleFilterRemove('care')}>
+                  {care.label} ✕
+                </button>
+              )}
+              {extraFilters.map(filter => (
+                <button key={filter} className="filter-button" onClick={() => handleExtraFilterClick({ value: filter })}>
+                  {extraFilterOptions.find(f => f.value === filter)?.label} ✕
+                </button>
+              ))}
+                </>
+              ) : (
+                <h3>Alle planten</h3>
+              )}
+            </div>
+            <div className='filters-extra'>
+              <div className="results-count">
+                {results.length > 0 ? (
+                  <p>{results.length} plant{results.length > 1 ? 'en' : ''} gevonden</p>
+                ) : (
+                  <p>0 planten gevonden</p>
+                )}
+              </div>
+              <div className="sort-options">
+                <select value={sortOption} onChange={(e) => setSortOption(e.target.value)}>
+                  <option disabled defaultValue value="order">Sorteer op</option>
+                  <option value="name">Naam</option>
+                  <option value="sunlight">Zonlicht</option>
+                  <option value="water">Water</option>
+                  <option value="height">Grootte</option>
+                </select>
+              </div>
+            {/* <button>Meer Filters</button> */}
+            </div>
+            <div className="results">
+              {sortedPlants.length > 0 ? (
+                sortedPlants.map((plant) => (
+                  <PlantCard
+                    key={plant.id} 
+                    plant={plant}
+                    isFavorite={session && favorites.includes(plant.id)}
+                    onFavorite={handleFavorite}
+                    onUnfavorite={handleUnfavorite}
+                    session={session}
+                  />
+                ))
+              ) : (
+                <p className="no-results">Er zijn geen resultaten voor uw zoekopdracht.</p>
+              )}
+            </div>
+
           </div>
         </div>
-        <div className="selected-filters">
-          {category && (
-            <button className="filter-button" onClick={() => handleFilterRemove('category')}>
-              {category.label} ✕
-            </button>
-          )}
-          {sunlight && (
-            <button className="filter-button" onClick={() => handleFilterRemove('sunlight')}>
-              {sunlight.label} ✕
-            </button>
-          )}
-          {size && (
-            <button className="filter-button" onClick={() => handleFilterRemove('size')}>
-              {size.label} ✕
-            </button>
-          )}
-          {care && (
-            <button className="filter-button" onClick={() => handleFilterRemove('care')}>
-              {care.label} ✕
-            </button>
-          )}
-          {extraFilters.map(filter => (
-            <button key={filter} className="filter-button" onClick={() => handleExtraFilterClick({ value: filter })}>
-              {extraFilterOptions.find(f => f.value === filter)?.label} ✕
-            </button>
-          ))}
-        </div>
-        <div className='filters-extra'>
-        <div className="results-count">
-          {results.length > 0 ? (
-            <p>{results.length} plant{results.length > 1 ? 'en' : ''} gevonden</p>
-          ) : (
-            <p>0 planten gevonden</p>
-          )}
-        </div>
-        <div className="sort-options">
-          <select value={sortOption} onChange={(e) => setSortOption(e.target.value)}>
-            <option disabled defaultValue value="order">Sorteer op</option>
-            <option value="name">Naam</option>
-            <option value="sunlight">Zonlicht</option>
-            <option value="water">Water</option>
-            <option value="height">Grootte</option>
-          </select>
-        </div>
-        {/* <button>Meer Filters</button> */}
-      </div>
-      <div className="results">
-        {sortedPlants.length > 0 ? (
-          sortedPlants.map((plant) => (
-            <PlantCard
-              key={plant.id} 
-              plant={plant}
-              isFavorite={session && favorites.includes(plant.id)}
-              onFavorite={handleFavorite}
-              onUnfavorite={handleUnfavorite}
-              session={session}
-            />
-          ))
-        ) : (
-          <p className="no-results">Er zijn geen resultaten voor uw zoekopdracht.</p>
-        )}
-      </div>
       </div>
       <Navbar />
     </>
