@@ -3,7 +3,6 @@ import { Link, NavLink, useNavigate } from 'react-router-dom';
 import Navbar from '../Navbar/Navbar';
 import { supabase } from '../../lib/helper/supabaseClient';
 import './Login.css';
-import logo from "../../assets/logo-kotgreener.svg";
 import Header from '../Header/Header';
 
 function LoginPage() {
