@@ -2,13 +2,12 @@ import React, { useEffect, useRef, useState } from 'react';
 import './Home.css';
 import Navbar from '../Navbar/Navbar';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
-import Profile from '../Profile/Profile';
 import image from "../../assets/hero-kotgreener.jpg";
-import toolsBlog from "../../assets/tools-blog.png";
-import toolsOwnPlants from "../../assets/tools-ownPlants.png";
 import toolsPlants from "../../assets/tools-plants.png";
 import toolsAR from "../../assets/tools-ar.png";
 import logo from "../../assets/logo-kotgreener.svg";
+import blogimage from "../../assets/kotgreener-blog.png";
+import myplantsImage from "../../assets/kotgreener-myplants.png";
 import { supabase } from '../../lib/helper/supabaseClient';
 import { format } from 'date-fns';
 import { parseISO, isSameDay } from 'date-fns';
@@ -16,15 +15,14 @@ import Header from '../Header/Header';
 import Loading from '../Loading/Loading';
 import UserStats from './UserStats';
 import PlantCard from '../Search/PlantCard';
+import Video from './Video';
 
 function Home() {
   const [loading, setLoading] = useState(false);
   const [username, setUsername] = useState('');
-  const [plants, setPlants] = useState([]);
-  const [showProfile, setShowProfile] = useState(false);
   const navigate = useNavigate();
-  const [avatar_url, setAvatarUrl] = useState(null)
-  const [session, setSession] = useState(null)
+  const [session, setSession] = useState(null);
+  const [avatar_url, setAvatarUrl] = useState(null);
   const [tasks, setTasks] = useState([]);
   const [todayTasks, setTodayTasks] = useState([]);
   const [todayTasksCount, setTodayTasksCount] = useState(0);
@@ -74,6 +72,7 @@ function Home() {
         } else {
           setPopularPlants(data);
         }
+        setLoading(false);
       } catch (error) {
         console.error('Error fetching popular plants:', error);
       }
@@ -114,9 +113,8 @@ function Home() {
           setAvatarUrl(data.avatar_url)
         }
       }
-      // setLoading(false)
-    }
-
+      setLoading(false);
+    };
     fetchSession();
     fetchPopularPlants();
     fetchTipOfTheWeek();
@@ -131,10 +129,6 @@ function Home() {
       isSameDay(parseISO(task.start_event), today)
     );
     setTodayTasks(todayTasks);
-  };
-
-  const toggleProfile = () => {
-    setShowProfile(!showProfile);
   };
   
   // Bepaal het aantal taken voor vandaag
@@ -264,6 +258,14 @@ function Home() {
             <h2>Maak <b>Groen</b> jouw kotgeno(o)t!</h2>
             <button className="login-button" onClick={() => navigate('/login')}>Start hier →</button>
           </div>
+          <div className="intro-what">
+              <h2>Wat is KotGreener?</h2>
+              <p>KotGreenr helpt studenten bij het vinden van duurzame en milieuvriendelijke koten in hun stad. Onze missie is om groen wonen toegankelijker te maken voor iedereen, terwijl we bijdragen aan een betere planeet.</p>
+              <p>Met KotGreenr krijg je toegang tot een breed scala aan groene koten, samen met handige tips om je energieverbruik te verminderen en je ecologische voetafdruk te verkleinen. Begin vandaag nog met jouw groene reis!</p>
+          </div>
+          <div>
+            <Video/>
+          </div>
           </>
         )}
         <img className="hero-image" src={image} alt="image" />
@@ -272,39 +274,27 @@ function Home() {
           <div className="tools-items">
             <div className="tools-item">
               <div className="item-image">
-                <img src={toolsBlog} alt='Informatief Blog' />
+                <img src={blogimage} alt='Informatief Blog' />
               </div>
-              <div>
                 <h3>Informatief Blog</h3>
-                <p></p>
-              </div>
             </div>
             <div className="tools-item">
               <div className="item-image">
-                <img src={toolsOwnPlants} alt='Jouw Groen beheren' />
+                <img src={myplantsImage} alt='Jouw Groen beheren' />
               </div>
-              <div>
                 <h3>Jouw Groen beheren</h3>
-                <p></p>
-              </div>
             </div>
             <div className="tools-item">
               <div className="item-image">
                 <img src={toolsPlants} alt='Student Market' />
               </div>
-              <div>
                 <h3>Student Market</h3>
-                <p></p>
-              </div>
             </div>
             <div className="tools-item">
               <div className="item-image">
                 <img src={toolsAR} alt='Virtueel plaatsen planten' />
               </div>
-              <div>
                 <h3>Virtueel plaatsen planten</h3>
-                <p></p>
-              </div>
             </div>
           </div>
         </section>

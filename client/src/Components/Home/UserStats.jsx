@@ -8,11 +8,7 @@ import Loading from '../Loading/Loading';
 
 function UserStats() {
     const [loading, setLoading] = useState(false);
-    const [username, setUsername] = useState('');
-    const [plants, setPlants] = useState([]);
-    const [showProfile, setShowProfile] = useState(false);
     const navigate = useNavigate();
-    const [avatar_url, setAvatarUrl] = useState(null)
     const [session, setSession] = useState(null)
     const [tasks, setTasks] = useState([]);
     const [todayTasks, setTodayTasks] = useState([]);
@@ -93,35 +89,32 @@ function UserStats() {
             }
         };
             
-        const fetchMarketTransactionsCount = async (userId) => {
-            try {
-            // Ophalen aantal gekochte items
-            const { data: purchases, error: purchasesError, count: purchasesCount } = await supabase
-                .from('market_transactions')
-                .select('*', { count: 'exact' })
-                .eq('buyer_id', userId);
+        // const fetchMarketTransactionsCount = async (userId) => {
+        //     try {
+        //     const { data: purchases, error: purchasesError, count: purchasesCount } = await supabase
+        //         .from('market_transactions')
+        //         .select('*', { count: 'exact' })
+        //         .eq('buyer_id', userId);
         
-            if (purchasesError) {
-                console.error('Error fetching user purchases count:', purchasesError);
-            }
+        //     if (purchasesError) {
+        //         console.error('Error fetching user purchases count:', purchasesError);
+        //     }
         
-            // Ophalen aantal verkochte items
-            const { data: sales, error: salesError, count: salesCount } = await supabase
-                .from('market_transactions')
-                .select('*', { count: 'exact' })
-                .eq('seller_id', userId);
+        //     const { data: sales, error: salesError, count: salesCount } = await supabase
+        //         .from('market_transactions')
+        //         .select('*', { count: 'exact' })
+        //         .eq('seller_id', userId);
         
-            if (salesError) {
-                console.error('Error fetching user sales count:', salesError);
-            }
+        //     if (salesError) {
+        //         console.error('Error fetching user sales count:', salesError);
+        //     }
         
-            // Totaal aantal transacties berekenen
-            const totalTransactionsCount = (purchasesCount || 0) + (salesCount || 0);
-            animateCounter(setMarketTransactionsCount, totalTransactionsCount);
-            } catch (error) {
-            console.error('Unexpected error fetching market transactions count:', error);
-            }
-        };
+        //     const totalTransactionsCount = (purchasesCount || 0) + (salesCount || 0);
+        //     animateCounter(setMarketTransactionsCount, totalTransactionsCount);
+        //     } catch (error) {
+        //     console.error('Unexpected error fetching market transactions count:', error);
+        //     }
+        // };
         
         const fetchCompletedEventsCount = async (userId) => {
             try {
@@ -196,7 +189,7 @@ function UserStats() {
             <span>{completedEventsCount}</span>
         </div>
         <div className="stat-item">
-            <h3>Transacties op Studentenmarkt</h3>
+            <h3>Actief op markt</h3>
             <span>{marketTransactionsCount}</span>
         </div>
     </div>
