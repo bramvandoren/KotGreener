@@ -14,7 +14,6 @@ const Header = () => {
   const [username, setUsername] = useState('');
   const navigate = useNavigate();
 
-  // Fetch session on component mount
   useEffect(() => {
     const fetchSession = async () => {
       try {
@@ -51,10 +50,8 @@ const Header = () => {
       const currentScrollY = window.scrollY;
 
       if (currentScrollY > prevScrollY.current && currentScrollY > 100) {
-        // User is scrolling down and has scrolled more than 100px
         setShowHeader(false);
       } else {
-        // User is scrolling up or at the top of the page
         setShowHeader(true);
       }
 
@@ -63,7 +60,6 @@ const Header = () => {
 
     window.addEventListener('scroll', handleScroll);
 
-    // Clean up the event listener on component unmount
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
@@ -101,7 +97,7 @@ const Header = () => {
         <NavLink to="/my-plants" className="nav-item">
           <p>Mijn Planten</p>
         </NavLink>
-        <NavLink to="/winkel" className="nav-item">
+        <NavLink to="/markt" className="nav-item">
           <p>Markt</p>
         </NavLink>
         <NavLink to="/plants" className="nav-item">
@@ -121,10 +117,6 @@ const Header = () => {
               <span className="profile-username">
                 {username ? username : session.user.user_metadata.username}
               </span>
-              {/* <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
-                <path d="M16 22a2 2 0 0 1-1.41-.59l-10-10a2 2 0 0 1 2.82-2.82L16 17.17l8.59-8.58a2 2 0 0 1 2.82 2.82l-10 10A2 2 0 0 1 16 22Z">
-                </path>
-              </svg> */}
             </div>
           </div>
           ) : (
