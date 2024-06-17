@@ -8,6 +8,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import './MyPlants.css';
 import Header from '../Header/Header';
 import Loading from '../Loading/Loading';
+import { format, isSameDay, parseISO, addDays } from 'date-fns';
 
 function MyPlant() {
   const { id } = useParams();
@@ -59,7 +60,8 @@ function MyPlant() {
       const { data, error } = await supabase
         .from('watering_events')
         .select('*')
-        .eq('user_plant_id', id);
+        .eq('user_plant_id', id)
+        .order('start_event', { ascending: true });
         
       if (error) {
         console.error('Error fetching events:', error);
@@ -95,6 +97,27 @@ function MyPlant() {
       console.log('Error downloading image: ', error.message)
     }
   }
+
+  const handleToggleDone = async (eventId, currentDoneStatus) => {
+    try {
+      const { error } = await supabase
+        .from('watering_events')
+        .update({ done: !currentDoneStatus })
+        .eq('id', eventId);
+  
+      if (error) {
+        console.error('Error toggling done status:', error);
+        toast.error('Fout bij het bijwerken van de taak.');
+      } else {
+        setEvents(events.map(event => event.id === eventId ? { ...event, done: !currentDoneStatus } : event));
+        toast.success(`Taak succesvol ${!currentDoneStatus ? 'voltooid' : 'ongedaan gemaakt'}.`);
+      }
+    } catch (error) {
+      console.error('Unexpected error:', error);
+      toast.error('Er is een onverwachte fout opgetreden.');
+    }
+  };
+  
 
   const handleDeleteEvent = async (eventId) => {
     try {
@@ -184,6 +207,21 @@ function MyPlant() {
       return <div>Plant niet gevonden.</div>;
   }
 
+  const formatDate = (date) => {
+    return `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
+  };
+
+
+  const today = new Date();
+  
+  const todayEvents = events.filter(event => !event.done && isSameDay(event.end_event, today));
+  const upcomingEvents = events.filter(event => !event.done && event.end_event >= today);
+  const completedEvents = events.filter(event => event.done && isSameDay(event.end_event, today));
+  
+  const overdueFalseEvents = events.filter(event => !event.done && event.end_event < today);
+  const overdueTrueEvents = events.filter(event => event.done && event.end_event < today);
+
+
   return (
     <>
       <div className="myPlant">
@@ -205,7 +243,7 @@ function MyPlant() {
                 <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
               </svg>
               <svg className="btn--delete" onClick={() => handlePlantDelete(id)} xmlns="http://www.w3.org/2000/svg" width="20" height="22" id="trash">
-              <g fill="none" fill-rule="evenodd" stroke="#000" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2">
+                <g fill="none" fillRule="evenodd" stroke="#000" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2">
                   <path d="M1 5h18M17 5v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5m3 0V3a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M8 10v6M12 10v6">
                   </path>
                 </g>
@@ -255,16 +293,83 @@ function MyPlant() {
           <h3>Taken</h3>
           {events.length > 0 ? (
             <div className="myPlant-tasks">
-              {events.map(event => (
-                <div className="myPlant-task" key={event.id}>
+              {/* {events.map(event => (
+                <div key={event.id} className={`myPlant-task ${event.completed ? 'done' : 'not-done'}`}>
                   <p>{event.type}</p>
                   <p>{event.start_event.toLocaleDateString()}</p>
-                  <button onClick={() => handleDeleteEvent(event.id)}>Delete</button>
+                  <button onClick={() => handleToggleDone(event.id, event.done)} className="btn-toggle-status">
+                    {event.done ? 'Markeer als niet gedaan' : 'Markeer als gedaan'}
+                  </button>
+                  <svg className="btn--delete" onClick={() => handleDeleteEvent(event.id)} xmlns="http://www.w3.org/2000/svg" width="20" height="22">
+                    <g fill="none" fillRule="evenodd" stroke="#000" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2">
+                      <path d="M1 5h18M17 5v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5m3 0V3a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M8 10v6M12 10v6">
+                      </path>
+                    </g>
+                  </svg>
                 </div>
-              ))}
+              ))} */}
+              <div className="events-list">
+                <h4>Vandaag te doen</h4>
+                {todayEvents.map(event => (
+                  <div key={event.id} className="event-item today">
+                    <p>{event.type}</p>
+                    <p>{event.start_event.toLocaleDateString()}</p>
+                    <button className="button--done" onClick={() => handleToggleDone(event.id, event.done)}>
+                      {event.done ? 'Ongedaan maken' : 'Voltooien'}
+                    </button>
+                    <svg className="btn--delete" onClick={() => handleDeleteEvent(event.id)} xmlns="http://www.w3.org/2000/svg" width="20" height="22">
+                      <g fill="none" fillRule="evenodd" stroke="#000" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2">
+                        <path d="M1 5h18M17 5v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5m3 0V3a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M8 10v6M12 10v6">
+                        </path>
+                      </g>
+                    </svg>
+                  </div>
+                ))}
+                <h4>Voltooid vandaag</h4>
+                {completedEvents.map(event => (
+                  <div key={event.id} className="event-item completed">
+                    <p>{event.name}</p>
+                    <button className="button--done" onClick={() => handleToggleDone(event.id, event.done)}>
+                      {event.done ? 'Ongedaan maken' : 'Voltooien'}
+                    </button>
+                    <svg className="btn--delete" onClick={() => handleDeleteEvent(event.id)} xmlns="http://www.w3.org/2000/svg" width="20" height="22">
+                      <g fill="none" fillRule="evenodd" stroke="#000" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2">
+                        <path d="M1 5h18M17 5v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5m3 0V3a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M8 10v6M12 10v6">
+                        </path>
+                      </g>
+                    </svg>
+                    <span>Voltooid op {formatDate(event.end_event)}</span>
+                  </div>
+                ))}
+                <h4>Toekomst</h4>
+                {upcomingEvents.map(event => (
+                  <div key={event.id} className="event-item">
+                    <p>{event.type}</p>
+                    <p>{event.start_event.toLocaleDateString()}</p>
+
+                    <button className="button--done" onClick={() => handleToggleDone(event.id, event.done)}>
+                      {event.done ? 'Ongedaan maken' : 'Voltooien'}
+                    </button>
+                    <button className="button--delete" onClick={() => handleDeleteEvent(event.id)}>Verwijderen</button>
+                  </div>
+                ))}
+                <h4>Afgelopen</h4>
+                {overdueTrueEvents.map(event => (
+                  <div key={event.id} className="event-item overdue-true">
+                    <p>{event.name}</p>
+                    <span>Voltooid op {formatDate(event.end_event)}</span>
+                  </div>
+                ))}
+                {overdueFalseEvents.map(event => (
+                  <div key={event.id} className="event-item overdue-false">
+                    <p>{event.name}</p>
+                    <span>Gemist op {formatDate(event.end_event)}</span>
+                  </div>
+                ))}
+              </div>
             </div>
           ) : (
-            <p>No watering events found for this plant.</p>
+            <p>Geen taken gevonden voor deze plant.</p>
           )}
         </section>
         <ToastContainer position="top-right" autoClose={5000} hideProgressBar={false} />

@@ -17,7 +17,7 @@
     .my-plants-intro-header {
       display: flex;
       flex-direction: row;
-      align-items: baseline;
+      align-items: center;
       justify-content: space-between;
     }
     .btn--secondary {
@@ -302,6 +302,12 @@
   }
 }
 
+.plant-card {
+  max-width: 100%;
+  overflow: hidden;
+  word-wrap: break-word;
+}
+
 
 .my-plants-items {
   display: grid;
@@ -316,6 +322,7 @@
     flex-direction: row;
     flex-wrap: wrap;
     justify-content: space-between;
+    gap: 10px;
     align-items: center;
     text-align: center;
   }
@@ -389,7 +396,8 @@
     box-shadow: 0 0 10px #f4f0f1;
     input,select {
       margin: 0;
-      margin-bottom: 10px;
+      margin-bottom: 15px;
+      margin-top: 5px;
       padding: 10px 0 10px 10px;
       width: 100%;
       background: #f4f0f1;
@@ -398,6 +406,13 @@
     }
     input:hover, select:hover {
       box-shadow:#9eb599 0 0 0 2px;
+    }
+    .css-t3ipsp-control:hover {
+      border-color: var(--medium-green);
+      box-shadow: 0 0 10px #f4f0f1;
+      input {
+        border-color: var(--medium-green);
+      }
     }
     /* input:focus, select:focus {
         box-shadow: 0 0 0 2px var(--medium-green), 0 0 0 6px rgba(158, 181, 153, .2) !important;
@@ -417,6 +432,14 @@
       justify-content: space-between;
     }
   }
+}
+
+.addPlant-button {
+  display: none;
+}
+
+.addPlant-form-image {
+  display: flex;
 }
 
 .calendar {
@@ -471,10 +494,14 @@
 .plant-card-info {
   display: flex;
   flex-direction: column;
+  max-width: 100%;
+  word-break: break-all;
+
   h2 {
-    font-size: 1.5rem;
-    margin: 0;
+    font-size: 1.4rem;
+    margin: 10px 0 10px 0;
     margin-bottom: 10px;
+    max-width: 100%;
   }
   h3 {
     margin: 0;
@@ -487,6 +514,24 @@
 input[type=number]::-webkit-inner-spin-button {
   -webkit-appearance: none;
 }
+/* .event-item { */
+  .overdue-false {
+    background-color: red;
+  }
+  .overdue-true {
+    background-color: green;
+  }
+  .completed {
+    background-color: green;
+  }
+  .upcoming {
+    background-color: purple;
+  }
+  .today {
+    background-color: orange;
+  }
+/* } */
+
 
 /* MEDIA QUERIES */
 @media (max-width: 600px) {
@@ -494,6 +539,42 @@ input[type=number]::-webkit-inner-spin-button {
     .today-tasks {
       width: 100%;
     }
+  }
+  .plus-button {
+    display: none;
+  }
+  .plant-card-info {
+    display: flex;
+    flex-direction: column;
+    h2 {
+      font-size: 1.2rem;
+      margin: 10px 0 10px 0;
+      /* margin: 0;
+      margin-bottom: 10px; */
+    }
+    h3 {
+      margin: 0;
+      margin-bottom: 10px;
+      font-weight: 400;
+    }
+  }
+}
+
+
+@media (min-width: 600px) {
+  .my-plants-page {
+    h2 {
+    }
+    .my-plants-intro {
+      .my-plants-intro-text {
+      }
+      .my-plants-intro-header {
+        align-items: baseline;
+      }
+    }
+  }
+  .addPlant-button {
+    display: flex;
   }
 }
 

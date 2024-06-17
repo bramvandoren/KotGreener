@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import {jwtDecode} from 'jwt-decode';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import Navbar from '../Navbar/Navbar';
@@ -26,7 +26,10 @@ function MyPlants() {
   const [showAddPlantForm, setShowAddPlantForm] = useState(false);
   const [isFavorite, setIsFavorite] = useState(false);
   const [imageUrl, setImageUrl] = useState([]);
-  const [imageLoaded, setImageLoaded] = useState([]);
+  // const [imageLoaded, setImageLoaded] = useState([]);
+  const [images, setImages] = useState({});
+  const [imageLoaded, setImageLoaded] = useState({});
+  const [avatar_url, setAvatarUrl] = useState(null);
   const [isCalendarVisible, setIsCalendarVisible] = useState(false);
   const [isTasksVisible, setIsTasksVisible] = useState(false);
   const [todayTasksCount, setTodayTasksCount] = useState(0);
@@ -49,45 +52,66 @@ function MyPlants() {
         console.error('Error fetching session:', error);
       }
     };
-    
-    const fetchEvents = async (userId) => {
-      const { data, error } = await supabase
-        .from('watering_events')
-        .select('*')
-        .eq('profile_id', userId);
-      
-      if (error) {
-        console.error('Error fetching events:', error);
-      } else {
-        setTasks(data);
-        countTodayTasks(data);
-
-      }
-    };
-    let ignore = false
-    const fetchMyPlants = async (userId) => {
-      setLoading(true)
-      const { data, error } = await supabase
-        .from('user_plants')
-        .select('*, plants(name, sunlight, water_frequency, image_url, height)')
-        .eq('profile_id', userId);
-      if (!ignore) {
-        if (error) {
-          console.error('Error fetching my plants:', error);
-        } else {
-          setMyPlants(data);
-          setImageUrl(data.image_url)
-          // console.log(data)
-        } 
-      }
-      setLoading(false)
-    };
     fetchSession();
-    // if (imageUrl)downloadImage(imageUrl);
-    // return () => {
-    //   ignore = true
-    // }
-  }, [imageUrl]);
+    // if (avatar_url)downloadImage(avatar_url);
+  }, [navigate]);
+
+  const fetchEvents = async (userId) => {
+    const { data, error } = await supabase
+      .from('watering_events')
+      .select('*')
+      .eq('profile_id', userId);
+    
+    if (error) {
+      console.error('Error fetching events:', error);
+    } else {
+      setTasks(data);
+      countTodayTasks(data);
+    }
+  };
+
+  const fetchMyPlants = async (userId) => {
+    setLoading(true)
+    const { data, error } = await supabase
+      .from('user_plants')
+      .select('*, plants(name, sunlight, water_frequency, image_url, height)')
+      .eq('profile_id', userId);
+
+    if (error) {
+      console.error('Error fetching my plants:', error);
+    } else {
+      setMyPlants(data);
+      fetchImages(data);
+      setAvatarUrl(data.image_url);
+    } 
+    setLoading(false);
+  };
+
+  const fetchImages = async (plants) => {
+    const imageFetchPromises = plants.map(async (plant) => {
+      if (plant.image_url) {
+        try {
+          const { data, error } = await supabase.storage.from('userPlants_images').download(plant.plants.image_url);
+          if (error) throw error;
+          const url = URL.createObjectURL(data);
+          return { id: plant.id, url };
+        } catch (error) {
+          console.log('Error downloading image: ', error.message);
+          return { id: plant.id, url: null };
+        }
+      } else {
+        return { id: plant.id, url: null };
+      }
+    });
+
+    const imageResults = await Promise.all(imageFetchPromises);
+    const imageMap = imageResults.reduce((acc, { id, url }) => {
+      acc[id] = url;
+      return acc;
+    }, {});
+
+    setImages(imageMap);
+  };
 
   // async function downloadImage(path) {
   //   try {
@@ -95,8 +119,9 @@ function MyPlants() {
   //     if (error) {
   //       throw error
   //     }
-  //     const url = URL.createObjectURL(data)
-  //     setImageLoaded(url)
+  //     const url = URL.createObjectURL(data);
+  //     console.log(url)
+  //     setImageUrl(url);
   //   } catch (error) {
   //     console.log('Error downloading image: ', error.message)
   //   }
@@ -109,21 +134,22 @@ function MyPlants() {
     setTodayTasksCount(todayTasks.length);
   };
 
-  // const togglePlusButton = () => {
-  //   setIsPlusButtonOpen(!isPlusButtonOpen);
-  //   setIsSocialButtonOpen(!isSocialButtonOpen);
-  // };
-
   const toggleCalendarVisibility = () => {
+    if (!isCalendarVisible) {
+      setIsTasksVisible(false);
+    }
     setIsCalendarVisible(!isCalendarVisible);
   };
 
   const toggleTasksVisibility = () => {
+    if (!isTasksVisible) {
+      setIsCalendarVisible(false);
+    }
     setIsTasksVisible(!isTasksVisible);
   };
 
   // Sorteer de plantenlijst op basis van de geselecteerde optie
-  const sortPlants = (plants, option) => {
+  const sortPlants = useCallback((plants, option) => {
     switch (option) {
       case 'nickname':
         return plants.sort((a, b) => a.nickname.localeCompare(b.nickname));
@@ -135,10 +161,10 @@ function MyPlants() {
       default:
         return plants;
     }
-  };
+  }, []);
 
   // Sorteer de planten voordat ze worden weergegeven
-  const sortedPlants = sortPlants([...myPlants], sortOption);
+  const sortedPlants = useMemo(() => sortPlants([...myPlants], sortOption), [myPlants, sortOption, sortPlants]);
 
   if (loading) {
     return <Loading/>;
@@ -157,7 +183,19 @@ function MyPlants() {
             <Link className="breadcrumb">Mijn Planten</Link>
             <div className="my-plants-intro-header">
               <h2>Mijn planten</h2>
-              <button onClick={() => navigate('/my-plants/add')}>Plant toevoegen +</button>
+              <button className="addPlant-button" onClick={() => navigate('/my-plants/add')}>Plant toevoegen +</button>
+              <button className="plus-button" onClick={() => navigate('/my-plants/add')}>
+                <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" 
+                  viewBox="0 0 45.402 45.402"
+                  xmlSpace="preserve">
+                  <g>
+                    <path d="M41.267,18.557H26.832V4.134C26.832,1.851,24.99,0,22.707,0c-2.283,0-4.124,1.851-4.124,4.135v14.432H4.141
+                      c-2.283,0-4.139,1.851-4.138,4.135c-0.001,1.141,0.46,2.187,1.207,2.934c0.748,0.749,1.78,1.222,2.92,1.222h14.453V41.27
+                      c0,1.142,0.453,2.176,1.201,2.922c0.748,0.748,1.777,1.211,2.919,1.211c2.282,0,4.129-1.851,4.129-4.133V26.857h14.435
+                      c2.283,0,4.134-1.867,4.133-4.15C45.399,20.425,43.548,18.557,41.267,18.557z"/>
+                  </g>
+                </svg>
+              </button>
             </div>
             <p className="my-plants-intro-text">Hier kan u uw eigen planten toevoegen, beheren en aanpassen. Bij het toevoegen van uw plant
               ontvangt u een persoonlijk schema met bijhorende taken.
@@ -228,16 +266,15 @@ function MyPlants() {
             <div className="my-plants-items">
             {sortedPlants.length > 0 ? (
               sortedPlants.map(plant => (
-                // <>
                 <div key={plant.id} className="plant-card">
                   <div className="plant-image-overlay">
-                  {imageLoaded ? (
+                  {plant.plants && imageUrl ? (
                     <img
-                      src={plant.image_url}
-                      alt={plant.name}
+                      src={imageUrl}
+                      alt={plant.plants.name}
                     />
                   ) : (
-                    <div>{plant.name}</div>
+                    <div className="placeholder">Geen afbeelding</div>
                   )}
                   </div>
                   <div className='plant-card-info'>
@@ -267,7 +304,6 @@ function MyPlants() {
                   </div>
                   <Link to={`/my-plants/${plant.id}`} className="detail-link">Meer Info</Link>
                 </div>
-              // </>
               ))
             ) : (
               <p>Geen planten</p>

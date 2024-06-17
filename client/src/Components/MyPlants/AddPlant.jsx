@@ -15,6 +15,8 @@ function AddPlant() {
   const [height, setHeight] = useState('');
   const [imageUrl, setImageUrl] = useState('');
   const [downloadImageUrl, setDownloadImageUrl] = useState('');
+  const [previewUrl, setPreviewUrl] = useState('');
+  const [selectedFile, setSelectedFile] = useState(null);
   const navigate = useNavigate();
   const [session, setSession] = useState(null);
   const [existingPlants, setExistingPlants] = useState([]);
@@ -22,7 +24,6 @@ function AddPlant() {
   const [isManualEntry, setIsManualEntry] = useState(false);
   const [uploading, setUploading] = useState(false)
   const [loading, setLoading] = useState(true)
-  // const [verticuttingFrequency, setVerticuttingFrequency] = useState('');
   const [repottingFrequency, setRepottingFrequency] = useState('');
 
 
@@ -32,9 +33,7 @@ function AddPlant() {
       try {
         const { data: { session } } = await supabase.auth.getSession();
         setSession(session);
-        if (session) {
-          // getPlant(session.user.id);
-        } else {
+        if (!session) {
           navigate('/login');
         }
       } catch (error) {
@@ -75,6 +74,21 @@ function AddPlant() {
       const userId = session.user.id;
       const plantId = selectedPlant.value;
 
+      let uploadedImageUrl = imageUrl;
+      if (selectedFile) {
+        const fileExt = selectedFile.name.split('.').pop();
+        const fileName = `${Math.random()}.${fileExt}`;
+        const { data, error: uploadError } = await supabase.storage
+          .from('userPlants_images')
+          .upload(fileName, selectedFile);
+
+        if (uploadError) {
+          console.error('Error uploading image:', uploadError);
+        } else {
+          uploadedImageUrl = fileName;
+        }
+      }
+
       const { data, error } = await supabase
         .from('user_plants')
         .insert({
@@ -86,7 +100,7 @@ function AddPlant() {
           water_frequency: waterFrequency,
           // verticutting: verticuttingFrequency,
           repotting: repottingFrequency,
-          image_url: imageUrl
+          image_url: uploadedImageUrl
         })
         .select('*')
         .single();
@@ -111,7 +125,6 @@ function AddPlant() {
   };
 
   const handlePlantChange = (selectedOption) => {
-    // const plantId = e.target.value;
     setSelectedPlant(selectedOption);
 
     if (selectedOption.value === "manual") {
@@ -122,16 +135,18 @@ function AddPlant() {
       // setVerticuttingFrequency('');
       setRepottingFrequency('');
       setImageUrl('');
+      setPreviewUrl(''); // Reset de preview
     } else {
       setIsManualEntry(false);
       const selected = existingPlants.find(plant => plant.id === selectedOption.value);
       if (selected) {
-        setHeight(selected.height);
+        // setHeight(selected.height);
         setSunlight(selected.sunlight);
         setWaterFrequency(selected.water_frequency);
         // setVerticuttingFrequency(selected.verticutting);
         setRepottingFrequency(selected.repotting);
         setImageUrl(selected.image_url);
+        setPreviewUrl(selected.image_url); // Zet de preview
       }
     }
   };
@@ -143,18 +158,15 @@ function AddPlant() {
 
   options.push({ value: 'manual', label: 'Nieuwe plant toevoegen' });
 
-  async function downloadImage(path) {
-    try {
-      const { data, error } = await supabase.storage.from('user_plants_images').download(path)
-      if (error) {
-        throw error
-      }
-      const url = URL.createObjectURL(data)
-      setDownloadImageUrl(url)
-    } catch (error) {
-      console.log('Error downloading image: ', error.message)
+  const handleFileChange = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      const previewUrl = URL.createObjectURL(file);
+      setPreviewUrl(previewUrl); // Set preview URL
+      setSelectedFile(file); // Set the selected file
+      setImageUrl(''); // Reset de image URL
     }
-  }
+  };
 
   async function uploadImage(event) {
     try {
@@ -168,16 +180,7 @@ function AddPlant() {
       const fileExt = file.name.split('.').pop()
       const fileName = `${Math.random()}.${fileExt}`
       const filePath = `${fileName}`
-
-      // const { error: uploadError } = await supabase.storage.from('user_plants_images').upload(filePath, file)
-
-      // if (uploadError) {
-      //   throw uploadError
-      // }
-
-      // onUpload(event, filePath)
-
-      // setLoading(true)
+      
       setImageUrl(filePath)      
     } catch (error) {
       alert(error.message)
@@ -216,7 +219,7 @@ function AddPlant() {
     const frequencyMap = {
       'jaarlijks': 360,
       'tweejaarlijks': 730,
-      // 'driejaarlijks': 1460,
+      'driejaarlijks': 1460,
     };
     const interval = frequencyMap[plant.repotting];
 
@@ -243,7 +246,7 @@ function AddPlant() {
           <Link to={'/my-plants'}>Mijn planten</Link>
           <span> / </span>
           <Link>Plant toevoegen</Link>
-      </div>
+        </div>
         <div className="my-plants-intro-header">
           <h2>Plant toevoegen</h2>
         </div>
@@ -265,22 +268,6 @@ function AddPlant() {
               isClearable
               required
             />
-            {/* <label>
-              Selecteer plant
-            </label>
-            <select
-              value={selectedPlant}
-              onChange={handlePlantChange}
-              required
-            >
-              <option disabled selected value="">Type plant</option>
-              {existingPlants.map((plant) => (
-                <option key={plant.id} value={plant.id}>
-                  {plant.name}
-                </option>
-              ))}
-              <option value="manual">Nieuwe plant toevoegen</option>
-            </select> */}
             <label>
               Bijnaam
             </label>
@@ -297,7 +284,7 @@ function AddPlant() {
               type="number"
               value={height}
               onChange={(e) => setHeight(e.target.value)}
-              disabled={!isManualEntry && selectedPlant !== ""}
+              // disabled={!isManualEntry && selectedPlant !== ""}
               required
               min={1}
             />
@@ -310,7 +297,7 @@ function AddPlant() {
               disabled={!isManualEntry && selectedPlant !== ""}
               required
             >
-              <option disabled selected value="">Hoeveelheid zonlicht</option>
+              <option disabled defaultValue value="">Hoeveelheid zonlicht</option>
               <option value="zonnig">Zonnig</option>
               <option value="schaduw">Schaduw</option>
               <option value="halfschaduw">Halfschaduw</option>
@@ -324,7 +311,7 @@ function AddPlant() {
               disabled={!isManualEntry && selectedPlant !== ""}
               required
             >
-              <option disabled selected value="">Frequentie water geven</option>
+              <option disabled defaultValue value="">Frequentie water geven</option>
               <option value="dagelijks">Dagelijks</option>
               <option value="wekelijks">Wekelijks</option>
               <option value="tweewekelijks">Tweewekelijks</option>
@@ -355,7 +342,7 @@ function AddPlant() {
               disabled={!isManualEntry && selectedPlant !== ""}
               required
             >
-              <option disabled selected value="">Wanneer verpotten</option>
+              <option disabled defaultValue value="">Wanneer verpotten</option>
               <option value="jaarlijks">Jaarlijks</option>
               <option value="tweejaarlijks">Tweejaarlijks</option>
               <option value="driejaarlijks">Driejaarlijks</option>
@@ -369,27 +356,32 @@ function AddPlant() {
                 disabled={!isManualEntry && selectedPlant !== ""}
               />
             </label>
-            <label className="button primary block" htmlFor="single">
-                {uploading ? 'Uploading ...' : 'Afbeelding kiezen'}
-            </label>
-            <input
-              type="file"
-              id="single"
-              accept="image/*"
-              onChange={uploadImage}
-              disabled={uploading}
-            />
-            {/* {console.log(downloadImageUrl)} */}
-            {downloadImageUrl ? (
+            <div className="addPlant-form-image">
+              <div className="form-image-upload">
+                <label className="button primary block" htmlFor="single">
+                    {uploading ? 'Uploading ...' : 'Afbeelding kiezen'}
+                </label>
+                <input
+                  type="file"
+                  id="single"
+                  accept="image/*"
+                  onChange={handleFileChange}
+                  disabled={uploading}
+                  required
+                />
+              </div>
+              {previewUrl ? (
               <img
-                src={downloadImageUrl}
-                alt="Image"
-                className="my plant image"
-                style={{ height: '50px', width: '50px' }}
-              />
-            ) : (
-              <div className="avatar no-image" style={{ height: '50px', width: '50px' }} />
-            )}
+                src={previewUrl}
+                alt="Preview"
+                className="plant-image-preview"
+                style={{ height: '100px', width: '100px', objectFit: 'cover' }} // Pas de grootte en stijl van de preview aan
+                />
+              ) : (
+                <div className="avatar no-image" style={{ height: '100px', width: '100px' }} />
+              )}
+              </div>
+            {/* {console.log(downloadImageUrl)} */}
             <button type="submit">Plant toevoegen</button>
           </div>
         </form>
