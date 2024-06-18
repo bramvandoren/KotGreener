@@ -3,8 +3,8 @@ import './Home.css';
 import Navbar from '../Navbar/Navbar';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import image from "../../assets/hero-kotgreener.jpg";
-import toolsPlants from "../../assets/tools-plants.png";
-import toolsAR from "../../assets/tools-ar.png";
+import toolsPlants from "../../assets/kotgreener-students-market.jpg";
+import toolsAR from "../../assets/kotgreener-ar-plants.jpg";
 import logo from "../../assets/logo-kotgreener.svg";
 import blogimage from "../../assets/kotgreener-blog.png";
 import myplantsImage from "../../assets/kotgreener-myplants.png";
@@ -30,6 +30,7 @@ function Home() {
   const [tipOfTheWeek, setTipOfTheWeek] = useState('');
   const elementRef = useRef(null);
   const [arrowDisable, setArrowDisable] = useState(true);
+  
 
   useEffect(() => {
     const fetchSession = async () => {
@@ -60,12 +61,13 @@ function Home() {
       }
     };
     const fetchPopularPlants = async () => {
+      setLoading(true)
       try {
         const { data, error } = await supabase
           .from('plants')
           .select('*')
           .order('visits', { ascending: false })
-          .limit(5);
+          .limit(4);
 
         if (error) {
           console.error('Error fetching popular plants:', error);
@@ -85,8 +87,6 @@ function Home() {
           .from('tips')
           .select('*')
           .single()
-
-          console.log(data)
         if (error) {
           console.error('Error fetching tip of the week:', error);
         } else {
@@ -98,7 +98,7 @@ function Home() {
     };
     let ignore = false
     async function getProfile(session) {
-      // setLoading(true)
+      setLoading(true)
       const { data, error } = await supabase
         .from('profiles')
         .select(`username, website, avatar_url`)
@@ -134,7 +134,7 @@ function Home() {
   // Bepaal het aantal taken voor vandaag
   const countTodayTasks = (tasks) => {
     const today = format(new Date(), 'yyyy-MM-dd');
-    const todayTasks = tasks.filter(task => format(new Date(task.start_event), 'yyyy-MM-dd') === today && !task.done);
+    const todayTasks = tasks.filter(task => format(parseISO(task.start_event), 'yyyy-MM-dd') === today && !task.done);
     setTodayTasksCount(todayTasks.length);
   };
 
@@ -158,6 +158,7 @@ function Home() {
         filterTasks(tasks.map(task =>
           task.id === taskId ? { ...task, done: !currentStatus } : task
         ));
+        // filterTasks(updatedTasks);
         countTodayTasks(tasks);
       }
     } catch (error) {
@@ -229,8 +230,21 @@ function Home() {
                 <>
                 <div className="tasks-items-card">
                   <div className={`tasks-item ${task.type} task-${task.done}`} key={task.id} onClick={() => toggleTaskDone(task.id, task.done)}>
+                  {task.done ? (
+                    <svg className="done" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" 
+                      viewBox="0 0 17.837 17.837" xmlSpace="preserve">
+                      <g>
+                        <path d="M16.145,2.571c-0.272-0.273-0.718-0.273-0.99,0L6.92,10.804l-4.241-4.27
+                          c-0.272-0.274-0.715-0.274-0.989,0L0.204,8.019c-0.272,0.271-0.272,0.717,0,0.99l6.217,6.258c0.272,0.271,0.715,0.271,0.99,0
+                          L17.63,5.047c0.276-0.273,0.276-0.72,0-0.994L16.145,2.571z"/>
+                      </g>
+                    </svg>                    
+                  ) : (
+                  <>
                     <p>{task.type}</p>
                     <img src={task.user_plants.image_url} alt={task.user_plants.image_url} className="task-item-image" />
+                  </>
+                  )}
                   </div>
                   <p>{task.title}</p>
                 </div>
@@ -248,24 +262,23 @@ function Home() {
           </section>
           <section className="tip-of-the-week">
             <h2>Tip van de week</h2>
-            <p>{tipOfTheWeek}</p>
+            <p>"{tipOfTheWeek}"</p>
           </section>
         </>
          ) : (
           <>
           <div className="hero-home">
             <img className="logo" src={logo} alt='Logo' />
-            <h2>Maak <b>Groen</b> jouw kotgeno(o)t!</h2>
+            <h2>Maak <span>Groen</span> jouw kotgeno(o)t!</h2>
             <button className="login-button" onClick={() => navigate('/login')}>Start hier →</button>
           </div>
           <div className="intro-what">
               <h2>Wat is KotGreener?</h2>
-              <p>KotGreenr helpt studenten bij het vinden van duurzame en milieuvriendelijke koten in hun stad. Onze missie is om groen wonen toegankelijker te maken voor iedereen, terwijl we bijdragen aan een betere planeet.</p>
-              <p>Met KotGreenr krijg je toegang tot een breed scala aan groene koten, samen met handige tips om je energieverbruik te verminderen en je ecologische voetafdruk te verkleinen. Begin vandaag nog met jouw groene reis!</p>
+              <p>KotGreener is een webapplicatie die studenten helpt bij het vergroenen van hun kot.</p>
+              <p>
+              Het biedt functionaliteiten zoals het bijhouden van plantverzorgingstaken, het lezen van informatieve blogs, de juiste plant te vinden, het beheren van eigen planten en nog veel meer.</p>
           </div>
-          <div>
             <Video/>
-          </div>
           </>
         )}
         <img className="hero-image" src={image} alt="image" />
@@ -288,7 +301,7 @@ function Home() {
               <div className="item-image">
                 <img src={toolsPlants} alt='Student Market' />
               </div>
-                <h3>Student Market</h3>
+                <h3>Studenten Market</h3>
             </div>
             <div className="tools-item">
               <div className="item-image">

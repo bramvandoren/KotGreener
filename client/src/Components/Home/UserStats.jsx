@@ -11,12 +11,15 @@ function UserStats() {
     const navigate = useNavigate();
     const [session, setSession] = useState(null)
     const [tasks, setTasks] = useState([]);
+    const [events, setEvents] = useState([]);
     const [todayTasks, setTodayTasks] = useState([]);
     const [todayTasksCount, setTodayTasksCount] = useState(0);
     const [userPlantCount, setUserPlantCount] = useState(0);
     const [upcomingEventsCount, setUpcomingEventsCount] = useState(0);
     const [marketTransactionsCount, setMarketTransactionsCount] = useState(0);
     const [completedEventsCount, setCompletedEventsCount] = useState(0);
+    const [uncompletedEventsCount, setUnCompletedEventsCount] = useState(0);
+
 
     useEffect(() => {
         const fetchSession = async () => {
@@ -27,8 +30,9 @@ function UserStats() {
                 fetchEvents(session.user.id);
                 fetchUserPlantCount(session.user.id);
                 fetchUpcomingEventsCount(session.user.id);
-                fetchMarketTransactionsCount(session.user.id);
+                // fetchMarketTransactionsCount(session.user.id);
                 fetchCompletedEventsCount(session.user.id);
+
             }
             } catch (error) {
             console.error('Error fetching session:', error);
@@ -44,7 +48,8 @@ function UserStats() {
             if (error) {
             console.error('Error fetching events:', error);
             } else {
-            setTasks(data);
+            // setTasks(data);
+            setEvents(data);
             countTodayTasks(data);
             filterTasks(data);
             }
@@ -133,8 +138,34 @@ function UserStats() {
                 console.error('Unexpected error fetching completed events count:', error);
             }
         };
+        
     fetchSession();
     }, [])
+
+    const calculateSuccessRate = () => {
+        const today = new Date();
+        
+        // Filter evenementen die tot vandaag of vandaag eindigen
+        const pastAndTodayEvents = events.filter(event => {
+            const eventEndDate = new Date(event.end_event);
+            return eventEndDate <= today;
+        });
+    
+        // Filter afgeronde evenementen
+        const completedEvents = pastAndTodayEvents.filter(event => event.done === true);
+    
+        if (pastAndTodayEvents.length === 0) {
+            return 0; // Als er geen evenementen zijn, is het succespercentage 0
+        }
+        
+        const totalEvents = pastAndTodayEvents.length;
+        const completedCount = completedEvents.length;
+    
+        // Bereken het succespercentage
+        const successRate = (completedCount / totalEvents) * 100;
+        return successRate.toFixed(1); // Afronden op één decimalen
+    };
+    
 
     const filterTasks = (tasks) => {
     const today = new Date();
@@ -173,6 +204,16 @@ function UserStats() {
         return <Loading/>
     }
 
+
+
+    
+      const today = new Date();
+      const todayEvents = events.filter(event => !event.done && isSameDay(event.end_event, today));
+      const upcomingEvents = events.filter(event => !event.done && event.end_event >= today);
+      const completedEvents = events.filter(event => event.done && isSameDay(event.end_event, today));
+      const overdueFalseEvents = events.filter(event => !event.done && event.end_event < today);
+      const overdueTrueEvents = events.filter(event => event.done && event.end_event < today);
+
     return (
     <>
     <div className="home-user-stats">
@@ -186,7 +227,8 @@ function UserStats() {
         </div>
         <div className="stat-item">
             <h3>Voltooide Taken</h3>
-            <span>{completedEventsCount}</span>
+            {/* <span>{completedEventsCount}</span> */}
+            <span>{calculateSuccessRate()}%</span>
         </div>
         <div className="stat-item">
             <h3>Actief op markt</h3>
