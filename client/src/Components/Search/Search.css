@@ -1,7 +1,6 @@
-.search-page {
-    padding: 70px 0 80px 0;
-}
-
+/* .search-page {
+    padding: 100px 0 100px 0;
+} */
 .detail-page {
   padding: 0;
   background: white;
@@ -14,8 +13,8 @@
     margin: 0;
     .plant-image-overlay {
       position: relative;
-      width: 400px;
-      height: 400px;
+      width: 200px;
+      height: 200px;
       margin: 0 auto;
       margin-top: 100px;
       margin-bottom: 20px;
@@ -34,6 +33,7 @@
     padding: 20px 0;
     h3 {
       padding: 0 5% 0 5%;
+      color: var(--medium-green);
     }
     .other-plants-container {
       display: grid;
@@ -138,8 +138,17 @@
   cursor: pointer;
 }
 
+.css-t3ipsp-control:hover {
+  border-color: var(--dark-green);
+  border-color: var(--medium-green);
+  box-shadow: 0 0 10px #f4f0f1;
+  input {
+    border-color: var(--medium-green);
+  }
+}
+
 .search-intro {
-  /* padding: 10px 5%; */
+  padding: 80px 0 0 0;
   background: white;
   position: relative;
   z-index: 100;
@@ -153,29 +162,34 @@
   }
   .filter-desktop {
     display: block;
-    padding: 0 5%;
+    /* padding: 0 5%; */
     position: relative;
     z-index: 100;
+    /* padding-bottom: 80px; */
   }
   img {
     position: absolute;
     width: 100%;
-    height: 100%;
+    /* height: 100%; */
     object-fit: cover;
+    filter: blur(2px);
 
   }
   .search-intro-header {
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    margin: 0px 5% 40px 5%;
+    margin: 0px 5% 20px 5%;
     position: relative;
-    background-color: rgba(255,255,255,0.8);
-    border-radius: 10px;
+    /* background-color: rgba(255,255,255,0.8); */
+    /* border-radius: 10px; */
     h2 {
       margin: 0;
       z-index: 2;
       background-color: rgba(255,255,255,0.8);
+      border-radius: 10px;
+      padding: 10px;
+      margin-top: 10px;
     }
     p {
       z-index: 2;
@@ -286,6 +300,7 @@
       position: relative;
       /* object-fit: cover; */
       border-radius: 0;
+      transition: 0.3s ease;
     }
     button {
       position: absolute;
@@ -294,33 +309,51 @@
     }
   }
 }
+.plant-card:hover {
+  cursor: pointer;
+  .plant-image-overlay {
+    img {
+      transform: scale(1.1);
+      transition: 0.3s ease;
+    }
+  }
+}
 
 .filter {
   /* margin: 5% 10px; */
   background: white;
   position: relative;
+  padding: 10px 5%;
+  z-index: 10;
   /* max-width: 500px; */
   .filter-content {
     h3 {
       display: none;
+    }
+    .css-t3ipsp-control:hover {
+      border-color: var(--dark-green);
+      box-shadow: none;
+      input {
+        border-color: var(--medium-green);
+      }
     }
   }
 }
 .filter-desktop {
   /* width: 100%; */
   display: none;
-  padding: 5% 5%;
-  background: white;
+  /* background: white; */
 }
 
 .filter-more {
   background-color: #f4f0f1;
   display: flex;
   flex-direction: column;
-  border-radius: 5px;
+  border-radius: 10px;
   cursor: pointer;
   position: relative;
-  z-index: 100;
+  margin-top: 5px;
+  /* z-index: 100; */
   p {
     margin: 0;
     width: 100%;
@@ -329,9 +362,9 @@
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-    padding: 10px;
+    padding: 5px 5px 10px 10px;
     svg {
-      width: 15px;
+      width: 12px;
     }
   }
   .filter-more-others {
@@ -343,8 +376,9 @@
     background: #f4f0f1;
     padding: 10px;
     cursor:auto;
-    position: absolute;
+    /* position: absolute; */
     top: 30px;
+    z-index: 200;
     .filter-item {
       padding: 10px;
       background: white;
@@ -352,6 +386,14 @@
       cursor: pointer;
       text-align: center;
       transition: 0.3s ease;
+    }
+    .filter-item.selected {
+      background: var(--medium-green);
+      color: white;
+      svg path {
+        stroke: white;
+        fill: white;
+      }
     }
     .filter-item:hover {
       box-shadow: 0 2px 4px var(--medium-green);
@@ -368,21 +410,21 @@
 
 .selected-filters  {
   padding: 0 5%;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: 10px;
+  h3 {
+    color: var(--dark-green);
+  }
 }
 
 .filter-button {
-  padding: 10px 20px;
-  background-color: transparent;
-  color: var(--dark-green);
-  border: 0.2rem solid var(--dark-green);
-  font-weight: bold;
-  margin-top: 10px;
-  margin-bottom: 10px;
+  background: black;
+  color: white;
 }
 .filter-button:hover {
-  background-color: transparent;
-  border-color: var(--medium-green);
-  color: var(--medium-green);
+  background-color: rgb(75, 75, 75);
 }
 
 .filters-extra {
@@ -390,6 +432,23 @@
   align-items: center;
   justify-content: space-between;
   padding: 0px 5%;
+  .sort-options select {
+    padding: 5px 5px;
+  }
+}
+
+.dropdowns {
+  input,select {
+    margin: 0;
+    cursor: pointer;
+    margin-bottom: 5px;
+    margin-top: 5px;
+    padding: 10px 0 10px 10px;
+    width: 100%;
+    background: #f4f0f1;
+    border: none;
+    border-radius: 10px;
+  }
 }
 
 .dropdown .css-13cymwt-control {
@@ -599,6 +658,86 @@
   z-index: 1;
 }
 
+.more-characteristics {
+  position: relative;
+  z-index: 2;
+  background: var(--light-green);
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  color: black;
+  font-weight: bold;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  .char-item {
+    border: 0.15rem solid black;
+    padding: 5px 10px;
+    border-radius: 20px;
+    p {
+      padding: 0;
+      margin: 0;
+    }
+  }
+}
+
+.care-instructions {
+  position: relative;
+  z-index: 2;
+  background: var(--light-green);
+  padding: 20px 0;
+  h3 {
+    margin: 0;
+    padding: 0 5%;
+  }
+  h4 {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  p {
+    margin: 0;
+  }
+  .care-item {
+    padding: 0 5%;
+    svg {
+      width: 20px;
+      cursor: pointer;
+      transition: 0.3s ease;
+    }
+    svg.arrow-rotate {
+      transform: rotate(-90deg);
+    }
+  }
+}
+
+.pagination {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  padding: 0 5%;
+  gap: 20px;
+}
+
+.pagination-buttons {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 10px;
+  margin-bottom: 20px;
+  button {
+    background:grey;
+  }
+  button.active {
+    background: black;
+  }
+  button:hover {
+    background: black;
+  }
+}
+
 /* Media query voor tablets (schermen groter dan 768px) */
 @media (min-width: 768px) {
   .filter-desktop {
@@ -654,6 +793,18 @@
       margin: 20px 0 0 0;
     }
   }
+  .detail-page {
+    .detail-page-hero {
+      .plant-image-overlay {
+        position: relative;
+        width: 400px;
+        height: 400px;
+      }
+    }
+  }
+  .filter {
+    padding: 0;
+  }
   
 }
 
@@ -685,7 +836,10 @@
     }
   }
   .search-page {
-    padding: 80px 0 80px 0;
+    padding: 0 0 100px 0;
+  }
+  .filter {
+    padding: 0;
   }
   
   

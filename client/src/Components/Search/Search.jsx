@@ -3,13 +3,16 @@ import { Link, NavLink, useNavigate } from 'react-router-dom';
 import Select from 'react-select';
 import PlantCard from './PlantCard';
 import Navbar from '../Navbar/Navbar';
-import plants from "../../assets/lot-of-plants.png";
+import plantSearchImage from "../../assets/background-search-page.jpg";
 import { supabase } from '../../lib/helper/supabaseClient';
 import './Search.css';
 import Header from '../Header/Header';
+import Loading from '../Loading/Loading';
 
 function Search() {
   const [query, setQuery] = useState('');
+  const [plants, setPlants] = useState({});
+  const plantsPerPage = 10;
   const [category, setCategory] = useState(null);
   const [sunlight, setSunlight] = useState(null);
   const [size, setSize] = useState(null);
@@ -20,6 +23,9 @@ function Search() {
   const [favorites, setFavorites] = useState([]);
   const [session, setSession] = useState(null);
   const [sortOption, setSortOption] = useState('order');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [isLoading, setLoading] = useState(true);
+
   const areFiltersSelected = sunlight || size || care || extraFilters.length > 0;
 
   const navigate = useNavigate();
@@ -32,24 +38,35 @@ function Search() {
     setQuery('');
   };
 
-  const sunlightOptions = [
-    { value: 'zonnig', label: 'Zonnig' },
-    { value: 'schaduw', label: 'Schaduw' },
-    { value: 'halfschaduw', label: 'Halfschaduw' },
-  ];
+  // const sunlightOptions = [
+  //   { value: 'zonnig', 
+  //     label: 'Zonnig' + 
+  //     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+  //       <g clip-path="url(#clip0_353_154)">
+  //         <path d="M17.004 1V3.004H15V1H17.004ZM11.052 2.635L12.47 4.052L11.053 5.469L9.636 4.052L11.052 2.635ZM20.952 2.635L22.367 4.051L20.952 5.468L19.534 4.052L20.952 2.635ZM11.959 6.055C12.7249 4.99981 13.8728 4.28557 15.1578 4.06454C16.4428 3.84352 17.7633 4.1332 18.8378 4.87183C19.9123 5.61045 20.6557 6.73959 20.9096 8.0185C21.1635 9.29742 20.9078 10.6249 20.197 11.718C21.298 12.688 22 14.092 22 15.667C22 18.647 19.502 21 16.5 21H6.6C4.095 21 2 19.036 2 16.534C2 14.704 3.125 13.158 4.706 12.463C4.70208 12.3754 4.70008 12.2877 4.7 12.2C4.7 8.74 7.601 6 11.1 6C11.3907 6 11.677 6.01867 11.959 6.056M14.067 6.706C15.559 7.464 16.713 8.779 17.219 10.38C17.6583 10.436 18.0783 10.5393 18.479 10.69C18.8883 10.0908 19.0665 9.36353 18.9806 8.64298C18.8948 7.92243 18.5507 7.25742 18.012 6.77115C17.4734 6.28489 16.7768 6.01033 16.0512 5.99835C15.3257 5.98638 14.6204 6.23778 14.066 6.706M11.1 8C8.634 8 6.7 9.916 6.7 12.2C6.7 12.4627 6.72433 12.718 6.773 12.966L6.957 13.921L6.007 14.131C4.832 14.391 4 15.391 4 16.534C4 17.86 5.128 19 6.6 19H16.5C18.469 19 20 17.473 20 15.667C20 14.451 19.314 13.37 18.259 12.784C17.7033 12.4762 17.0761 12.321 16.441 12.334L15.587 12.347L15.44 11.506C15.158 9.884 13.89 8.55 12.206 8.134C11.8441 8.04469 11.4727 7.99969 11.1 8ZM22 8H24.004V10.004H22V8Z" fill="black"/>
+  //       </g>
+  //     <defs>
+  //     <clipPath id="clip0_353_154">
+  //     <rect width="24" height="24" fill="white"/>
+  //     </clipPath>
+  //     </defs>
+  //     </svg> },
+  //   { value: 'schaduw', label: 'Schaduw' },
+  //   { value: 'halfschaduw', label: 'Halfschaduw' },
+  // ];
 
-  const sizeOptions = [
-    { value: 'klein', label: 'Klein (<=15cm)' },
-    { value: 'middel', label: 'Middel (15cm tem 50 cm)' },
-    { value: 'groot', label: 'Groot (>50cm)' },
-  ];
+  // const sizeOptions = [
+  //   { value: 'klein', label: 'Klein (<=15cm)' },
+  //   { value: 'middel', label: 'Middel (15cm tem 50 cm)' },
+  //   { value: 'groot', label: 'Groot (>50cm)' },
+  // ];
 
-  const careOptions = [
-    { value: 'dagelijks', label: 'Dagelijks' },
-    { value: 'wekelijks', label: 'Wekelijks' },
-    { value: 'tweewekelijks', label: '2-wekelijks' },
-    { value: 'maandelijks', label: 'Maandelijks' },
-  ];
+  // const careOptions = [
+  //   { value: 'dagelijks', label: 'Dagelijks' },
+  //   { value: 'wekelijks', label: 'Wekelijks' },
+  //   { value: 'tweewekelijks', label: '2-wekelijks' },
+  //   { value: 'maandelijks', label: 'Maandelijks' },
+  // ];
 
   const extraFilterOptions = [
     { value: 'diervriendelijk', label: 'Diervriendelijk' },
@@ -94,28 +111,28 @@ function Search() {
 
     if (sunlight) {
       filteredResults = filteredResults.filter((plant) => {
-        if (sunlight.value === 'zonnig') return plant.sunlight === 'zonnig';
-        if (sunlight.value === 'schaduw') return plant.sunlight === 'schaduw';
-        if (sunlight.value === 'halfschaduw') return plant.sunlight == 'halfschaduw';
+        if (sunlight === 'zonnig') return plant.sunlight === 'zonnig';
+        if (sunlight === 'schaduw') return plant.sunlight === 'schaduw';
+        if (sunlight === 'halfschaduw') return plant.sunlight == 'halfschaduw';
         return true;
     });
     }
 
     if (size) {
       filteredResults = filteredResults.filter((plant) => {
-        if (size.value === 'klein') return plant.height <= 15;
-        if (size.value === 'middel') return plant.height > 15 && plant.height <= 50;
-        if (size.value === 'groot') return plant.height > 50;
+        if (size === 'klein') return plant.height <= 15;
+        if (size === 'middel') return plant.height > 15 && plant.height <= 50;
+        if (size === 'groot') return plant.height > 50;
         return true;
       });
     }
 
     if (care) {
       filteredResults = filteredResults.filter((plant) => {
-        if (care.value === 'dagelijks') return plant.water_frequency === 'dagelijks';
-        if (care.value === 'wekelijks') return plant.water_frequency === 'wekelijks';
-        if (care.value === 'tweewekelijks') return plant.water_frequency === 'tweewekeliiks';
-        if (care.value === 'maandelijks') return plant.water_frequency === 'maandelijks';
+        if (care === 'dagelijks') return plant.water_frequency === 'dagelijks';
+        if (care === 'wekelijks') return plant.water_frequency === 'wekelijks';
+        if (care === 'tweewekelijks') return plant.water_frequency === 'tweewekeliiks';
+        if (care === 'maandelijks') return plant.water_frequency === 'maandelijks';
         return true;
       });
     }
@@ -133,29 +150,31 @@ function Search() {
 
   useEffect(() => {
     const fetchSessionAndUser = async () => {
+      setLoading(true);
       try {
         const { data: { session } } = await supabase.auth.getSession();
-        setSession(session);
-        // Nu kunnen we fetchFavorites aanroepen nadat de sessie is ingesteld
-        fetchFavorites(session);
+        if (session) {
+          setSession(session);
+          fetchFavorites(session);          
+        }
       } catch (error) {
         console.error('Error fetching session or user:', error);
       }
+      setLoading(false);
     };
     const fetchPlants = async () => {
-      try {
-        const { data: plants, error } = await supabase
-          .from('plants')
-          .select('*');
+      // setLoading(true);
+      const { data: plants, error } = await supabase
+        .from('plants')
+        .select('*');
 
         if (error) {
-          throw new Error('Failed to fetch plants');
+          console.log("Error fetching plants:", error)
+        } else {
+          setPlants(plants);
+          filterResults(plants);
         }
-
-        filterResults(plants);
-      } catch (error) {
-        console.error(error);
-      }
+        setLoading(false);
     };
     fetchSessionAndUser();
     fetchPlants();
@@ -263,12 +282,31 @@ function Search() {
   // Sorteer de planten voordat ze worden weergegeven
   const sortedPlants = sortPlants([...results], sortOption);
 
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
+
+  const totalPages = Math.ceil(results.length / plantsPerPage);
+
+  const indexOfLastPlant = currentPage * plantsPerPage;
+  const indexOfFirstPlant = indexOfLastPlant - plantsPerPage;
+  const currentPlants = sortedPlants.slice(indexOfFirstPlant, indexOfLastPlant);
+
+  // Pagina veranderen
+  // const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
+  // if (!plants.length) return <div></div>;
+
+  if (isLoading) {
+    return <Loading/>
+  }
+
   return (
     <>
       <div className="search-page">
         <Header/>
         <div className="search-intro">
-          <img src={plants} alt='Jouw Groen beheren' />
+          <img src={plantSearchImage} alt='Jouw Groen beheren' />
           <Link className="breadcrumb">Planten zoeken</Link>
           <div className="search-intro-header">
               <h2>Planten zoeken</h2>
@@ -301,34 +339,66 @@ function Search() {
                   
                 </div>
                 <div className="dropdowns">
-                  <Select
+                  <select
+                    value={sunlight}
+                    onChange={(e) => setSunlight(e.target.value)}
+                    required
+                  >
+                    <option value="">Hoeveelheid Zonlicht</option>
+                    <option value="zonnig">Zonnig</option>
+                    <option value="halfschaduw">Halfschaduw</option>
+                    <option value="Schaduw">Schaduw</option>
+                  </select>
+                  {/* <Select
                     options={sunlightOptions}
                     placeholder="Hoeveelheid Zonlicht"
                     value={sunlight}
                     onChange={setSunlight}
                     className="dropdown"
-                  />
-                  <Select
+                  /> */}
+                  <select
+                    value={size}
+                    onChange={(e) => setSize(e.target.value)}
+                  >
+                    <option value="">Grootte Plant</option>
+                    <option value="klein">Klein (&lt;=15cm)</option>
+                    <option value="middel">Middel (15cm tem 50 cm)</option>
+                    <option value="groot">Groot (&gt;50cm)</option>
+                  </select>
+                  
+                  {/* <Select
                     options={sizeOptions}
                     placeholder="Grootte Plant"
                     value={size}
                     onChange={setSize}
                     className="dropdown"
-                  />
-                  <Select
+                  /> */}
+                  {/* <Select
                     options={careOptions}
                     placeholder="Hoeveelheid Verzorging"
                     value={care}
                     onChange={setCare}
                     className="dropdown"
-                  />
+                  /> */}
+                  <select
+                    value={care}
+                    onChange={(e) => setCare(e.target.value)}
+
+                  >
+                    <option value="">Hoeveelheid Verzorging</option>
+                    <option value="dagelijks">Dagelijks</option>
+                    <option value="wekelijks">Wekelijks</option>
+                    <option value="tweewekelijks">2-wekelijks</option>
+                    <option value="maandelijks">Maandelijks</option>
+
+                  </select>
                 </div>
                 <div className="filter-more">
                 <div className="filter-more">
                   <div className="filter-more-header" onClick={() => setIsMoreFiltersOpen(!isMoreFiltersOpen)}>
                     <p>Meer eigenschappen</p>
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
-                      <path d={isMoreFiltersOpen ? "M16 22a2 2 0 0 1-1.41-.59l-10-10a2 2 0 0 1 2.82-2.82L16 17.17l8.59-8.58a2 2 0 0 1 2.82 2.82l-10 10A2 2 0 0 1 16 22Z" : "M16 10a2 2 0 0 1 1.41.59l10 10a2 2 0 0 1-2.82 2.82L16 14.83l-8.59 8.58a2 2 0 0 1-2.82-2.82l10-10A2 2 0 0 1 16 10Z"}></path>
+                      <path d="M16 22a2 2 0 0 1-1.41-.59l-10-10a2 2 0 0 1 2.82-2.82L16 17.17l8.59-8.58a2 2 0 0 1 2.82 2.82l-10 10A2 2 0 0 1 16 22Z"></path>
                     </svg>
                   </div>
                   {isMoreFiltersOpen && (
@@ -378,34 +448,64 @@ function Search() {
                   
                 </div>
                 <div className="dropdowns">
-                  <Select
+                  <select
+                    value={sunlight}
+                    onChange={(e) => setSunlight(e.target.value)}
+                    required
+                  >
+                    <option value="">Hoeveelheid Zonlicht</option>
+                    <option value="zonnig">Zonnig</option>
+                    <option value="halfschaduw">Halfschaduw</option>
+                    <option value="Schaduw">Schaduw</option>
+                  </select>
+                  {/* <Select
                     options={sunlightOptions}
                     placeholder="Hoeveelheid Zonlicht"
                     value={sunlight}
                     onChange={setSunlight}
                     className="dropdown"
-                  />
-                  <Select
+                  /> */}
+                  <select
+                    value={size}
+                    onChange={(e) => setSize(e.target.value)}
+                  >
+                    <option value="">Grootte Plant</option>
+                    <option value="klein">Klein (&lt;=15cm)</option>
+                    <option value="middel">Middel (15cm tem 50 cm)</option>
+                    <option value="groot">Groot (&gt;50cm)</option>
+                  </select>
+                  
+                  {/* <Select
                     options={sizeOptions}
                     placeholder="Grootte Plant"
                     value={size}
                     onChange={setSize}
                     className="dropdown"
-                  />
-                  <Select
+                  /> */}
+                  {/* <Select
                     options={careOptions}
                     placeholder="Hoeveelheid Verzorging"
                     value={care}
                     onChange={setCare}
                     className="dropdown"
-                  />
+                  /> */}
+                  <select
+                    value={care}
+                    onChange={(e) => setCare(e.target.value)}
+                  >
+                    <option value="">Hoeveelheid Verzorging</option>
+                    <option value="dagelijks">Dagelijks</option>
+                    <option value="wekelijks">Wekelijks</option>
+                    <option value="tweewekelijks">2-wekelijks</option>
+                    <option value="maandelijks">Maandelijks</option>
+
+                  </select>
                 </div>
-                <div className="filter-more">
                 <div className="filter-more">
                   <div className="filter-more-header" onClick={() => setIsMoreFiltersOpen(!isMoreFiltersOpen)}>
                     <p>Meer eigenschappen</p>
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
-                      <path d={isMoreFiltersOpen ? "M16 22a2 2 0 0 1-1.41-.59l-10-10a2 2 0 0 1 2.82-2.82L16 17.17l8.59-8.58a2 2 0 0 1 2.82 2.82l-10 10A2 2 0 0 1 16 22Z" : "M16 10a2 2 0 0 1 1.41.59l10 10a2 2 0 0 1-2.82 2.82L16 14.83l-8.59 8.58a2 2 0 0 1-2.82-2.82l10-10A2 2 0 0 1 16 10Z"}></path>
+                      <path d="M16 22a2 2 0 0 1-1.41-.59l-10-10a2 2 0 0 1 2.82-2.82L16 17.17l8.59-8.58a2 2 0 0 1 2.82 2.82l-10 10A2 2 0 0 1 16 22Z"></path>
                     </svg>
                   </div>
                   {isMoreFiltersOpen && (
@@ -424,7 +524,6 @@ function Search() {
                   )}
                 </div>
               </div>
-              </div>
             </div>
 
           </div>
@@ -434,17 +533,17 @@ function Search() {
                 <>
                 {sunlight && (
                 <button className="filter-button" onClick={() => handleFilterRemove('sunlight')}>
-                  {sunlight.label} ✕
+                  {sunlight} ✕
                 </button>
               )}
               {size && (
                 <button className="filter-button" onClick={() => handleFilterRemove('size')}>
-                  {size.label} ✕
+                  {size} ✕
                 </button>
               )}
               {care && (
                 <button className="filter-button" onClick={() => handleFilterRemove('care')}>
-                  {care.label} ✕
+                  {care} ✕
                 </button>
               )}
               {extraFilters.map(filter => (
@@ -477,8 +576,8 @@ function Search() {
             {/* <button>Meer Filters</button> */}
             </div>
             <div className="results">
-              {sortedPlants.length > 0 ? (
-                sortedPlants.map((plant) => (
+              {currentPlants.length > 0 ? (
+                currentPlants.map((plant) => (
                   <PlantCard
                     key={plant.id} 
                     plant={plant}
@@ -492,7 +591,25 @@ function Search() {
                 <p className="no-results">Er zijn geen resultaten voor uw zoekopdracht.</p>
               )}
             </div>
-
+            <div className="pagination">
+            {currentPlants.length > 0 ? (
+              <>
+              <p>Pagina</p>
+              <div className="pagination-buttons">
+                {Array.from({ length: totalPages }, (_, i) => (
+                  <button
+                    key={i + 1}
+                    className={currentPage === i + 1 ? "active" : ""}
+                    onClick={() => handlePageChange(i + 1)}
+                  >
+                    {i + 1}
+                  </button>
+                ))}
+              </div>
+              </>
+            ) : ('')
+            }
+            </div>
           </div>
         </div>
       </div>
