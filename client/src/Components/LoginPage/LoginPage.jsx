@@ -89,7 +89,6 @@ function LoginPage() {
       const { user, error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
       });
-      console.log(user);
   
       if (error) {
         throw error;
