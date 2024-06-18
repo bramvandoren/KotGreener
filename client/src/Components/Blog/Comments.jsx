@@ -85,8 +85,6 @@ const Comments = ({ blogId, session }) => {
         console.error('Error deleting comment:', error);
       } else {
         setComments(comments.filter((comment) => comment.id !== commentId));
-        console.log(comments)
-
       }
     } catch (error) {
       console.error('Unexpected error:', error);

@@ -11,7 +11,7 @@
 
 .blog-intro {
   padding: 0 5%;
-  padding-top: 100px;
+  padding-top: 80px;
   h2 {
     margin: 10px 0;
   }
@@ -50,8 +50,12 @@
   transition: transform 0.3s ease;
 }
 
+.blog-content h3 {
+  color: var(--dark-green);
+}
 
-.blog-content h2, .blog-content p  {
+
+.blog-content h3, .blog-content p  {
   margin: 10px;
 }
 

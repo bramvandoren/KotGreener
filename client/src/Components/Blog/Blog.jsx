@@ -85,7 +85,7 @@ function Blog() {
                 />
               </div>
               <div className="blog-content">
-                <h2>{blog.title}</h2>
+                <h3>{blog.title}</h3>
                 <p>{truncateText(blog.content, 30)}</p>
                 <p className="blog-content-date">{formatDate(blog.created_at)}</p>
                 {session ? (
