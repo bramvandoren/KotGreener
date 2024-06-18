@@ -19,9 +19,6 @@ const Profile = ( {onClose} ) => {
   const [avatar_url, setAvatarUrl] = useState(null);
   const [imageUrl, setImageUrl] = useState(null)
 
-  const [notifications, setNotifications] = useState([
-    { id: 1, message: 'Plant 2 moet water krijgen!', read: false }
-  ]);
   const [favorites, setFavorites] = useState([]);
   const [showProfile, setShowProfile] = useState(true);
   const [session, setSession] = useState(null);
@@ -144,7 +141,14 @@ const Profile = ( {onClose} ) => {
         </button>
       </div>
       <section className="favorites">
-        <h3>Mijn Favoriete Planten</h3>
+        <h3>Mijn Favoriete Planten 
+          <span className="heart">
+            {favorites.length}
+            {/* <svg class="heart" viewBox="0 0 32 29.6">
+              <path d="M23.6,0c-3.4,0-6.3,2.7-7.6,5.6C14.7,2.7,11.8,0,8.4,0C3.8,0,0,3.8,0,8.4c0,9.4,9.5,11.9,16,21.2
+              c6.1-9.3,16-12.1,16-21.2C32,3.8,28.2,0,23.6,0z"/>
+            </svg>  */}
+          </span></h3>
         <div className="favorites-plants">
           {favorites.length > 0 ? (
             favorites.map(favorite => (
@@ -157,7 +161,7 @@ const Profile = ( {onClose} ) => {
           )}
         </div>
       </section>
-      <section className="places">
+      {/* <section className="places">
         <h3>Plaatsen</h3>
         <div className="place-item">
           <h4>Mijn kot</h4>
@@ -167,11 +171,11 @@ const Profile = ( {onClose} ) => {
           <button className="create-btn">Maken +</button>
           <button className="participate-btn">Deelnemen</button>
         </div>
-      </section>
-      <section className="notifications">
+      </section> */}
+      {/* <section className="notifications">
         <h3>Meldingen</h3>
         <p>meldingen weergeven</p>
-      </section>
+      </section> */}
       <div className="settings">
         <button className="settings-btn">Instellingen</button>
         <button className="logout-button" type="button" onClick={handleLogout}>

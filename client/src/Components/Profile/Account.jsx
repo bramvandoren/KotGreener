@@ -141,7 +141,7 @@ export default function Account() {
                 />
             <div>
               <button className="button block primary" type="submit" disabled={loading || (!username && !website)}>
-                {loading ? 'Loading ...' : 'Update'}
+                {loading ? 'laden ...' : 'Aanpassen'}
               </button>
             </div>
           </div>
