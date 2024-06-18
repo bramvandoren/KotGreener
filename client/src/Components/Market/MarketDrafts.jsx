@@ -9,6 +9,7 @@ const MarketDrafts = () => {
   const [price, setPrice] = useState('');
   const [session, setSession] = useState(false);
   const [selectedPlant, setSelectedPlant] = useState(null);
+  const [errorMessages, setErrorMessages] = useState({});
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -26,7 +27,7 @@ const MarketDrafts = () => {
       }
     };
     fetchSession();
-  }, []);
+  }, [navigate]);
 
   const fetchUserPlants = async (userId) => {
     const { data, error } = await supabase
@@ -43,7 +44,27 @@ const MarketDrafts = () => {
     }
   };
 
+  const validateInputs = () => {
+    const errors = {};
+    if (!selectedPlant) {
+      errors.plant = 'Selecteer een plant.';
+    }
+
+    if (!price) {
+      errors.price = 'Voer een prijs in.';
+    } else if (isNaN(price) || price <= 0) {
+      errors.price = 'Voer een geldige prijs in.';
+    }
+
+    return errors;
+  };
+
+
   const addToDrafts = async () => {
+    
+    const errors = validateInputs();
+    setErrorMessages(errors);
+
     if (selectedPlant && price) {
       // Controleer of de plant niet op de markt staat of al in een draft zit
       const { data: plantData, error: fetchError } = await supabase
@@ -58,7 +79,9 @@ const MarketDrafts = () => {
       }
 
       if (plantData.is_on_market || plantData.is_draft) {
-        alert('Deze plant staat al op de markt of zit al in een draft.');
+        setErrorMessages({
+          plant: 'Deze plant staat al op de markt of zit al in een draft.',
+        });
         return;
       }
 
@@ -83,15 +106,17 @@ const MarketDrafts = () => {
         }]);
 
       if (!insertError) {
-        alert('Plant toegevoegd aan drafts');
         fetchUserPlants(session.user.id); // Update de lijst van planten na toevoeging
         setPrice(''); // Reset het prijsveld
+        setSelectedPlant(''); // Reset de geselecteerde plant
+        setErrorMessages({}); // Clear error messages
         setSelectedPlant(null); // Reset de geselecteerde plant
+        navigate('/markt');
       } else {
         console.error('Error inserting into market_drafts:', insertError);
       }
     } else {
-      alert('Selecteer een plant en voer een prijs in.');
+      console.error('Error inserting into market_drafts:', insertError);
     }
   };
 
@@ -118,6 +143,7 @@ const MarketDrafts = () => {
                 </option>
               ))}
             </select>
+            {errorMessages.plant && <div className="error-message">{errorMessages.plant}</div>}
           </div>
           <div className="input-price">
             <label>Prijs</label>
@@ -128,6 +154,7 @@ const MarketDrafts = () => {
               placeholder="Voer de prijs in"
               min={0}
             />
+            {errorMessages.price && <div className="error-message">{errorMessages.price}</div>}
           </div>
           <button onClick={addToDrafts}>Voeg toe aan Drafts</button>
         </div>

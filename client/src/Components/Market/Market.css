@@ -54,11 +54,19 @@
 
 /* marketplace.css */
 .marketplace {
-  padding-top: 100px;
+  padding-top: 80px;
   background: var(--light-green);
   .marketplace-header {
     padding: 0 5%;
+    h2 {
+      margin: 0;
+    }
   }
+}
+
+.market-need-to-login {
+  padding: 0 5%;
+  min-height: 30vh;
 }
 
 .plants-list-market {
@@ -71,6 +79,7 @@
 
 .plant-card-market {
   display: flex;
+  cursor: pointer;
   flex-direction: column;
   background: white;
   border-radius: 10px;
@@ -92,6 +101,7 @@
       position: relative;
       object-fit: cover;
       border-radius: 0;
+      transition: 0.3s ease;
     }
   }
   .plant-card-market-header {
@@ -100,7 +110,9 @@
     align-items: center;
     div {
       display: flex;
-      gap: 20px;
+      flex-direction: row;
+      align-items: baseline;
+      gap: 10px;
     }
     button {
       background: grey;
@@ -122,6 +134,15 @@
   }
   p {
     margin: 0;
+  }
+}
+
+.plant-card-market:hover {
+  .plant-card-market-image-overlay {
+    img {
+      transform: scale(110%);
+      transition: 0.3s ease;
+    }
   }
 }
 
@@ -159,6 +180,7 @@
     padding: 20px;
     background: white;
     border-radius: 10px;
+    max-width: 400px;
   }
   .sell-section-header {
     display: flex;
@@ -166,6 +188,13 @@
     align-items: center;
     justify-content: space-between;
   }
+}
+
+.market-buy-items {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 10px;
 }
 
 /* MARKT SELL */
@@ -216,7 +245,8 @@
 /* MARKT ADD */
 
 .market-add-draft {
-  padding-top: 100px;
+  padding-top: 80px;
+  margin-bottom: 20px;
   .breadcrumb {
     padding: 0 5%;
   }

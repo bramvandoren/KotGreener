@@ -123,7 +123,6 @@ const UserDrafts = () => {
       if (draftError) {
         console.error('Error updating price in market_drafts:', draftError);
       }
-      console.log(newPrice);
 
       // Werk de lokale state bij om de nieuwe prijs weer te geven
       setFilteredPlants(filteredPlants.map(plant =>
@@ -292,9 +291,10 @@ const UserDrafts = () => {
     }
   };
 
-  
 
   return (
+    <>
+    {session ? (
     <div className="user-drafts-sell">
       <div className="filter-section">
         {/* <input
@@ -338,8 +338,6 @@ const UserDrafts = () => {
         </div>
       </div>
       <div>
-      {console.log('Rendered filteredPlants:', filteredPlants)}
-
         {filteredPlants.length > 0 ? (
           <div className="plants-list-market">
             {filteredPlants.map(plant => (
@@ -401,6 +399,8 @@ const UserDrafts = () => {
         )}
       </div>
     </div>
+    ) : ("")}
+    </>
   );
 };
 

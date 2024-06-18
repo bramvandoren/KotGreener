@@ -23,7 +23,6 @@ const EditPlantMarket = () => {
           console.error('Error fetching plant details:', error);
         } else {
           setPlant(data);
-          console.log(data)
           setNickname(data.nickname);
           setPrice(data.market_drafts.price || data.plants_for_sale[0].selling_price);
         }

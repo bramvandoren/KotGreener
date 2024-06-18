@@ -24,30 +24,29 @@ const Marketplace = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchSession = async () => {
+    const checkSession = async () => {
       try {
         const { data: { session } } = await supabase.auth.getSession();
         setSession(session);
-        if (session) {
-          // fetchUserPlants(session.user.id);
-          fetchPlantsForSale(session.user.id)
-        }
-        //  else {
-        //   navigate('/login');
-        // }
       } catch (error) {
         console.error('Error fetching session:', error);
       }
     };
-    fetchSession();
+    checkSession();
+    fetchPlantsForSale();
   }, []);
 
-  const fetchPlantsForSale = async (userId) => {
+  const fetchPlantsForSale = async () => {
     try {
-      const { data, error } = await supabase
+      let query = supabase
         .from('plants_for_sale')
-        .select('*, user_plants(*, plants(*)), profiles(*)')
-        .neq('profile_id', userId);
+        .select('*, user_plants(*, plants(*)), profiles(*)');
+
+      // if (userId) {
+      //   query = query.neq('profile_id', userId);
+      // }
+
+      const { data, error } = await query;
 
       if (error) {
         console.error('Error fetching plants for sale:', error);
@@ -58,7 +57,7 @@ const Marketplace = () => {
     } catch (error) {
       console.error('Unexpected error:', error);
     }
-  };  
+  };
 
   // const fetchUserPlants = async (userId) => {
   //   try {
@@ -80,7 +79,6 @@ const Marketplace = () => {
   useEffect(() => {
     if (userPlants.length > 0 && plantsForSale.length > 0) {
       const favoritePlantIds = plantsForSale.map(plant => plant.plant_id);
-      console.log(plantsForSale);
       const filteredFavorites = plantsForSale.filter(plant => 
         favoritePlantIds.includes(plant.user_plants.plant_id)
       );
@@ -201,7 +199,7 @@ const Marketplace = () => {
         <Link to={'/markt'}>Studenten Markt</Link>
       </div>
       <h2>Markt</h2>
-      <p>Welkom op de studenten markt, verkooop en koop hier jouw planten tegen een voordelige prijs!</p>
+      <p>Welkom op de studenten markt, koop en verkoop hier jouw planten tegen een voordelige prijs!</p>
       </div>
       <main className="main">
           <div className="toggle">
@@ -234,20 +232,22 @@ const Marketplace = () => {
                     placeholder="Min prijs"
                     value={minPrice}
                     onChange={(e) => setMinPrice(e.target.value)}
+                    min={0}
                   />
                   <input
                     type="number"
                     placeholder="Max prijs"
                     value={maxPrice}
                     onChange={(e) => setMaxPrice(e.target.value)}
+                    min={0}
                   />
                   <button onClick={handleSearch}>Zoek</button>
                 </div>
                 <div className="section">
                   {filteredPlants.length > 0 ? (
                     <>
-                    <p>{filteredPlants.length == 1 ? "1 plant te koop" : "planten te koop"}</p>
-                    <div>
+                    <p>{filteredPlants.length == 1 ? "1 plant te koop" : filteredPlants.length + " planten te koop"}</p>
+                    <div className="market-buy-items">
                       {filteredPlants.map(plant => (
                         <div className="plant-card-market" key={plant.id}>
                           <div className="plant-card-market-image-overlay">
@@ -257,18 +257,19 @@ const Marketplace = () => {
                           <i>{plant.user_plants.nickname}</i>
                           <p className="card-username">van {plant.profiles.username}</p>
                           <p className="plant-price">{plant.selling_price} euro</p>
-                          <button>Koop</button>
+                          <button>Meer info</button>
                         </div>
                       ))}
                     </div>
                     </>
                   ) : (
-                    <p>Geen planten beschikbaar om te kopen.</p>
+                    <p>Geen planten beschikbaar om te kopen</p>
                   )}
                 </div>
                 <div className="section">
-                  <h3>Planten die jij ook hebt</h3>
                   {favoritePlants.length > 0 ? (
+                    <>
+                    <h3>Planten die jij ook hebt</h3>
                     <div>
                       {favoritePlants.map(plant => (
                         <div className="plant-card-market" key={plant.id}>
@@ -283,13 +284,14 @@ const Marketplace = () => {
                         </div>
                       ))}
                     </div>
-                  ) : (
-                    <p>Geen favoriete planten beschikbaar om te kopen.</p>
-                  )}
+                    </>
+                  ) : ('')}
                 </div>
               </div>
               </>
             ) : (
+              <>
+              {session ? (
             <section className="sell-section">
               <div className="sell-section-header">
                 <h2>Planten verkopen</h2>
@@ -310,6 +312,10 @@ const Marketplace = () => {
               <UserDrafts />
               {/* <MarketDrafts/> */}
             </section>
+              ) : 
+              <p className="market-need-to-login"><Link to="/login">Log in</Link> of <Link to="/register">maak een account</Link> aan om jouw planten te verkopen</p>
+              }
+            </>
           )}
         </main>
     </div>
