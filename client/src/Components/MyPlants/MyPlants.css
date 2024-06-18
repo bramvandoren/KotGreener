@@ -46,6 +46,8 @@
   }
 }
 
+
+
 .tasks {
   background: var(--light-green);
   padding: 10px;
@@ -232,6 +234,18 @@
   height: 60px; */
   border-radius: 10px;
   margin-right: 20px;
+}
+
+.plant-details {
+  .care-instructions {
+    /* padding: 0; */
+    h3 {
+      padding: 0;
+    }
+    .care-item {
+      padding: 0;
+    }
+  }
 }
 
 .plant-info {

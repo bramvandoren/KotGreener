@@ -19,9 +19,9 @@ function DetailPage() {
   const [visitsCount, setVisitsCount] = useState(0);
   const [animalFriendly, setAnimalFriendly] = useState('');
   const [otherPlants, setOtherPlants] = useState([]);
-  const [showSunlight, setShowSunlight] = useState(false);
-  const [showWater, setShowWater] = useState(false);
-  const [showRepotting, setShowRepotting] = useState(false);
+  const [showSunlight, setShowSunlight] = useState(true);
+  const [showWater, setShowWater] = useState(true);
+  const [showRepotting, setShowRepotting] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -219,8 +219,10 @@ function DetailPage() {
           </div>
         </div>
       </section>
-      <div className="care-instructions">
+        <div className="care-instructions">
         <h3>Verzorging</h3>
+              {session ? (
+        <>
         <div className="care-item">
           <h4 onClick={() => setShowSunlight(!showSunlight)}>
             Zonlicht {showSunlight ? 
@@ -328,6 +330,10 @@ function DetailPage() {
             </p>
           )}
         </div>
+        </>
+      ) : (
+        <p className="market-need-to-login"><Link to="/login">Log in</Link> of <Link to="/register">maak een account</Link> aan om de verzorging te raadplegen</p>
+      )}
       </div>
       
 

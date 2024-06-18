@@ -19,6 +19,9 @@ function MyPlant() {
   const [imageUrl, setImageUrl] = useState(null);
   const [plantImageUrl, setPlantImageUrl] = useState(null)
   const [events, setEvents] = useState([]);
+  const [showSunlight, setShowSunlight] = useState(false);
+  const [showWater, setShowWater] = useState(false);
+  const [showRepotting, setShowRepotting] = useState(false);
 
   // const [downloadImageUrl, setDownloadImageUrl] = useState(null);
 
@@ -289,6 +292,118 @@ function MyPlant() {
               <p>{plant.plants ? plant.plants.repotting : plant.repotting}</p>
             </div>
           </div>
+          <div className="care-instructions">
+        <h3>Verzorging</h3>
+        <>
+        <div className="care-item">
+          <h4 onClick={() => setShowSunlight(!showSunlight)}>
+            Zonlicht {showSunlight ? 
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+              <path d="M16 22a2 2 0 0 1-1.41-.59l-10-10a2 2 0 0 1 2.82-2.82L16 17.17l8.59-8.58a2 2 0 0 1 2.82 2.82l-10 10A2 2 0 0 1 16 22Z">
+              </path>
+            </svg> :
+            <svg className="arrow-rotate" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+              <path d="M16 22a2 2 0 0 1-1.41-.59l-10-10a2 2 0 0 1 2.82-2.82L16 17.17l8.59-8.58a2 2 0 0 1 2.82 2.82l-10 10A2 2 0 0 1 16 22Z">
+              </path>
+            </svg> 
+            }
+          </h4>
+          {showSunlight && (
+            <p>
+              {plant.sunlight === 'zonnig' && (
+                <>
+                  Deze plant gedijt het beste op een zonnige locatie waar hij direct zonlicht kan ontvangen gedurende een groot deel van de dag. Zorg ervoor dat de plant voldoende licht krijgt om gezond te groeien en bloeien. Houd er rekening mee dat in zeer zonnige omgevingen, vooral in de zomer, de plant extra water kan nodig hebben om uitdroging te voorkomen.
+                </>
+              )}
+              {plant.sunlight === 'schaduw' && (
+                <>
+                  Deze plant voelt zich het prettigst op een locatie met helder, indirect licht. Plaats hem op een plek waar hij beschermd is tegen directe zonnestralen, maar nog steeds voldoende licht ontvangt om gezond te groeien. Een locatie bij een noordelijk raam of een plek waar gefilterd licht binnenvalt, is ideaal. Vermijd intense middagzon, omdat dit de bladeren kan beschadigen.
+                </>
+              )}
+              {plant.sunlight === 'halfschaduw' && (
+                <>
+                  Deze plant gedijt goed op een locatie met halfschaduw. Dit betekent dat hij enige bescherming geniet tegen de felste zonnestralen, maar toch voldoende licht ontvangt om gezond te groeien. Een plek bij een raam op het oosten of westen kan ideaal zijn, waar de plant wat ochtend- of namiddagzon krijgt, maar niet de volle kracht van de middagzon.
+                </>
+              )}
+            </p>
+          )}
+        </div>
+        {/* Water sectie met toggle */}
+        <div className="care-item">
+          <h4 onClick={() => setShowWater(!showWater)}>
+            Water {showWater ? 
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+              <path d="M16 22a2 2 0 0 1-1.41-.59l-10-10a2 2 0 0 1 2.82-2.82L16 17.17l8.59-8.58a2 2 0 0 1 2.82 2.82l-10 10A2 2 0 0 1 16 22Z">
+              </path>
+            </svg> :
+            <svg className="arrow-rotate" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+              <path d="M16 22a2 2 0 0 1-1.41-.59l-10-10a2 2 0 0 1 2.82-2.82L16 17.17l8.59-8.58a2 2 0 0 1 2.82 2.82l-10 10A2 2 0 0 1 16 22Z">
+              </path>
+            </svg> 
+            }
+          </h4>
+          {showWater && (
+            <p>
+              {plant.water_frequency === 'dagelijks' && (
+                <>
+                  Deze plant heeft dagelijks water nodig om te gedijen. Zorg ervoor dat de grond altijd vochtig blijft, maar niet doorweekt.
+                </>
+              )}
+              {plant.water_frequency === 'wekelijks' && (
+                <>
+                  Deze plant heeft wekelijks water nodig. Geef de plant water zodra de bovenste laag van de potgrond droog aanvoelt, maar voorkom dat de wortels uitdrogen.
+                </>
+              )}
+              {plant.water_frequency === 'tweewekelijks' && (
+                <>
+                  Deze plant heeft eens in de twee weken water nodig. Laat de grond tussen de gietbeurten door gedeeltelijk uitdrogen voordat je opnieuw water geeft.
+                </>
+              )}
+              {plant.water_frequency === 'maandelijks' && (
+                <>
+                  Deze plant heeft maandelijks water nodig. Laat de grond volledig drogen voordat je opnieuw water geeft om wortelrot te voorkomen.
+                </>
+              )}
+            </p>
+          )}
+        </div>
+
+        {/* Verpotten sectie met toggle */}
+        <div className="care-item">
+        <h4 onClick={() => setShowRepotting(!showRepotting)}>
+            Verpotten {showRepotting ? 
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+              <path d="M16 22a2 2 0 0 1-1.41-.59l-10-10a2 2 0 0 1 2.82-2.82L16 17.17l8.59-8.58a2 2 0 0 1 2.82 2.82l-10 10A2 2 0 0 1 16 22Z">
+              </path>
+            </svg> :
+            <svg className="arrow-rotate" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+              <path d="M16 22a2 2 0 0 1-1.41-.59l-10-10a2 2 0 0 1 2.82-2.82L16 17.17l8.59-8.58a2 2 0 0 1 2.82 2.82l-10 10A2 2 0 0 1 16 22Z">
+              </path>
+            </svg> 
+            }
+          </h4>
+          {showRepotting && (
+            <p>
+              {plant.repotting === 'jaarlijks' && (
+                <>
+                  Deze plant moet jaarlijks worden verpot om gezond te blijven groeien. Controleer regelmatig of de plant voldoende ruimte heeft voor zijn wortels.
+                </>
+              )}
+              {plant.repotting === 'tweejaarlijks' && (
+                <>
+                  Deze plant moet eens in de twee jaar worden verpot. Laat de plant enkele dagen met rust na het verpotten voordat je weer normaal water geeft.
+                </>
+              )}
+              {plant.repotting === 'driejaarlijks' && (
+                <>
+                  Deze plant hoeft pas eens in de drie jaar te worden verpot. Vermijd overmatig water geven direct na het verpotten.
+                </>
+              )}
+            </p>
+          )}
+        </div>
+        </>
+      </div>
           <h3>Taken</h3>
           {events.length > 0 ? (
             <div className="myPlant-tasks">

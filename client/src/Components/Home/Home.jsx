@@ -195,11 +195,11 @@ function Home() {
           <section className="today-todo">
             <div className="today-todo-count">
               <h2>Vandaag te doen</h2>
-              {todayTasksCount > 0 && (
+              {/* {todayTasksCount > 0 && (
                 <span className="task-count">
                   {todayTasksCount}
                 </span>
-              )}
+              )} */}
             </div>
             <div className="task-items-scroll">
               {todayTasksCount > 5 && (

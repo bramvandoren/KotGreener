@@ -30,7 +30,7 @@ function UserStats() {
                 fetchEvents(session.user.id);
                 fetchUserPlantCount(session.user.id);
                 fetchUpcomingEventsCount(session.user.id);
-                // fetchMarketTransactionsCount(session.user.id);
+                fetchMarketTransactionsCount(session.user.id);
                 fetchCompletedEventsCount(session.user.id);
 
             }
@@ -93,33 +93,24 @@ function UserStats() {
                 console.error('Unexpected error fetching upcoming events count:', error);
             }
         };
+
+        const fetchMarketTransactionsCount = async (userId) => {
+            try {
+              const { count, error } = await supabase
+                .from('plants_for_sale')
+                .select('*', { count: 'exact' })
+                .eq('profile_id', userId);
+      
+              if (error) {
+                console.error('Error fetching market transactions count:', error);
+              } else {
+                animateCounter(setMarketTransactionsCount, count);
+              }
+            } catch (error) {
+              console.error('Unexpected error fetching market transactions count:', error);
+            }
+          };
             
-        // const fetchMarketTransactionsCount = async (userId) => {
-        //     try {
-        //     const { data: purchases, error: purchasesError, count: purchasesCount } = await supabase
-        //         .from('market_transactions')
-        //         .select('*', { count: 'exact' })
-        //         .eq('buyer_id', userId);
-        
-        //     if (purchasesError) {
-        //         console.error('Error fetching user purchases count:', purchasesError);
-        //     }
-        
-        //     const { data: sales, error: salesError, count: salesCount } = await supabase
-        //         .from('market_transactions')
-        //         .select('*', { count: 'exact' })
-        //         .eq('seller_id', userId);
-        
-        //     if (salesError) {
-        //         console.error('Error fetching user sales count:', salesError);
-        //     }
-        
-        //     const totalTransactionsCount = (purchasesCount || 0) + (salesCount || 0);
-        //     animateCounter(setMarketTransactionsCount, totalTransactionsCount);
-        //     } catch (error) {
-        //     console.error('Unexpected error fetching market transactions count:', error);
-        //     }
-        // };
         
         const fetchCompletedEventsCount = async (userId) => {
             try {

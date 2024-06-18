@@ -387,7 +387,7 @@ function AddPlant() {
                   accept="image/*"
                   onChange={handleFileChange}
                   disabled={uploading}
-                  required
+                  // required
                 />
               </div>
               {previewUrl ? (

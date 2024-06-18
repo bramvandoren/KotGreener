@@ -127,6 +127,10 @@ function MyPlants() {
   //   }
   // }
 
+  useEffect(() => {
+    countTodayTasks(tasks);
+  }, [tasks]);
+
   // Bepaal het aantal taken voor vandaag
   const countTodayTasks = (tasks) => {
     const today = format(new Date(), 'yyyy-MM-dd');
@@ -266,11 +270,13 @@ function MyPlants() {
             <div className="my-plants-items">
             {sortedPlants.length > 0 ? (
               sortedPlants.map(plant => (
+                <>
+                {console.log(plant)}
                 <div key={plant.id} className="plant-card">
                   <div className="plant-image-overlay">
                   {plant.plants && imageUrl ? (
                     <img
-                      src={imageUrl}
+                      src={plant.image_url}
                       alt={plant.plants.name}
                     />
                   ) : (
@@ -304,6 +310,7 @@ function MyPlants() {
                   </div>
                   <Link to={`/my-plants/${plant.id}`} className="detail-link">Meer Info</Link>
                 </div>
+                </>
               ))
             ) : (
               <p>Geen planten</p>
