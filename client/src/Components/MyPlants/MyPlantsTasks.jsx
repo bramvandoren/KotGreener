@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { format, isSameDay, parseISO, addDays } from 'date-fns';
 import { supabase } from '../../lib/helper/supabaseClient';
+import { toast, ToastContainer } from 'react-toastify';
 
 const MyPlantsTasks = () => {
   const [tasks, setTasks] = useState([]);
@@ -61,36 +62,65 @@ const MyPlantsTasks = () => {
   // Bepaal het aantal taken voor vandaag
   const countTodayTasks = (tasks) => {
     const today = format(new Date(), 'yyyy-MM-dd');
-    const todayTasks = tasks.filter(task => format(new Date(task.start_event), 'yyyy-MM-dd') === today && !task.done);
+    const todayTasks = tasks.filter(task => format(parseISO(task.start_event), 'yyyy-MM-dd') === today && !task.done);
     setTodayTasksCount(todayTasks.length);
   };
 
-  const toggleTaskDone = async (taskId, currentStatus) => {
+  const handleToggleDone = async (eventId, currentDoneStatus) => {
     try {
       const { error } = await supabase
         .from('watering_events')
-        .update({ done: !currentStatus })
-        .eq('id', taskId);
-
+        .update({ done: !currentDoneStatus })
+        .eq('id', eventId);
+  
       if (error) {
-        console.error('Error updating task status:', error);
+        console.error('Error toggling done status:', error);
+        toast.error('Fout bij het bijwerken van de taak.');
       } else {
-        // Update the task list to reflect the changes
         setTasks(prevTasks =>
           prevTasks.map(task =>
-            task.id === taskId ? { ...task, done: !currentStatus } : task
+            task.id === eventId ? { ...task, done: !currentDoneStatus } : task
           )
         );
-        // Re-filter tasks to reflect the changes
-        filterTasks(tasks.map(task =>
-          task.id === taskId ? { ...task, done: !currentStatus } : task
-        ));
-        countTodayTasks(tasks);
+        const updatedTasks = tasks.map(task =>
+          task.id === eventId ? { ...task, done: !currentDoneStatus } : task
+        );
+        filterTasks(updatedTasks);
+        countTodayTasks(updatedTasks);
+        toast.success(`Taak succesvol ${!currentDoneStatus ? 'voltooid' : 'ongedaan gemaakt'}.`);
       }
     } catch (error) {
       console.error('Unexpected error:', error);
+      toast.error('Er is een onverwachte fout opgetreden.');
     }
   };
+
+  // const toggleTaskDone = async (taskId, currentStatus) => {
+  //   try {
+  //     const { error } = await supabase
+  //       .from('watering_events')
+  //       .update({ done: !currentStatus })
+  //       .eq('id', taskId);
+
+  //     if (error) {
+  //       console.error('Error updating task status:', error);
+  //     } else {
+  //       // Update the task list to reflect the changes
+  //       setTasks(prevTasks =>
+  //         prevTasks.map(task =>
+  //           task.id === taskId ? { ...task, done: !currentStatus } : task
+  //         )
+  //       );
+  //       // Re-filter tasks to reflect the changes
+  //       filterTasks(tasks.map(task =>
+  //         task.id === taskId ? { ...task, done: !currentStatus } : task
+  //       ));
+  //       countTodayTasks(tasks);
+  //     }
+  //   } catch (error) {
+  //     console.error('Unexpected error:', error);
+  //   }
+  // };
 
   const deleteEvent = async (eventId) => {
     try {
@@ -127,7 +157,7 @@ const MyPlantsTasks = () => {
             {todayTasks.length > 0 ? (
               todayTasks.map(task => (
                 
-                <div className={`tasks-item ${task.type} task-${task.done}`} key={task.id} onClick={() => toggleTaskDone(task.id, task.done)}>
+                <div className={`tasks-item ${task.type} task-${task.done}`} key={task.id} onClick={() => handleToggleDone(task.id, task.done)}>
                   <div className={`small-circle ${task.type}`}>
                     {task.type === 'watering' &&
                       <svg width="16" height="21" viewBox="0 0 16 21" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -194,6 +224,7 @@ const MyPlantsTasks = () => {
           <p>Geen volgende taken</p>
         )}
       </div>
+      <ToastContainer position="top-right" autoClose={5000} hideProgressBar={false} />
     </div>
   );
 };

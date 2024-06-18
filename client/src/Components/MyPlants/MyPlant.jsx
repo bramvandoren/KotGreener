@@ -74,7 +74,6 @@ function MyPlant() {
       }
     };
 
-    // console.log(imageUrl)
     fetchSession();
     fetchEvents();
     if (imageUrl) {
@@ -278,7 +277,7 @@ function MyPlant() {
                 </svg>
                 <h3>Grootte</h3>
               </div>
-              <p>{plant.plants ? plant.plants.height + ' cm' : plant.height + ' cm'}</p>
+              <p>{plant.height + ' cm'}</p>
             </div>
             <div className="plant-info-item">
               <div className="item-repot">
@@ -309,61 +308,64 @@ function MyPlant() {
                 </div>
               ))} */}
               <div className="events-list">
-                <h4>Vandaag te doen</h4>
-                {todayEvents.map(event => (
-                  <div key={event.id} className="event-item today">
-                    <p>{event.type}</p>
-                    <p>{event.start_event.toLocaleDateString()}</p>
-                    <button className="button--done" onClick={() => handleToggleDone(event.id, event.done)}>
-                      {event.done ? 'Ongedaan maken' : 'Voltooien'}
-                    </button>
-                    <svg className="btn--delete" onClick={() => handleDeleteEvent(event.id)} xmlns="http://www.w3.org/2000/svg" width="20" height="22">
-                      <g fill="none" fillRule="evenodd" stroke="#000" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2">
-                        <path d="M1 5h18M17 5v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5m3 0V3a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M8 10v6M12 10v6">
-                        </path>
-                      </g>
-                    </svg>
-                  </div>
-                ))}
-                <h4>Voltooid vandaag</h4>
+                <h4 className="event-title-today">Vandaag te doen <span className="event-count-today">{todayEvents.length}</span></h4>
+                <div className="event-items">
+                  {todayEvents.map(event => (
+                    <div key={event.id} className="event-item today">
+                      <p><b>{event.type}</b></p>
+                      <p>{event.start_event.toLocaleDateString()}</p>
+                      <button className="button--done" onClick={() => handleToggleDone(event.id, event.done)}>
+                        {event.done ? 'Ongedaan maken' : 'Voltooien'}
+                      </button>
+                      {/* <svg className="btn--delete" onClick={() => handleDeleteEvent(event.id)} xmlns="http://www.w3.org/2000/svg" width="20" height="22">
+                        <g fill="none" fillRule="evenodd" stroke="#000" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2">
+                          <path d="M1 5h18M17 5v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5m3 0V3a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M8 10v6M12 10v6">
+                          </path>
+                        </g>
+                      </svg> */}
+                    </div>
+                  ))}
+                </div>
+                <h4 >Voltooid vandaag <span className="event-count-today-done">{completedEvents.length}</span></h4>
                 {completedEvents.map(event => (
                   <div key={event.id} className="event-item completed">
+                    <p><b>{event.type}</b></p>
                     <p>{event.name}</p>
                     <button className="button--done" onClick={() => handleToggleDone(event.id, event.done)}>
                       {event.done ? 'Ongedaan maken' : 'Voltooien'}
                     </button>
-                    <svg className="btn--delete" onClick={() => handleDeleteEvent(event.id)} xmlns="http://www.w3.org/2000/svg" width="20" height="22">
+                    {/* <svg className="btn--delete" onClick={() => handleDeleteEvent(event.id)} xmlns="http://www.w3.org/2000/svg" width="20" height="22">
                       <g fill="none" fillRule="evenodd" stroke="#000" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2">
                         <path d="M1 5h18M17 5v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5m3 0V3a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M8 10v6M12 10v6">
                         </path>
                       </g>
-                    </svg>
-                    <span>Voltooid op {formatDate(event.end_event)}</span>
+                    </svg> */}
+                    {/* <span>Voltooid op {formatDate(event.end_event)}</span> */}
                   </div>
                 ))}
-                <h4>Toekomst</h4>
+                <h4 className="event-title-today-future">Toekomst <span className="event-count-future">{upcomingEvents.length}</span></h4>
                 {upcomingEvents.map(event => (
-                  <div key={event.id} className="event-item">
-                    <p>{event.type}</p>
+                  <div key={event.id} className="event-item future">
+                    <p><b>{event.type}</b></p>
                     <p>{event.start_event.toLocaleDateString()}</p>
 
-                    <button className="button--done" onClick={() => handleToggleDone(event.id, event.done)}>
+                    {/* <button className="button--done" onClick={() => handleToggleDone(event.id, event.done)}>
                       {event.done ? 'Ongedaan maken' : 'Voltooien'}
-                    </button>
-                    <button className="button--delete" onClick={() => handleDeleteEvent(event.id)}>Verwijderen</button>
+                    </button> */}
+                    {/* <button className="button--delete" onClick={() => handleDeleteEvent(event.id)}>Verwijderen</button> */}
                   </div>
                 ))}
-                <h4>Afgelopen</h4>
+                <h4>Afgelopen <span className="event-count-done">{overdueTrueEvents.length + overdueFalseEvents.length}</span></h4>
                 {overdueTrueEvents.map(event => (
                   <div key={event.id} className="event-item overdue-true">
-                    <p>{event.name}</p>
-                    <span>Voltooid op {formatDate(event.end_event)}</span>
+                    <p><b>{event.type}</b></p>
+                    <p>Voltooid op {formatDate(event.end_event)}</p>
                   </div>
                 ))}
                 {overdueFalseEvents.map(event => (
                   <div key={event.id} className="event-item overdue-false">
-                    <p>{event.name}</p>
-                    <span>Gemist op {formatDate(event.end_event)}</span>
+                    <p><b>{event.type}</b></p>
+                    <p>Gemist op {formatDate(event.end_event)}</p>
                   </div>
                 ))}
               </div>

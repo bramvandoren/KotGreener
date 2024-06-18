@@ -91,7 +91,7 @@ function MyPlantsCalendar() {
     const eventPropGetter = (event) => {
       let backgroundColor = '#3174ad';
       if (event.type === 'watering') {
-          backgroundColor = '#007BFF';
+          backgroundColor = '#add8e6';
       } else if (event.type === 'repotting') {
           backgroundColor = '#a5592a';
       }

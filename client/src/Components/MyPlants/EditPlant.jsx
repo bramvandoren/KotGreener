@@ -139,6 +139,16 @@ const EditPlant = () => {
               onChange={(e) => setNickname(e.target.value)}
               />
           <label>
+            Hoogte (in cm)
+          </label>
+          <input
+            type="number"
+            value={height}
+            onChange={(e) => setHeight(e.target.value)}
+            required
+            min={1}
+          />
+          <label>
             Zonlicht
           </label>
           <input
@@ -157,17 +167,6 @@ const EditPlant = () => {
           value={water_frequency || ''}
           onChange={(e) => setWaterFrequency(e.target.value)}
           disabled
-          />
-          <label>
-            Hoogte (in cm)
-          </label>
-          <input
-            type="number"
-            value={height}
-            onChange={(e) => setHeight(e.target.value)}
-            disabled
-            required
-            min={1}
           />
           <label>
             Verpotten frequentie

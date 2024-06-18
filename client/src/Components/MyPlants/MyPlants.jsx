@@ -9,7 +9,7 @@ import Calendar from './MyPlantsCalendar';
 import MyPlantsCalendar from './MyPlantsCalendar';
 import MyPlantsTasks from './MyPlantsTasks';
 import logo from "../../assets/logo-kotgreener.svg";
-import { format } from 'date-fns';
+import { format, parseISO } from 'date-fns';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Header from '../Header/Header';
@@ -130,7 +130,7 @@ function MyPlants() {
   // Bepaal het aantal taken voor vandaag
   const countTodayTasks = (tasks) => {
     const today = format(new Date(), 'yyyy-MM-dd');
-    const todayTasks = tasks.filter(task => format(new Date(task.start_event), 'yyyy-MM-dd') === today && !task.done);
+    const todayTasks = tasks.filter(task => format(parseISO(task.start_event), 'yyyy-MM-dd') === today && !task.done);
     setTodayTasksCount(todayTasks.length);
   };
 
@@ -197,8 +197,8 @@ function MyPlants() {
                 </svg>
               </button>
             </div>
-            <p className="my-plants-intro-text">Hier kan u uw eigen planten toevoegen, beheren en aanpassen. Bij het toevoegen van uw plant
-              ontvangt u een persoonlijk schema met bijhorende taken.
+            <p className="my-plants-intro-text">Hier kan je jouw eigen planten toevoegen, beheren en aanpassen. Bij het toevoegen van jouw plant
+              ontvang je een persoonlijk schema met bijhorende taken.
             </p>
             {isCalendarVisible ? 
               <button className='btn--secondary btn-show' onClick={toggleCalendarVisibility}>

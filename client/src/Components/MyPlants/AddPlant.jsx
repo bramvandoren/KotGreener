@@ -6,6 +6,7 @@ import Select from 'react-select';
 import { addDays, format } from 'date-fns';
 import Header from '../Header/Header';
 import Navbar from '../Navbar/Navbar';
+import { toast, ToastContainer } from 'react-toastify';
 
 function AddPlant() {
   const [name, setName] = useState('');
@@ -270,6 +271,9 @@ function AddPlant() {
             />
             <label>
               Bijnaam
+              <span className="info-icon" onClick={() => toast.info('Bijnaam: een unieke naam voor uw plant')}>
+                ?
+              </span>
             </label>
             <input
               type="text"
@@ -279,6 +283,9 @@ function AddPlant() {
             />
             <label>
               Hoogte (in cm)
+              <span className="info-icon" onClick={() => toast.info('Hoogte: de hoogte van uw plant in centimeters')}>
+                ?
+              </span>
             </label>
             <input
               type="number"
@@ -290,6 +297,9 @@ function AddPlant() {
             />
             <label>
               Zonlicht
+              <span className="info-icon" onClick={() => toast.info('Zonlicht: hoeveel zonlicht uw plant nodig heeft')}>
+                ?
+              </span>
             </label>
             <select
               value={sunlight}
@@ -304,6 +314,11 @@ function AddPlant() {
             </select>
             <label>
               Waterfrequentie
+              <span className="info-icon" 
+              onClick={() => 
+              toast.info('Water frequentie: het aantal keer water geven van de plant')}>
+                ?
+              </span>
             </label>
             <select
               value={waterFrequency}
@@ -335,6 +350,11 @@ function AddPlant() {
           <div className="form-right">
             <label>
               Verpotten frequentie
+              <span className="info-icon" 
+              onClick={() => 
+              toast.info('Verpotten: na hoeveel tijd de plant in andere pot zetten')}>
+                ?
+              </span>
             </label>
             <select
               value={repottingFrequency}
@@ -347,7 +367,7 @@ function AddPlant() {
               <option value="tweejaarlijks">Tweejaarlijks</option>
               <option value="driejaarlijks">Driejaarlijks</option>
             </select>
-            <label>
+            {/* <label>
               Afbeelding URL:
               <input
                 type="text"
@@ -355,7 +375,7 @@ function AddPlant() {
                 onChange={(e) => setImageUrl(e.target.value)}
                 disabled={!isManualEntry && selectedPlant !== ""}
               />
-            </label>
+            </label> */}
             <div className="addPlant-form-image">
               <div className="form-image-upload">
                 <label className="button primary block" htmlFor="single">
@@ -378,14 +398,14 @@ function AddPlant() {
                 style={{ height: '100px', width: '100px', objectFit: 'cover' }} // Pas de grootte en stijl van de preview aan
                 />
               ) : (
-                <div className="avatar no-image" style={{ height: '100px', width: '100px' }} />
+                <div className="avatar no-image" />
               )}
               </div>
-            {/* {console.log(downloadImageUrl)} */}
             <button type="submit">Plant toevoegen</button>
           </div>
         </form>
       </div>
+      <ToastContainer position="top-center" autoClose={5000} hideProgressBar={false} />
     </div>
     <Navbar/>
   </>

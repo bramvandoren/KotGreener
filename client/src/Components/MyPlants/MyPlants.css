@@ -22,6 +22,7 @@
     }
     .btn--secondary {
       padding: 0.5rem 0.5rem 0.5rem 1rem;
+      margin: 5px 5px 5px 0;
       svg {
         transform: rotate(-90deg);
         width: 15px;
@@ -171,10 +172,9 @@
   .next-task-title {
     display: flex;
     flex-direction: row;
+    flex-wrap: wrap;
     align-items: baseline;
-    p {
-      margin-left: 10px;
-    }
+    gap: 5px;
   }
 }
 
@@ -261,6 +261,7 @@
     flex-direction: row;
     flex-wrap: wrap;
     gap: 10px;
+    width: 100%;
     .myPlant-task {
       display: flex;
       flex-direction: column;
@@ -344,7 +345,7 @@
     padding: 10px 5%;
   }
   .editPlant-form {
-    max-width: 400px;
+    max-width: 200px;
     width: 100%;
     padding: 10px 5%;
     margin: 0 auto;
@@ -386,12 +387,26 @@
       margin: 0 0 10px 0;
     }
   }
+  .info-icon {
+    cursor: pointer;
+    font-size: 12px;
+    margin-left: 5px;
+    color: white;
+    background: var(--medium-green);
+    border-radius: 50%;
+    padding: 2px 7px;
+  }
+  
+  .info-icon:hover {
+    background: var(--dark-green);
+  }
   .addPlant-form {
     padding: 10px 20px;
     background: white;
     max-width: 700px;
     margin: 0 auto;
     margin-top: 20px;
+    margin-bottom: 20px;
     border-radius: 10px;
     box-shadow: 0 0 10px #f4f0f1;
     input,select {
@@ -424,6 +439,7 @@
     button {
       padding: 1rem 1rem;
       border-radius: 100px;
+      margin-top: 20px;
     }
     form {
       display: flex;
@@ -440,6 +456,7 @@
 
 .addPlant-form-image {
   display: flex;
+  flex-wrap: wrap;
 }
 
 .calendar {
@@ -448,6 +465,9 @@
     padding: 0;
     height: 50vh;
     width: 80vw;
+  }
+  .rbc-today {
+    background-color: var(--light-green);
   }
   .rbc-agenda-view {
     color: white;
@@ -514,23 +534,71 @@
 input[type=number]::-webkit-inner-spin-button {
   -webkit-appearance: none;
 }
-/* .event-item { */
-  .overdue-false {
-    background-color: red;
+
+.events-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  .event-items {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 10px;
   }
-  .overdue-true {
+  h4 {
+    span.event-count-today-done {
+      background: rgba(0,128,0,0.7);
+      border-radius: 50%;
+      padding: 5px 10px;
+    }
+    span.event-count-today {
+      background: rgba( 255,165,0, 0.7);
+      border-radius: 50%;
+      padding: 5px 10px;
+    }
+    span.event-count-future {
+      background: rgba( 211,211,211, 0.7);
+      border-radius: 50%;
+      padding: 5px 10px;
+    }
+    span.event-count-done {
+      background: black;
+      color: white;
+      border-radius: 50%;
+      padding: 5px 10px;
+    }
+  }
+  .event-item {
+    text-align: center;
+    background: lightgrey;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    p {
+      padding: 0 10px;
+    }
+    button {
+      border-radius: 0 0 10px 10px;
+    }
+  }
+  .event-item.today {
+    background-color: rgba( 255,165,0, 0.7);
+  }
+  .event-item.completed {
+    background-color: rgba(0,128,0,0.7);
+  }
+  .event-item.future {
+    background-color: lightgrey;
+  }
+  .event-item.overdue-true {
     background-color: green;
   }
-  .completed {
-    background-color: green;
+  .event-item.overdue-false {
+    background-color: rgb(128, 0, 0);
+    color: white;
   }
-  .upcoming {
-    background-color: purple;
-  }
-  .today {
-    background-color: orange;
-  }
-/* } */
+}
+
 
 
 /* MEDIA QUERIES */
@@ -571,6 +639,11 @@ input[type=number]::-webkit-inner-spin-button {
       .my-plants-intro-header {
         align-items: baseline;
       }
+    }
+  }
+  .editPlant {
+    .editPlant-form {
+        max-width: 400px;
     }
   }
   .addPlant-button {
