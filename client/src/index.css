@@ -13,6 +13,12 @@
   --toastify-icon-color-success: #457A14;
   --toastify-color-progress-success: #457A14;
 
+  .Toastify__toast-container--top-center {
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
   font-family: 'Montserrat', Helvetica, sans-serif;
   font-family: "Segoe UI", sans-serif;
   line-height: 1.5;
